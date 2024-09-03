@@ -49,7 +49,7 @@
                     <table class="transaction-table" id="pending_table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>IDS</th>
                             <th>Transaction ID</th>
                             <th>Name</th>
                             <th>Email</th>
