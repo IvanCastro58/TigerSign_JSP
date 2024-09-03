@@ -1,0 +1,374 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --primary-color: #F4BB00;
+    --secondary-color: #5D4600;
+    --accent-color: #3B2D00;
+    --light-gray: #a1a1a1;
+    --dark-gray: #1a1a1a;
+    --medium-gray: #303030;
+    --blackish: #101010;
+    --blue: #3B83FB;
+    --white: #ffffff;
+    --green: #1C8454;
+    --lighter-gray: #f4f4f4;
+    --red: #d9534f;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.title-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.title-page-claimed{
+    color: var(--light-gray);
+    border-bottom: 5px solid var(--white);
+}
+
+.title-icon i{
+    margin-right: 10px;
+    margin-left: 10px;
+    font-size: 24px;
+}
+
+.title-page-number{
+    border-bottom: 5px solid var(--primary-color);
+}
+
+.back-btn {
+    margin-left: auto;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: var(--blackish);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+}
+
+.details-container{
+    background-color: var(--white);
+    border: 1px solid var(--blackish);
+}
+
+.title-number{
+    background-color: var(--blackish);
+    width: 100%;
+    color: var(--white);
+    text-align: left;
+    font-size: 18px;
+    padding: 15px 0;
+    letter-spacing: 2px;
+}
+
+.title-number span{
+    margin-left: 15px;
+}
+
+.request-information {
+    background-color: var(--lighter-gray); 
+    margin: 20px;
+}
+
+.request-details {
+    background-color: var(--lighter-gray); 
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.title-request{
+    font-weight: 500;
+    padding: 5px;
+}
+
+.title-request p{
+    font-size: 20px;
+    margin: 10px;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.info-item{
+    margin: 10px;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.personal-info {
+    flex: 1;
+}
+
+.info-item {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.info-item strong {
+    color: var(--blackish);
+}
+
+.requested-documents {
+    flex: 1;
+}
+
+.requested-documents .title-request p {
+    font-size: 20px;
+    margin-bottom: 10px;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.documents-list {
+    list-style-type: disc; 
+    margin-top: 0px;
+
+}
+
+.documents-list li {
+    font-size: 16px;
+    padding-bottom: 10px;
+}
+
+.claim-information {
+    background-color: var(--lighter-gray); 
+    margin: 20px;
+}
+
+.claim-details {
+    background-color: var(--lighter-gray); 
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.title-claim{
+    font-weight: 500;
+    padding: 5px;
+}
+
+.title-claim p{
+    font-size: 20px;
+    margin: 10px;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.claimer-proof {
+    flex: 1;
+}
+
+.proof-btn {
+    width: 220px;
+    background-color: var(--primary-color);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 5px;
+    margin-bottom: 20px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    transition: box-shadow 0.3s ease;
+}
+
+.proof-btn:hover {
+    box-shadow: none;
+}
+
+.bottom-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.proof-btn2{
+    width: 220px;
+    background-color: var(--green);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 5px;
+    margin-bottom: 20px;
+    border: none;
+    cursor: pointer;
+    color: var(--white);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    transition: box-shadow 0.3s ease;
+}
+
+.proof-btn2:hover {
+    box-shadow: none; 
+}
+
+@media (max-width: 720px) {
+    .title-page-claimed{
+        border-bottom: 3px solid var(--white);
+        font-size: 25px;
+    }
+    .title-page-number{
+        border-bottom: 3px solid var(--primary-color);
+        font-size: 25px;
+    }
+}
+
+@media (max-width: 610px) {
+    .title-page-claimed{
+        font-size: 20px;
+    }
+    .title-page-number{
+        font-size: 20px;
+    }
+    .request-details {
+        display: block;
+
+    }
+    .claim-details {
+        display: block;
+    }
+
+    .claimer-proof {
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        gap: 10px;
+    }
+}
+
+@media (max-width: 580px) {
+    .title-number{
+        font-size: 16px;
+        padding: 10px 0;
+        letter-spacing: 1px;
+    }
+    .request-details {
+        display: block;
+
+    }
+    .claim-details {
+        display: block;
+    }
+
+    .info-item {
+        font-size: 14px;
+    }
+
+    .documents-list li {
+        font-size: 14px;
+    }
+
+    .proof-btn{
+        width: 200px;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .proof-btn2{
+        width: 200px;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 520px) {
+    .bottom-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+    }
+}
+
+@media (max-width: 505px) {
+    .title-page-claimed{
+        font-size: 16px;
+    }
+
+    .title-page-number{
+        font-size: 16px;
+    }
+
+    .title-number{
+        font-size: 14px;
+        padding: 10px 0;
+        letter-spacing: 1px;
+    }
+
+    .info-item {
+        font-size: 12px;
+    }
+
+    .documents-list li {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 470px) {
+    .margin-content {
+        padding: 10px 20px;
+    }
+
+    .main-content .margin-content .title-page{
+        text-align: center;
+        padding-bottom: 10px;
+        border-bottom: 4px solid var(--primary-color);
+        width: 100%;
+        font-size: 18px;
+    }
+
+}
+
+@media (max-width: 410px) {
+    .margin-content {
+        padding: 5px 5px;
+    }
+
+}
+
+@media (max-width: 375px) {
+    .back-btn {
+        font-size: 12px;
+    }
+    .title-page-claimed{
+        font-size: 12px;
+    }
+
+    .title-page-number{
+        font-size: 12px;
+    }
+
+    .title-number{
+        font-size: 12px;
+        padding: 10px 0;
+        letter-spacing: 1px;
+    }
+
+    .info-item {
+        font-size: 10px;
+    }
+
+    .documents-list li {
+        font-size: 10px;
+    }
+
+    .proof-btn{
+        width: 180px;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .proof-btn2{
+        width: 180px;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+}
+
+
+

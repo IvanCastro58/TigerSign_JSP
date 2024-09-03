@@ -1,0 +1,541 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --primary-color: #F4BB00;
+    --secondary-color: #5D4600;
+    --accent-color: #3B2D00;
+    --light-gray: #a1a1a1;
+    --dark-gray: #1a1a1a;
+    --medium-gray: #303030;
+    --blackish: #101010;
+    --blue: #3B83FB;
+    --white: #ffffff;
+    --lighter-gray: #f4f4f4;
+}
+
+.highlight-bar2{
+    background-color: var(--blackish);
+    height: 3px;
+    margin-bottom: 20px;
+}
+
+.nav-buttons {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+}
+
+.generate-buttons {
+    margin: 20px 0;
+    align-items: center; 
+}
+
+
+.status-btn,
+.survey-btn {
+    margin-right: 20px; 
+}
+
+.filter-btn {
+    margin-left: auto;
+}
+
+.reports-btn{
+    width: 220px;
+    background-color: var(--blackish);
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 5px;
+    border: none;
+    margin-right: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    transition: box-shadow 0.3s ease;
+}
+
+.reports-btn:hover {
+    box-shadow: none;
+    background-color: var(--white);
+    color: var(--blackish);
+    border: 1px solid var(--blackish);
+}
+
+.gen-btn{
+    width: 220px;
+    background-color: var(--green);
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 5px;
+    border: none;
+    margin-right: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    transition: box-shadow 0.3s ease;
+}
+
+.gen-btn:hover {
+    box-shadow: none;
+    background-color: var(--white);
+    color: var(--blackish);
+    border: 1px solid var(--blackish);
+}
+
+.current-page-btn {
+    background-color: var(--white);
+    color: var(--blackish);
+    border: 1px solid var(--blackish);
+    box-shadow: none;
+}
+
+.filters-btn{
+    width: 80px;
+    background-color: var(--blackish);
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 5px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    transition: box-shadow 0.3s ease;
+}
+
+.filters-btn:hover {
+    box-shadow: none;
+    background-color: var(--white);
+    color: var(--blackish);
+    border: 1px solid var(--blackish);
+}
+
+#pending-card-reports,
+#claimed-card-reports, 
+#eval-received, 
+#eval-sent {
+    background-color: var(--blackish);
+}
+
+#pending-card-reports .card-number,
+#claimed-card-reports .card-number, 
+#eval-received .card-number, 
+#eval-sent .card-number{
+    color: var(--primary-color); 
+}
+
+#overall-score .card-number {
+    position: relative;
+    display: inline-block;
+    width: 70px; 
+    height: 70px;
+    line-height: 70px; 
+    background-color: white;
+    border-radius: 50%; 
+    color: var(--green);
+    font-weight: bold;
+    font-size: 35px; 
+    text-align: center; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    border: 5px solid var(--green);
+    margin: 0 auto; 
+}
+
+.comments-section{
+    grid-column: span 2; 
+    background-color: var(--lighter-gray);
+    padding: 10px;
+    border: 1px solid var(--blackish);
+}
+
+@media (max-width: 1445px) {
+    .card-heading {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1405px) {
+    .card-view {
+        gap: 30px;
+    }
+}
+
+@media (max-width: 1375px) {
+    .card-view {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 1346px) {
+    .card-heading {
+        font-size: 16px;
+    }
+    
+    .card-number {
+        font-size: 48px;
+        margin: 5px 0;
+    }
+
+    #overall-score .card-number {
+        font-size: 30px; 
+        width: 60px; 
+        height: 60px;
+        line-height: 60px; 
+        border: 3px solid var(--green);
+    }
+}
+
+@media (max-width: 1290px) {
+    #overall-score .card-heading {
+        font-size: 15px;
+        }
+    }
+
+@media (max-width: 1260px) {
+    .card {
+        padding: 15px 0;
+    }
+}
+
+@media (max-width: 1215px) {
+    .card-heading {
+        font-size: 15px;
+    }
+    
+    .card-number {
+        font-size: 45px;
+        margin: 0;
+    }
+
+    .see-more {
+        font-size: 11px;
+        right: 5px;
+    }
+
+    #overall-score .card-number {
+        font-size: 30px; 
+        width: 55px; 
+        height: 55px;
+        line-height: 55px; 
+    }
+}
+
+@media (max-width: 1170px) {
+    .card-heading {
+        font-size: 14px;
+    }
+    
+    .card-number {
+        font-size: 40px;
+        margin: 0;
+    }
+
+    .see-more {
+        font-size: 11px;
+    }
+
+    #overall-score .card-number {
+        font-size: 25px; 
+        width: 45px; 
+        height: 45px;
+        line-height: 45px; 
+    }
+
+    #overall-score .card-heading {
+        font-size: 13px;
+    }
+
+}
+
+@media only screen and (min-width: 993px) and (max-width: 1169px) {
+    .card {
+        padding: 10px 0;
+    }
+    .card-heading {
+        font-size: 13px;
+    }
+    
+    .card-number {
+        font-size: 35px;
+        margin: 0;
+    }
+
+    .see-more {
+        font-size: 10px;
+        bottom: 2px;
+        right: 2px;
+    }
+
+    .heading-container h3 {
+        font-size: 16px;
+    }
+    
+    .btn-see-more {
+        font-size: 10px;
+        color: var(--white);
+        padding: 3px 5px;
+        border-radius: 10px;
+    }
+}
+
+@media only screen and (max-width: 992px){
+    .card-view {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px; 
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .card-heading {
+        font-size: 18px;
+    }
+    
+    .card-number {
+        font-size: 45px;
+        margin: 0;
+    }
+    
+    .latest-reports {
+        display: flex;
+        flex-direction: column; 
+    }
+
+    .report-column {
+        width: 100%;
+    }
+
+    .comments-section {
+        margin-top: 20px; 
+        background-color: var(--lighter-gray);
+        padding: 10px;
+        border: 1px solid var(--blackish);
+        order: 3; 
+    }
+
+    .report-column.left, .report-column.right {
+        order: 1; 
+    }
+
+    #overall-score .card-heading {
+        font-size: 18px;
+        
+    }
+
+    #overall-score .card-number {
+        width: 60px; 
+        height: 60px;
+        line-height: 60px; 
+        font-size: 35px; 
+        border: 4px solid var(--green);
+    }
+
+}
+
+@media (max-width: 768px) {
+    .card-view {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px; 
+    }
+
+}
+
+@media (max-width: 690px) {
+    .status-btn,
+    .survey-btn {
+        margin-right: 10px; 
+    }
+
+    .reports-btn{
+        width: 180px;
+        font-size: 13px;
+    }
+
+    .filters-btn{
+        width: 60px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 600px) {
+    #overall-score .card-heading {
+        font-size: 16px;
+        
+    }
+
+    #eval-sent .card-number{
+        line-height: 70px; 
+    }
+}
+
+@media (max-width: 580px) {
+    .card-heading {
+        font-size: 16px;
+    }
+    
+    .card-number {
+        font-size: 40px;
+        margin: 0;
+    }
+
+}
+
+@media (max-width: 560px) {
+    .status-btn,
+    .survey-btn {
+        margin-right: 0; 
+    }
+
+    .reports-btn{
+        width: 180px;
+        font-size: 13px;
+        margin-right: 8px;
+    }
+
+    .filters-btn{
+        width: 60px;
+        font-size: 13px;
+    }
+
+}
+
+@media (max-width: 550px) {
+    .card {
+        padding: 10px;
+    }
+    .card-view {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px; 
+    }
+
+}
+
+@media (max-width: 525px) {
+    .card-heading {
+        font-size: 14px;
+    }
+
+    .heading-container h3 {
+        font-size: 14px;
+    }
+    
+    .btn-see-more {
+        font-size: 10px;
+    }
+
+    .reports-btn{
+        width: 150px;
+        font-size: 12px;
+        margin-right: 5px;
+    }
+
+    .filters-btn{
+        width: 50px;
+        font-size: 11px;
+    }
+
+    #overall-score .card-heading {
+        font-size: 14px;
+        
+    }
+
+
+}
+
+@media (max-width: 470px) {
+    .margin-content {
+        padding: 10px 20px;
+    }
+
+}
+
+@media (max-width: 440px) {
+    .card-heading {
+        font-size: 12px;
+    }
+
+    #overall-score .card-heading {
+        font-size: 12px;
+        
+    }
+
+}
+
+@media (max-width: 410px) {
+    .margin-content {
+        padding: 5px 5px;
+    }
+
+    .heading-container h3 {
+        font-size: 14px;
+    }
+    
+    .btn-see-more {
+        font-size: 10px;
+    }
+
+    .latest-reports {
+        padding: 5px;
+     
+    }
+}
+
+@media (max-width: 375px) {
+    .card {      
+        padding: 10px;
+    }
+
+    .card-heading {
+        font-size: 11px;
+    }
+
+    .see-more {
+        font-size: 10px;
+        bottom: 2px;
+        right: 2px;
+    }
+
+    #overall-score .card-heading {
+        font-size: 11px;
+        
+    }
+
+    #overall-score .card-number {
+        width: 60px; 
+        height: 60px;
+        line-height: 60px; 
+        font-size: 35px; 
+        border: 3px solid var(--green);
+    }
+
+}
+
+@media (max-width: 374px) {
+    .nav-buttons {
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .filter-btn {
+        width: 100%; 
+        margin-top: 10px; 
+    }
+
+    .status-btn {
+        margin-right: 0; 
+    }
+
+    .survey-btn {
+        margin-right: 0;
+    }
+
+    #overall-score .card-number {
+        width: 50px; 
+        height: 50px;
+        line-height: 50px; 
+        font-size: 30px; 
+        border: 3px solid var(--green);
+    }
+}
+

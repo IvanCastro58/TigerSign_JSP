@@ -1,0 +1,370 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --primary-color: #F4BB00;
+    --secondary-color: #5D4600;
+    --accent-color: #3B2D00;
+    --light-gray: #a1a1a1;
+    --dark-gray: #1a1a1a;
+    --medium-gray: #303030;
+    --blackish: #101010;
+    --blue: #3B83FB;
+    --white: #ffffff;
+    --green: #1C8454;
+    --lighter-gray: #f4f4f4;
+    --red: #d9534f;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.account-navbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom: 1px solid var(--light-gray);
+    margin-top: 40px;
+}
+
+.nav-link {
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--blackish);
+    position: relative;
+    transition: color 0.3s;
+}
+
+.nav-link::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 3px;
+    background: var(--primary-color);
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    transition: width 0.3s;
+}
+
+.nav-link.active::after {
+    width: 100%;
+}
+
+.button-div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px 0px;
+}
+
+.add-user-btn{
+    background-color: var(--green);
+    color: var(--white);
+    font-size: 14px;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.add-user-btn i{
+    font-size: 14px;
+    margin-right: 5px;
+    font-weight: 600;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 5px;
+}
+
+.search-input {
+    font-size: 14px;
+    padding: 5px 10px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.search-button {
+    font-size: 14px;
+    padding: 8px 10px;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 4px;
+    height: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    color: var(--blackish);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.popup {
+    background: white;
+    width: 600px;
+    position: relative;
+    transform: translateY(-100%);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease-in-out;
+    opacity: 0;
+}
+
+.popup.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+
+.popup-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--primary-color);
+    padding: 0 10px;
+}
+
+.popup-header strong{
+    font-size: 14px;
+}
+
+.popup-content{
+    background-color: var(--white);
+    padding: 0px 20px 20px 20px;
+}
+
+.popup-content .bigger-text{
+    color: var(--blackish);
+    font-size: 16px;
+    text-align: justify;
+}
+
+.popup-content .info-text .smaller-text{
+    color: var(--blackish);
+    font-size: 12px;
+    text-align: justify;
+}
+
+.popup-content .info-text{
+    display: flex;
+    align-items: baseline;
+}
+
+.popup-close {
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.bi.bi-info-circle{
+    color: #3B83FB; 
+    font-size: 12px; 
+    margin-right: 5px;
+}
+
+#add-admin-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#add-admin-form label {
+    margin-bottom: 10px;
+}
+
+#add-admin-form input {
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    padding: 15px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    border: 1px solid var(--light-gray);
+}
+
+#add-admin-form input:focus {
+    border-color: #0099FF; 
+    outline: none; 
+}
+
+.submit-btn {
+    background-color: var(--blackish);
+    color: var(--white);
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    width: max-content;
+    margin-left: auto;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.submit-btn i{
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.skeleton {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    display: inline-block;
+    height: 1em;
+    width: 100%;
+    animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: #e0e0e0;
+    animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.actual-data {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .popup{
+        width: 550px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .add-user-btn,
+    .add-user-btn i{
+        font-size: 12px;
+    }
+
+    .popup{
+        width: 500px;
+    }
+
+    .popup-header strong{
+        font-size: 12px;
+    }
+
+    .popup-close {
+        font-size: 24px;
+    }
+
+    .popup-content .bigger-text{
+        font-size: 14px;
+    }
+
+    .popup-content .info-text .smaller-text{
+        font-size: 10px;
+    }
+
+    #add-admin-form input {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .submit-btn {
+        font-size: 12px;
+        padding: 10px 15px;
+    }
+
+    .submit-btn i{
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 525px) {
+    .search-input{
+        display: none;
+    }
+
+    .add-user-btn,
+    .add-user-btn i{
+        font-size: 10px;
+    }
+
+    .nav-link {
+        font-size: 10px;
+    }
+
+    .popup{
+        width: 400px;
+        margin: 0 10px;
+    }
+
+    .popup-header strong{
+        font-size: 10px;
+    }
+
+    .popup-close {
+        font-size: 20px;
+    }
+
+    .popup-content .bigger-text{
+        font-size: 12px;
+    }
+
+    .popup-content .info-text .smaller-text{
+        font-size: 10px;
+    }
+
+    #add-admin-form input {
+        font-size: 10px;
+        padding: 10px;
+    }
+
+    .submit-btn {
+        font-size: 10px;
+        padding: 10px 15px;
+    }
+
+    .submit-btn i{
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 376px) {
+    .submit-btn{
+        margin-right: auto;
+    }
+}
