@@ -101,6 +101,7 @@
                                 <button class="proof-btn2">Send Proof of Claim</button>
                             </div>
                         </div>
+                        <%@ include file="/WEB-INF/components/view_proof.jsp" %>
                 </div>
             </div>
         </div>  

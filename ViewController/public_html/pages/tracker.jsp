@@ -105,5 +105,27 @@
             </div>
         </div>
     </div>
+    
+     <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <img src="../resources/images/logo.png" alt="University of Santo Tomas">
+            </div>
+            <div class="footer-contact">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 2nd floor Main Bldg, University of Santo Tomas España, Manila C-1015</p>
+                <p><i class="fas fa-phone-alt"></i> (632) 8880-1611 Loc. 8216</p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:registrar.office@ust.edu.ph">registrar.office@ust.edu.ph</a></p>
+                <p><i class="fas fa-clock"></i> Operation Hours: 8:00 am to 5:00 pm Monday to Friday</p>
+            </div>
+            <div class="footer-about">
+                <h3>About Office of the Registrar</h3>
+                <p>The Office of the Registrar is custodian of the academic records of students. It is responsible for monitoring the integrity of the records under its care, making them available upon request, subject to existing rules and regulations.</p>
+            </div>
+        </div>
+        <div class="footer-yellow">
+            <p>© 2016 Copyright University of Santo Tomas, Office of the Registrar. Proudly powered by <strong>UST-ICT Santo Tomas E-Service Providers</strong></p>
+        </div>
+    </footer>
     </body>
 </html>

@@ -70,8 +70,8 @@
                             <tr>
                                 <td><%= claim.getId() %></td>
                                 <td><%= claim.getTransactionId() %></td>
-                                <td><%= claim.getName() %></td>
-                                <td><%= claim.getEmail() %></td>
+                                <td class="expandable-text"><%= claim.getName() %></td>
+                                <td class="expandable-text"><%= claim.getEmail() %></td>
                                 <td>
                                     <form action="pending_claim.jsp" method="post">
                                         <input type="hidden" name="id" value="<%= claim.getId() %>">
@@ -82,12 +82,12 @@
                                         </select>
                                     </form>
                                 </td>
-                                <td><%= claim.getCollege() %></td>
+                                <td class="expandable-text"><%= claim.getCollege() %></td>
                                 <td><%= claim.getDateProcessed() %></td>
                                 <td class="expandable-text"><%= claim.getFiles() %></td>
                                 <td>
-                                    <button class="action-button">CLAIM</button>
-                                </td>
+                                    <button type="submit" class="action-button">CLAIM</button>
+                               </td>
                             </tr>
                         <%
                                 }
@@ -117,10 +117,10 @@
                             <p class="smaller-text">Select <strong>Primary Claimer</strong> if the original requester is present. If the original requester is not physically present, select <strong>Representative.</strong></p>
                         </div>
                         <div class="claimer-button">
-                            <a href="/pages/redirecting.html?redirect=../pages/receiving_form_primary.html" class="primary" target="_blank">
+                            <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp" class="primary" target="_blank">
                                 Primary Claimer<i class="bi bi-chevron-right"></i>
                             </a>
-                            <a href="/pages/redirecting.html?redirect=../pages/receiving_form_representative.html" class="representative" target="_blank">
+                            <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp" class="representative" target="_blank">
                                 Representative<i class="bi bi-chevron-right"></i>
                             </a>                              
                         </div>

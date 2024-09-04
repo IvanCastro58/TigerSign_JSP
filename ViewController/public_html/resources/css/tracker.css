@@ -193,6 +193,81 @@ header .logo img {
     margin: 5px;
 }
 
+.footer {
+    background-color: var(--blackish);
+    color: var(--primary-color);
+    padding: 20px 0 0 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.footer-logo img {
+    max-width: 250px;
+    margin: 50px 20px;
+    height: auto;
+}
+
+.footer-contact, .footer-about {
+    max-width: 400px; 
+    padding: 0 10px;
+    flex-grow: 1;
+    flex-basis: 0; 
+}
+
+.footer-contact {
+    border-left: 2px solid var(--light-gray); 
+}
+
+.footer-about {
+    border-left: 2px solid var(--light-gray); 
+}
+
+.footer-contact h3, .footer-about h3 {
+    color: var(--primary-color);
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.footer-contact p, .footer-about p {
+    color: var(--light-gray); 
+    font-size: 11px;
+    line-height: 1.5;
+    margin: 5px 0;
+}
+
+.footer-contact p i, .footer-about p i {
+    margin-right: 10px;
+}
+
+.footer-contact a {
+    color: var(--light-gray);
+    text-decoration: none;
+}
+
+.footer-contact a:hover {
+    text-decoration: underline;
+}
+
+.footer-yellow {
+    background-color: var(--primary-color); 
+    text-align: center;
+    margin-top: 20px;
+    padding: 5px 0;
+}
+
+.footer-yellow p {
+    color: var(--blackish); 
+    font-size: 14px;
+    margin: 10px;
+}
 
 
 
@@ -409,6 +484,24 @@ header .logo img {
     .info-icon {
         font-size: 14px; 
     }
+
+    .footer-container {
+        flex-direction: column;
+        margin: 0 20px;
+    }
+
+    .footer-logo, .footer-contact, .footer-about {
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .footer-logo img {
+        margin: 20px 0;
+    }
+
+    .footer-yellow p {
+        font-size: 12px;
+    }
 }
 
 @media only screen and (min-width: 375px) and (max-width: 480px) {
@@ -482,6 +575,24 @@ header .logo img {
     }
     .reminders .nested-list li {
         font-size: 11px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        margin: 0 20px;
+    }
+
+    .footer-logo, .footer-contact, .footer-about {
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .footer-logo img {
+        margin: 20px 0;
+    }
+
+    .footer-yellow p {
+        font-size: 10px;
     }
 
 }
@@ -568,6 +679,22 @@ header .logo img {
         font-size: 11px;
     }
 
+    .footer-container {
+        flex-direction: column;
+        margin: 0 20px;
+    }
+
+    .footer-logo, .footer-contact, .footer-about {
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .footer-logo img {
+        margin: 20px 0;
+    }
+
+    .footer-yellow p {
+        font-size: 10px;
+    }
 
 }
-

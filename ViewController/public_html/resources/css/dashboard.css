@@ -20,8 +20,13 @@
     height: 3px;
 }
 
+h1{
+    margin: 10px 0;
+}
+
 h2{
     font-size: 25px;
+    margin: 10px 0;
 }
 
 .card-view {
@@ -90,46 +95,47 @@ h2{
     transform: scale(1.05);
 }
 
-.latest-reports {
-    border: 2px solid var(--blackish);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    padding: 20px;
-    background-color: var(--lighter-gray);
-}
-
-.report-column {
+.search-box {
+    background-color: var(--primary-color);
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
-}
-
-.heading-container {
-    display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    padding: 10px 20px 20px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--blackish);
 }
 
-.heading-container h3 {
-    margin: 0;
+.search-container {
+    display: flex;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--light-gray);
+    border-radius: 4px;
     font-size: 18px;
-    color: var(--primary-color);
 }
 
-.btn-see-more {
-    font-size: 12px;
-    color: var(--white);
-    padding: 3px 5px;
-    border-radius: 10px;
-    border: 0;
+.search-button {
     background-color: var(--blackish);
-    margin-left: auto;
+    border: none;
+    color: var(--white);
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 10px;
+    justify-content: center;
 }
 
-.btn-see-more:hover {
-    color: var(--blackish);
-    background-color: var(--white);
+.search-button i{
+    font-size: 14px;
 }
+
 
 @media (max-width: 1405px) {
     .card-view {
@@ -211,22 +217,26 @@ h2{
         right: 2px;
     }
 
-    .heading-container h3 {
+    .search-input {
         font-size: 16px;
+        height: 12px;
     }
     
-    .btn-see-more {
-        font-size: 10px;
-        color: var(--white);
-        padding: 3px 5px;
-        border-radius: 10px;
+    .search-button {
+        padding: 8px;
+        font-size: 16px;
+
+    }
+    
+    .search-button i{
+        font-size: 14px;
     }
 }
 
 @media only screen and (max-width: 992px){
     .card-view {
         grid-template-columns: repeat(2, 1fr);
-        gap: 30px; 
+        gap: 10px; 
     }
 
     .card {
@@ -241,33 +251,29 @@ h2{
         font-size: 45px;
         margin: 0;
     }
-    
-    .latest-reports {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .report-column {
-        width: 100%;
-    }
-
-    .report-column.left {
-        order: 1; /* Ensure this column is displayed first */
-    }
-
-    .report-column.right {
-        order: 2; /* Ensure this column is displayed second */
-    }
 
 }
 
 @media (max-width: 768px) {
     .card-view {
         grid-template-columns: repeat(2, 1fr);
-        gap: 20px; 
+        gap: 10px; 
     }
 
+    .search-input {
+        font-size: 16px;
+        height: 12px;
+    }
+    
+    .search-button {
+        padding: 8px;
+        font-size: 16px;
+
+    }
+    
+    .search-button i{
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 580px) {
@@ -278,6 +284,10 @@ h2{
     .card-number {
         font-size: 40px;
         margin: 0;
+    }
+
+    h2{
+        font-size: 20px;
     }
 
 }
@@ -297,14 +307,6 @@ h2{
     .card-heading {
         font-size: 14px;
     }
-
-    .heading-container h3 {
-        font-size: 14px;
-    }
-    
-    .btn-see-more {
-        font-size: 10px;
-    }
 }
 
 @media (max-width: 470px) {
@@ -319,6 +321,26 @@ h2{
         font-size: 12px;
     }
 
+    .search-box {
+        background-color: var(--primary-color);
+        padding: 10px;
+    }
+
+    .search-input {
+        font-size: 14px;
+        height: 10px;
+    }
+    
+    .search-button {
+        padding: 6px;
+        font-size: 14px;
+
+    }
+    
+    .search-button i{
+        font-size: 12px;
+    }
+
 }
 
 @media (max-width: 410px) {
@@ -326,15 +348,7 @@ h2{
         padding: 5px 5px;
     }
 
-    .heading-container h3 {
-        font-size: 14px;
-    }
-    
-    .btn-see-more {
-        font-size: 10px;
-    }
-
-    .latest-reports {
+    .search-box {
         padding: 5px;
      
     }

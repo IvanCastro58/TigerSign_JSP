@@ -14,6 +14,10 @@
 <script src="<%= request.getContextPath() %>/resources/javascript/pagination.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/nav_item1.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/skeleton.js"></script>
+<script src="<%= request.getContextPath() %>/resources/javascript/claimer_view.js"></script>
+<script src="<%= request.getContextPath() %>/resources/javascript/photo_proof.js"></script>
+<script src="<%= request.getContextPath() %>/resources/javascript/signature.js"></script>
+<script src="<%= request.getContextPath() %>/resources/javascript/survey.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
