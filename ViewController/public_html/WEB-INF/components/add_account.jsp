@@ -13,7 +13,7 @@
                 <i class="bi bi-info-circle"></i>
                 <p class="smaller-text">Please ensure that the GSuite account you will enter is correct and the official UST Google Account of the person you want to invite.</p>
             </div>
-            <form id="add-admin-form">
+            <form id="add-admin-form" action="send-invitation" method="post">
                 <input type="email" id="admin-email" name="admin-email" placeholder="Enter UST GSuite Address to send invitations" required>
                 <button type="submit" class="submit-btn">Send Invitation<i class="bi bi-chevron-right"></i></button>
             </form>

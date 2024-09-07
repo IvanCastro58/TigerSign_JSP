@@ -12,20 +12,20 @@
     <link rel="stylesheet" href="../resources/css/dashboard.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
-<body>
-    <input type="checkbox" id="menu-toggle" hidden>
-    
+<body
+    <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <% 
         request.setAttribute("activePage", "dashboard");  
     %>
-    
     <%@ include file="/WEB-INF/components/header.jsp" %>
     <%@ include file="/WEB-INF/components/sidebar.jsp" %>
     
     <div class="main-content dashboard-main-content">
         <div class="highlight-bar"><span>Sunday,&nbsp; September&nbsp; 16,&nbsp; 2023</span></div>
         <div class="margin-content">
-            <h1>Welcome back, Bossing!</h1>
+            <!-- Display the user's first name dynamically -->
+            <h1>Welcome back, <%= userFirstName %>!</h1>
+
             <div class="highlight-bar1"></div>
 
             <div class="search">

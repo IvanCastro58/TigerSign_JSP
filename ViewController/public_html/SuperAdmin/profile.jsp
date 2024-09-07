@@ -14,9 +14,8 @@
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
 <body>
-    <input type="checkbox" id="menu-toggle" hidden>
-    
-    <% 
+    <%@ include file="/WEB-INF/components/session_check.jsp" %>
+    <%  
         request.setAttribute("activePage", "profile");  
     %>
     
@@ -29,7 +28,8 @@
             <div class="profile-box">
                 <div class="profile-pic">
                     <label for="profile-pic-toggle">
-                        <img src="${pageContext.request.contextPath}/resources/images/tigersign.png" alt="TigerSign Logo" id="profile-pic-img">
+                        <!-- Display the user's profile picture dynamically -->
+                        <img src="<%= (userPicture != null ? userPicture : "../resources/images/tigersign.png") %>" alt="Profile Picture" id="profile-pic-img">
                         <div class="camera-icon">
                             <i class="bi bi-camera-fill"></i>
                         </div>
@@ -41,7 +41,8 @@
                 </div>
                 <div class="profile-name">
                     <div class="name-line">
-                        <h3>Juan Dela Cruz</h3>
+                        <!-- Display the user's first and last names dynamically -->
+                        <h3><%= userFirstName %> <%= userLastName %></h3>
                         <span>ACTIVE</span>
                     </div>
                     <p>Super Admin</p>
@@ -55,17 +56,17 @@
                         <div class="name">
                             <div class="firstname">
                                 <label>First Name</label>
-                                <p>Juan</p>
+                                <p><%= userFirstName %></p>
                             </div>
                             <div>
                                 <label>Last Name</label>
-                                <p>Dela Cruz</p>
+                                <p><%= userLastName %></p>
                             </div>
                         </div>
                         <div class="email">
                             <div>
                                 <label>Email</label>
-                                <p>juan.delacruz.registrar@ust.edu.ph</p>
+                                <p><%= userEmail %></p>
                             </div>
                         </div>
                     </div>
@@ -75,7 +76,6 @@
         </div>
     </div>
     <div class="overlay"></div>
-    
     
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>

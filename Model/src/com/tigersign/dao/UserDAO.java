@@ -16,7 +16,7 @@ public class UserDAO {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String query = "SELECT id, picture, firstname, lastname, email, status FROM TS_ADMIN WHERE is_active = 'Y'";
+        String query = "SELECT id, picture, firstname, lastname, email, status FROM TS_ADMIN WHERE status = 'ACTIVE'";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query);
@@ -25,7 +25,7 @@ public class UserDAO {
             while (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getInt("id"));
-                user.setPicture(resultSet.getString("picture"));
+                user.setPicture(resultSet.getString("picture")); // Retrieve the full URL
                 user.setFirstname(resultSet.getString("firstname"));
                 user.setLastname(resultSet.getString("lastname"));
                 user.setEmail(resultSet.getString("email"));

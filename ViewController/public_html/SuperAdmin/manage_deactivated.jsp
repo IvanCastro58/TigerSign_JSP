@@ -15,7 +15,7 @@
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
 <body>
-    <input type="checkbox" id="menu-toggle" hidden>
+    <%@ include file="/WEB-INF/components/session_check.jsp" %>
     
     <% 
         request.setAttribute("activePage", "manage_account");  
@@ -103,7 +103,7 @@
                             <tr class="actual-data account-row" data-user-id="<%= user.getId() %>">
                                 <td><%= user.getId() %></td>
                                 <td class="profile-column">
-                                    <img src="${pageContext.request.contextPath}/resources/pictures/<%= user.getPicture() %>" alt="Profile Picture" />  
+                                    <img src="<%= user.getPicture() %>" alt="Profile Picture" />  
                                 </td>
                                 <td class="expandable-text"><%= user.getFirstname() + " " + user.getLastname() %></td>
                                 <td class="expandable-text"><%= user.getEmail() %></td>

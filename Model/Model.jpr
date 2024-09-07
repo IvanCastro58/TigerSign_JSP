@@ -80,6 +80,7 @@
          <string v="EJB"/>
          <string v="Java"/>
          <string v="TopLink"/>
+         <string v="XML"/>
       </list>
    </hash>
    <hash n="oracle.jdeveloper.compiler.OjcConfiguration">

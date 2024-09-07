@@ -3,7 +3,7 @@ package com.tigersign.dao;
 
 public class User {
     private int id;
-    private String picture;
+    private String picture;  
     private String firstname;
     private String lastname;
     private String email;
@@ -18,7 +18,7 @@ public class User {
         this.id = id;
     }
 
-    // Getter and Setter for picture
+    // Getter and Setter for picture (URL of the picture)
     public String getPicture() {
         return picture;
     }

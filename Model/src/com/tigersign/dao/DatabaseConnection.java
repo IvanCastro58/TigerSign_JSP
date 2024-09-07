@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    private static final String JDBC_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
-    //private static final String JDBC_URL = "jdbc:oracle:thin:@localhost:1521:ORCLDB";
+    //private static final String JDBC_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
+    private static final String JDBC_URL = "jdbc:oracle:thin:@localhost:1521:ORCLDB";
     private static final String DB_USER = "system";
     private static final String DB_PASSWORD = "sys123";
 

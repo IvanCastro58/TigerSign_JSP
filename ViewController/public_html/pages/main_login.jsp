@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html;charset=windows-1252"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.tigersign.config.GoogleOAuthConfig"%>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +11,10 @@
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+<%
+    GoogleOAuthConfig googleOAuthConfig = new GoogleOAuthConfig();
+    String authUrl = googleOAuthConfig.getAuthUrl(); // Call the non-static method
+%>
 <body>
     <div class="container">
         <div class="overlay"></div>
@@ -35,7 +41,7 @@
                     2. Google Authenticator Application
                 </div> 
                 <div>
-                    <a href="#" class="google-button">
+                    <a href="<%= authUrl %>" class="google-button">
                         <div class="google-icon">
                             <img src="../resources/images/google.png" alt="Google Icon">
                         </div>

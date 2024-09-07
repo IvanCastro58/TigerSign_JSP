@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
     <link rel="stylesheet" href="../resources/css/sidebar.css">
     <link rel="stylesheet" href="../resources/css/table.css">
     <link rel="stylesheet" href="../resources/css/manage_account.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
 <body>
-    <input type="checkbox" id="menu-toggle" hidden>
-    
+    <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <% 
         request.setAttribute("activePage", "manage_account");  
         request.setAttribute("activeNav", "manage_account");  
@@ -105,7 +105,7 @@
                                 <tr class="actual-data account-row" data-user-id="<%= user.getId() %>">
                                     <td><%= user.getId() %></td>
                                     <td class="profile-column">
-                                        <img src="${pageContext.request.contextPath}/resources/pictures/<%= user.getPicture() %>" alt="Profile Picture" />  
+                                        <img src="<%= user.getPicture() %>" alt="Profile Picture" /> 
                                     </td>
                                     <td class="expandable-text"><%= user.getFirstname() + " " + user.getLastname() %></td>
                                     <td class="expandable-text"><%= user.getEmail() %></td>
@@ -124,6 +124,7 @@
             <%@ include file="/WEB-INF/components/add_account.jsp" %>
         </div>
     </div>
+    
     <div class="overlay"></div>
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>

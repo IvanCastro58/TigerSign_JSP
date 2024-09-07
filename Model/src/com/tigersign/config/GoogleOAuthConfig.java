@@ -1,8 +1,15 @@
 package com.tigersign.config;
 
+import com.tigersign.dao.DatabaseConnection;
+
 import java.io.IOException;
 
 import java.security.SecureRandom;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,49 +44,58 @@ public class GoogleOAuthConfig extends HttpServlet {
     private static final String USER_INFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String code = request.getParameter("code");
-        if (code != null) {
-            // Exchange code for access token
-            String tokenResponse = getTokenResponse(code);
-            JSONObject tokenJson = new JSONObject(tokenResponse);
+       protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+           String code = request.getParameter("code");
+           if (code != null) {
+               String tokenResponse = getTokenResponse(code);
+               JSONObject tokenJson = new JSONObject(tokenResponse);
 
-            // Check for errors in the token response
-            if (tokenJson.has("error")) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error obtaining access token: " + tokenJson.getString("error"));
-                return;
+               if (tokenJson.has("error")) {
+                   response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error obtaining access token: " + tokenJson.getString("error"));
+                   return;
+               }
+
+               String accessToken = tokenJson.getString("access_token");
+               String userInfoResponse = getUserInfo(accessToken);
+               JSONObject userInfoJson = new JSONObject(userInfoResponse);
+               String email = userInfoJson.getString("email");
+               String firstName = userInfoJson.optString("given_name", "N/A");
+               String lastName = userInfoJson.optString("family_name", "N/A");
+               String picture = userInfoJson.optString("picture", "");
+
+               try (Connection conn = DatabaseConnection.getConnection()) {
+                   if (isAllowedSuperAdmin(conn, email)) {
+                       HttpSession session = request.getSession();
+                       session.setAttribute("userEmail", email);
+                       session.setAttribute("userFirstName", firstName);
+                       session.setAttribute("userLastName", lastName);
+                       session.setAttribute("userPicture", picture);
+
+                       response.sendRedirect("SuperAdmin/dashboard.jsp");
+                   } else {
+                       response.sendRedirect("error/error_unauthorized.jsp");
+                   }
+               } catch (SQLException e) {
+                   response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
+               }
+           } else {
+               String authUrl = getAuthUrl();
+               response.sendRedirect(authUrl);
+           }
+       }
+
+    private boolean isAllowedSuperAdmin(Connection conn, String email) throws SQLException {
+        String query = "SELECT COUNT(*) FROM TS_SUPERADMIN WHERE email = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
             }
-
-            String accessToken = tokenJson.getString("access_token");
-
-            // Get user info
-            String userInfoResponse = getUserInfo(accessToken);
-            JSONObject userInfoJson = new JSONObject(userInfoResponse);
-            String email = userInfoJson.getString("email");
-            String name = userInfoJson.optString("name", "N/A");
-            String picture = userInfoJson.optString("picture", "");
-
-            // Authenticate user
-            if (email.endsWith("@ust.edu.ph")) {
-                // Store user details in session
-                HttpSession session = request.getSession();
-                session.setAttribute("userEmail", email);
-                session.setAttribute("userName", name);
-                session.setAttribute("userPicture", picture);
-
-                // Login successful, redirect to protected page
-                response.sendRedirect("protected-page.jsp");
-            } else {
-                // Login failed, display error message
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid email domain");
-            }
-        } else {
-            // Redirect to Google authorization page
-            String authUrl = getAuthUrl();
-            response.sendRedirect(authUrl);
         }
+        return false;
     }
-
+    
     private static String generateState() {
         Random random = new SecureRandom();
         String state = String.valueOf(random.nextLong());
@@ -88,18 +104,20 @@ public class GoogleOAuthConfig extends HttpServlet {
 
     public static String getAuthUrl() {
         String state = generateState();
-        String authUrl = AUTH_URL + "?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=code&scope=openid+email+profile&state=" + state;
+        String authUrl = AUTH_URL + "?client_id=" + CLIENT_ID
+                         + "&redirect_uri=" + REDIRECT_URI
+                         + "&response_type=code"
+                         + "&scope=openid+email+profile"
+                         + "&state=" + state
+                         + "&prompt=select_account";  
         return authUrl;
     }
 
     private String getTokenResponse(String code) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(TOKEN_URL);
-
-        // Set the Content-Type header
         httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
-        // URL-encoded parameters
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("grant_type", "authorization_code"));
         params.add(new BasicNameValuePair("code", code));
@@ -108,11 +126,8 @@ public class GoogleOAuthConfig extends HttpServlet {
         params.add(new BasicNameValuePair("client_secret", CLIENT_SECRET));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 
-        // Execute the request
         CloseableHttpResponse response = httpClient.execute(httpPost);
         String responseBody = EntityUtils.toString(response.getEntity());
-
-        // Log the response body
         System.out.println("Token Response: " + responseBody);
 
         return responseBody;
@@ -125,11 +140,8 @@ public class GoogleOAuthConfig extends HttpServlet {
 
         CloseableHttpResponse response = httpClient.execute(httpGet);
         String responseBody = EntityUtils.toString(response.getEntity());
-
-        // Log the user info response body
         System.out.println("User Info Response: " + responseBody);
 
         return responseBody;
     }
 }
-
