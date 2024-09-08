@@ -47,7 +47,7 @@ header .logo img {
 }
 
 .main-content {
-    background: url("../images/background.jpg")  fixed;
+    background: url('../images/background.jpg') fixed;
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
@@ -328,6 +328,16 @@ video {
     margin: 20px 0;
 }
 
+.id-captured-image-container {
+    display: none;
+    margin: 20px 0;
+}
+
+.letter-captured-image-container {
+    display: none;
+    margin: 20px 0;
+}
+
 .capture-btn {
     background-color: var(--primary-color);
     color: var(--white);
@@ -351,6 +361,14 @@ video {
     width: 100%;
 }
 
+.id-captured-image-preview {
+    width: 100%;
+}
+
+.letter-captured-image-preview {
+    width: 100%;
+}
+
 #photo-controls {
     margin-top: 10px;
 }
@@ -366,6 +384,16 @@ video {
 }
 
 #view-image-modal img {
+    max-width: 100%;
+    margin-top: 20px;
+}
+
+#view-id-image-modal img {
+    max-width: 100%;
+    margin-top: 20px;
+}
+
+#view-letter-image-modal img {
     max-width: 100%;
     margin-top: 20px;
 }
@@ -440,6 +468,15 @@ video {
 .input-with-button {
   position: relative;
 }
+
+input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
 
 .success input[type="text"] + .success-icon {
   display: block;

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../resources/css/receiving_form.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
@@ -68,17 +69,23 @@
                             <div class="input-fields">
                                 <label for="claimer-letter" class="form-label">Authorization Letter:</label>
                                 <div class="input-with-button">
-                                    <input type="text" name="field-letter" placeholder="Upload Authorization Letter">
-                                    <button type="button" class="upload-btn"><i class="fa-solid fa-camera"></i></button>
+                                    <input type="file" name="field-letter" id="letter-photo-field" accept="image/*">
+                                    <input type="text" id="letter-photo-filename" placeholder="Upload Authorization Letter" readonly onclick="viewCapturedLetterImage()">
+                                    <button type="button" class="upload-btn" id="open-letter-camera-btn"><i class="fa-solid fa-camera"></i></button>
+                                    <i class="fas fa-check-circle success-icon" id="letter-photo-check-icon"></i>
                                 </div>
                             </div>
+
                             <div class="input-fields">
                                 <label for="claimer-id" class="form-label">ID Photo:</label>
                                 <div class="input-with-button">
-                                    <input type="text" name="field-id" placeholder="Upload Owner's ID">
-                                    <button type="button" class="upload-btn"><i class="fa-solid fa-camera"></i></button>
+                                    <input type="file" name="field-id" id="id-photo-field" accept="image/*">
+                                    <input type="text" id="id-photo-filename" placeholder="Upload Owner's ID" readonly onclick="viewCapturedIdImage()">
+                                    <button type="button" class="upload-btn" id="open-id-camera-btn"><i class="fa-solid fa-camera"></i></button>
+                                    <i class="fas fa-check-circle success-icon" id="id-photo-check-icon"></i>
                                 </div>
                             </div>
+
                             <div class="input-fields">
                                 <label for="claimer-signature" class="form-label">E-Signature</label>
                                 <div class="input-with-button">

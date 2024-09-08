@@ -16,10 +16,13 @@
 <script src="<%= request.getContextPath() %>/resources/javascript/skeleton.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/claimer_view.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/photo_proof.js"></script>
+<script src="<%= request.getContextPath() %>/resources/javascript/id_proof.js"></script>
+<script src="<%= request.getContextPath() %>/resources/javascript/letter_proof.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/signature.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/survey.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/toggle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
 <script>
     const contextPath = "${pageContext.request.contextPath}";

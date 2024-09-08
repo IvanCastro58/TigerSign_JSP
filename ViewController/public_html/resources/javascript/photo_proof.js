@@ -15,7 +15,8 @@ const viewImage = document.getElementById('view-image');
 const closeViewImageModalBtn = document.getElementById('close-view-image-modal-btn');
 let stream;
 let capturedDataUrl = null;
-let confirmedDataUrl = null; // Store confirmed image URL
+let confirmedDataUrl = null;
+let cropper; // Cropper instance
 
 openCameraBtn.addEventListener('click', async () => {
     captureModal.style.display = 'flex';
@@ -43,27 +44,47 @@ captureBtn.addEventListener('click', () => {
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     capturedDataUrl = canvas.toDataURL('image/png');
+    
+    // Show image in the preview area and initialize Cropper
     capturedImagePreview.src = capturedDataUrl;
     photoControlsModal.style.display = 'flex';
     capturedImageContainer.style.display = 'block';
     captureModal.style.display = 'none';
+    
+    cropper = new Cropper(capturedImagePreview, {
+        aspectRatio: NaN, // Allows free aspect ratio (non-square)
+        viewMode: 1,
+        autoCropArea: 1,
+        movable: true,
+        scalable: true,
+        zoomable: true,
+        rotatable: true,
+    });
 });
 
 retakeBtn.addEventListener('click', () => {
+    if (cropper) {
+        cropper.destroy();
+    }
     photoControlsModal.style.display = 'none';
     captureModal.style.display = 'flex';
     capturedDataUrl = null;
 });
 
 confirmBtn.addEventListener('click', () => {
-    if (capturedDataUrl) {
-        const blob = dataURLToBlob(capturedDataUrl);
+    if (cropper) {
+        const canvas = cropper.getCroppedCanvas();
+        const croppedDataUrl = canvas.toDataURL('image/png');
+        
+        const blob = dataURLToBlob(croppedDataUrl);
         const file = new File([blob], "photo.png", { type: 'image/png' });
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
         photoField.files = dataTransfer.files;
         photoFilename.value = "photo.png";
-        confirmedDataUrl = capturedDataUrl; 
+        confirmedDataUrl = croppedDataUrl; // Store confirmed cropped image URL
+        
+        cropper.destroy(); // Remove cropper after confirmation
         capturedImageContainer.style.display = 'block';
         photoControlsModal.style.display = 'none';
 
