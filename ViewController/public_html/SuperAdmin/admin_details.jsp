@@ -11,10 +11,39 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../resources/css/sidebar.css">
     <link rel="stylesheet" href="../resources/css/profile.css">
+    <link rel="stylesheet" href="../resources/css/toastify.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
 </head>
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
+    <%
+        if (request.getParameter("confirm-input") != null && request.getParameter("confirm-input").equalsIgnoreCase("CONFIRM")) {
+            UserService userService = new UserService();
+            boolean success = userService.deactivateUser(Integer.parseInt(request.getParameter("userId")));
+            
+            if (success) {
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account successfully deactivated!', backgroundColor: '#ffffff', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000}).showToast();</script>");
+            } else {
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to deactivate account!', backgroundColor: '#ffffff', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000}).showToast();</script>");
+            }
+        }
+    %>
+    
+    <%
+        if (request.getParameter("confirm-input-activation") != null && request.getParameter("confirm-input-activation").equalsIgnoreCase("CONFIRM")) {
+            UserService userService = new UserService();
+            boolean success = userService.activateUser(Integer.parseInt(request.getParameter("userId")));
+            
+            if (success) {
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account successfully activated!', backgroundColor: '#ffffff', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000}).showToast();</script>");
+            } else {
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to activate account!', backgroundColor: '#ffffff', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000}).showToast();</script>");
+            }
+        }
+    %>
+
     <% 
         request.setAttribute("activePage", "manage_account");
         
@@ -44,7 +73,7 @@
             <div class="profile-box">
                 <div class="admin-profile">
                     <label for="admin-profile">
-                        <img src="../resources/pictures/<%= (user != null) ? user.getPicture() : "default.png" %>" alt="Profile Picture" id="profile-pic-img">
+                        <img src="<%= user.getPicture() %>" alt="Profile Picture" id="profile-pic-img">
                     </label>
                 </div>
                 <div class="profile-name">
@@ -99,8 +128,9 @@
                         </div>
                         <div class="popup-content">
                             <p class="bigger-text">Please type "CONFIRM" to proceed with activating this account.</p>
-                            <form id="confirm-activation-form">
-                                <input type="text" id="confirm-input-activation" name="confirm-input" placeholder="Type 'CONFIRM' to proceed" required>
+                            <form id="confirm-activation-form" method="post">
+                                <input type="hidden" name="userId" value="<%= userIdParam %>">
+                                <input type="text" id="confirm-input-activation" name="confirm-input-activation" placeholder="Type 'CONFIRM' to proceed" required>
                                 <button type="submit" class="submit-btn" disabled>Activate Account</button>
                             </form>
                         </div>
@@ -119,7 +149,8 @@
                         </div>
                         <div class="popup-content">
                             <p class="bigger-text">Please type "CONFIRM" to proceed with deactivating this account.</p>
-                            <form id="confirm-deactivation-form">
+                            <form id="confirm-deactivation-form" method="post">
+                                <input type="hidden" name="userId" value="<%= userIdParam %>">
                                 <input type="text" id="confirm-input-deactivation" name="confirm-input" placeholder="Type 'CONFIRM' to proceed" required>
                                 <button type="submit" class="submit-btn" disabled>Deactivate Account</button>
                             </form>

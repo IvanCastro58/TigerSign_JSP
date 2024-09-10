@@ -97,7 +97,7 @@ public class AdminOAuthConfig extends HttpServlet {
     }
 
     private void updateAdminInfo(Connection conn, String email, String firstName, String lastName, String pictureUrl) throws SQLException {
-        String query = "UPDATE TS_ADMIN SET firstname = ?, lastname = ?, picture = ? WHERE email = ?";
+        String query = "UPDATE TS_ADMIN SET firstname = ?, lastname = ?, picture = ?, is_verified = 'Y' WHERE email = ? AND is_verified = 'N'";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, firstName);
             stmt.setString(2, lastName);
