@@ -83,7 +83,7 @@ idConfirmBtn.addEventListener('click', () => {
         idPhotoField.files = dataTransfer.files;
         idPhotoFilename.value = "id_photo.png";
         idConfirmedDataUrl = croppedDataUrl; // Store confirmed cropped image URL
-        
+        document.getElementById('id-data').value = croppedDataUrl;
         idCropper.destroy(); // Remove cropper after confirmation
         idCapturedImageContainer.style.display = 'block';
         idPhotoControlsModal.style.display = 'none';

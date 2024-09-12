@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const signatureCanvas = document.getElementById('signature-canvas');
     const signatureCtx = signatureCanvas.getContext('2d');
     const signatureField = document.getElementById('signature-field');
+    const signatureDataField = document.getElementById('signature-data'); // Hidden field for signature data
     const signatureControlsModal = document.getElementById('signature-controls-modal');
     const signaturePreviewImg = document.getElementById('signature-preview');
     const closeSignatureControlsModalBtn = document.getElementById('close-signature-controls-modal-btn');
@@ -75,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const signatureData = signatureCanvas.toDataURL('image/png');
         newSignatureData = signatureData;
         signaturePreviewImg.src = signatureData;
+        document.getElementById('signature-data').value = signatureData; // Set the signature data into hidden field
         signatureControlsModal.style.display = 'block';
         signatureModal.style.display = 'none';
     });
@@ -89,11 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     confirmSignatureBtn.addEventListener('click', () => {
         signatureField.value = 'Signature Uploaded';
-        signatureField.dataset.signature = newSignatureData;
-        signatureControlsModal.style.display = 'none';
-        
         signatureField.classList.add('success');
         document.getElementById('signature-check-icon').style.display = 'block';
+        signatureControlsModal.style.display = 'none';
     }); 
 
     retakeSignatureControlsBtn.addEventListener('click', () => {
@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     signatureField.addEventListener('click', () => {
-        if (signatureField.dataset.signature) {
-            viewSignatureImg.src = signatureField.dataset.signature;
+        if (signatureDataField.value) {
+            viewSignatureImg.src = signatureDataField.value;
             viewSignatureModal.style.display = 'block';
         }
     });

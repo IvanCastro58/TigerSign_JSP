@@ -28,16 +28,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const clickableRows = document.querySelectorAll(".clickable-row");
-    clickableRows.forEach(row => {
+   clickableRows.forEach(row => {
         row.addEventListener("click", function() {
-            window.location.href = contextPath + "/SuperAdmin/claimed_request_details.jsp";
+            const transactionId = this.querySelector('td').innerText.trim();
+            window.location.href = contextPath + "/SuperAdmin/claimed_request_details.jsp?transactionId=" + transactionId;
         });
     });
     
     const adminClickableRows = document.querySelectorAll(".admin-clickable-row");
     adminClickableRows.forEach(row => {
         row.addEventListener("click", function() {
-            window.location.href = contextPath + "/Admin/claimed_request_details.jsp";
+           const transactionId = this.querySelector('td').innerText.trim();
+            window.location.href = contextPath + "/Admin/claimed_request_details.jsp?transactionId=" + transactionId;
         });
     });
 });

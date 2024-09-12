@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.tigersign.dao.ClaimerDAO" %>
+<%@ page import="com.tigersign.dao.ProofDAO" %>
+<%@ page import="java.sql.SQLException" %>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -8,6 +11,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">    
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
         <link rel="stylesheet" href="../resources/css/receiving_form.css">
         <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     </head>
@@ -35,20 +39,41 @@
                                 String name = request.getParameter("name");
                                 String email = request.getParameter("email");
                                 String files = request.getParameter("files");
-                            %>
+                                String proofDate = request.getParameter("field-date");
+                                String role = "PRIMARY";
+                                String photoData = request.getParameter("photo-data");
+                                String signatureData = request.getParameter("signature-data");
+                                String idData = null;
+                                String letterData = null;
+                                String submit = request.getParameter("submit"); 
+                            
+                                if (submit != null && name != null && email != null) {
+                                    ClaimerDAO claimerDAO = new ClaimerDAO();
+                                    int claimerId = claimerDAO.insertClaimer(name, email, role); 
+
+                                    if (claimerId > 0) {
+                                        ProofDAO proofsDAO = new ProofDAO();
+                                        proofsDAO.insertProofs(photoData, signatureData, proofDate, "", "", claimerId, transactionId);
+                                    } else {
+                                        throw new SQLException("Failed to retrieve the generated claimer_id.");
+                                    }
+                                }
+                        %>
                             <h2 class="number-form"><span>Transaction ID: <%= transactionId != null ? "#" + transactionId : "" %></span></h2>
-                            <form action="" class="form">
+                            <form action="" class="form" method="POST">
+                                <input type="hidden" name="photo-data" id="photo-data">
+                                <input type="hidden" name="signature-data" id="signature-data">
                                 <div class="input-fields">
                                     <label for="claimer-name" class="form-label">Name</label>
-                                    <input type="text" name="field-name" id="field-name" value="<%= name != null ? name : "" %>" placeholder="Enter Full Name">
+                                    <input type="text" name="field-name" id="field-name" value="<%= name != null ? name : "" %>" placeholder="Enter Full Name" required>
                                 </div>
                                 <div class="input-fields">
-                                     <label for="claimer-date" class="form-label">Date</label>
-                                     <input type="date" name="field-date" id="field-date">
+                                    <label for="claimer-date" class="form-label">Date</label>
+                                    <input type="date" name="field-date" id="field-date" required>
                                 </div>
                                 <div class="input-fields">
                                     <label for="claimer-email" class="form-label">Email Address</label>
-                                    <input type="text" name="field-email" id="field-email" value="<%= email != null ? email : "" %>" placeholder="Enter email address">
+                                    <input type="text" name="field-email" id="field-email" value="<%= email != null ? email : "" %>" placeholder="Enter email address" required>
                                 </div>
                                 <div class="input-fields">
                                     <label for="claimer-documents" class="form-label">Requested Documents:</label>
@@ -88,7 +113,7 @@
                                 <%@ include file="/WEB-INF/components/form_modals.jsp" %>
 
                                 <div class="submit-button-container">
-                                    <button type="submit" class="submit-btn">Submit</button>
+                                        <button type="submit" name="submit" value="submit" class="submit-btn">Submit</button>
                                 </div>
                             </form>
                         </div>

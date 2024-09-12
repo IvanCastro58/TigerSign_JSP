@@ -83,7 +83,7 @@ confirmBtn.addEventListener('click', () => {
         photoField.files = dataTransfer.files;
         photoFilename.value = "photo.png";
         confirmedDataUrl = croppedDataUrl; // Store confirmed cropped image URL
-        
+        document.getElementById('photo-data').value = croppedDataUrl;
         cropper.destroy(); // Remove cropper after confirmation
         capturedImageContainer.style.display = 'block';
         photoControlsModal.style.display = 'none';

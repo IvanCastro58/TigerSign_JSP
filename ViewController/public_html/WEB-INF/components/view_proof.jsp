@@ -14,8 +14,8 @@
                 <p class="smaller-text">Viewing signatures is strictly for <strong>verification purposes only</strong>. Ensure you access this information responsibly and <strong>avoid sharing or displaying it publicly</strong> to protect the claimer's privacy and prevent unauthorized use.  Always prioritize data security and confidentiality.</p>
             </div>
             <div class="image-container">
-                <button class="expand-button" onclick="openPopup()"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button> <!-- Expand icon -->
-                <img src="../resources/images/logo1.png" alt="Sample Image">
+                <button class="expand-button" onclick="openPopup()"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+                <img src="data:image/png;base64,<%= details.getSignatureBase64() %>" alt="Claimer's Signature">
             </div>
         </div>
     </div>
@@ -32,8 +32,8 @@
                 <p class="smaller-text">Viewing photos is strictly for <strong>verification purposes only</strong>. Ensure you access this information responsibly and <strong>avoid sharing or displaying it publicly</strong> to protect the claimer's privacy and prevent unauthorized use.  Always prioritize data security and confidentiality.</p>
             </div>
             <div class="image-container">
-                <button class="expand-button" onclick="openPopup()"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button> 
-                <img src="../resources/images/google.png" alt="Sample Image">
+                <button class="expand-button" onclick="openPopup()"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+                <img src="data:image/png;base64,<%= details.getPhotoBase64() %>" alt="Claimer's Photo">
             </div>
         </div>
     </div>
@@ -52,12 +52,13 @@
             <div class="image-container-wrapper">
                 <div class="image-container-left">
                     <button class="expand-button" onclick="openPopup()"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
-                    <img src="../resources/images/background.jpg" alt="Authorization Letter Image">
+                    <img src="data:image/png;base64,<%= details.getLetterPhotoBase64() %>" alt="Authorization Letter Image">
                 </div>
                 <div class="image-container-right">
                     <button class="expand-button" onclick="openPopup()"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
-                    <img src="../resources/images/tigersign.png" alt="ID Photo Image">
+                    <img src="data:image/png;base64,<%= details.getIdPhotoBase64() %>" alt="ID Photo Image">
                 </div>
+
             </div>
             <div class="signature-result">
                 <i class="bi bi-check-circle"></i> Signature Matched

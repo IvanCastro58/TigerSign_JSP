@@ -1,8 +1,10 @@
-<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.tigersign.dao.PendingClaimsService" %>
 <%@ page import="com.tigersign.dao.PendingClaim" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.ParseException" %>
 
 <html lang="en">
 <head>
@@ -35,6 +37,9 @@
         }
 
         request.setAttribute("activePage", "pending_claim");  
+
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
     %>
     
     <%@ include file="/WEB-INF/components/header.jsp" %>
@@ -66,6 +71,16 @@
                             List<PendingClaim> claims = service.getPendingClaims();
                             if (claims != null) {
                                 for (PendingClaim claim : claims) {
+                                    String dateStr = claim.getDateProcessed();
+                                    String formattedDate = "";
+                                    if (dateStr != null && !dateStr.isEmpty()) {
+                                        try {
+                                            Date date = inputFormat.parse(dateStr); 
+                                            formattedDate = outputFormat.format(date);
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                         %>
                             <tr>
                                 <td><%= claim.getId() %></td>
@@ -83,7 +98,7 @@
                                     </form>
                                 </td>
                                 <td class="expandable-text"><%= claim.getCollege() %></td>
-                                <td><%= claim.getDateProcessed() %></td>
+                                <td><%= formattedDate %></td>
                                 <td class="expandable-text"><%= claim.getFiles() %></td>
                                 <td>
                                     <button type="submit" class="action-button">CLAIM</button>

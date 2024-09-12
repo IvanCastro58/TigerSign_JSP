@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.tigersign.dao.ClaimedRequest" %>
+<%@ page import="com.tigersign.dao.ClaimedRequestsService" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.ParseException" %>
 
 <html lang="en">
 <head>
@@ -18,10 +24,14 @@
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <% 
         request.setAttribute("activePage", "claimed_request");  
+        ClaimedRequestsService service = new ClaimedRequestsService();
+        List<ClaimedRequest> requests = service.getClaimedRequests();
+
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd"); 
     %>
     
     <%@ include file="/WEB-INF/components/header.jsp" %>
-    
     <%@ include file="/WEB-INF/components/sidebar.jsp" %>
     
     <div class="main-content">
@@ -62,76 +72,37 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="clickable-row">
-                            <td>#123456789</td>
-                            <td class="expandable-text">Dominador Del Rosario</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#132465789</td>
-                            <td class="expandable-text">Rogelio Tampipi</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#274937651</td>
-                            <td class="expandable-text">Bienvenido Reyes</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#182647970</td>
-                            <td class="expandable-text">Esteban Dimaculangan</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#175482954</td>
-                            <td class="expandable-text">Juanito Mangubat</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#175482954</td>
-                            <td class="expandable-text">Nicanor Bustamante</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#175482954</td>
-                            <td class="expandable-text">Salvador Dimaguiba</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#175482954</td>
-                            <td class="expandable-text">Sofronio Buencamino</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#175423495</td>
-                            <td class="expandable-text">Fransisco Trinidad</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
-                        <tr class="clickable-row">
-                            <td>#254482954</td>
-                            <td class="expandable-text">Ernesto Concepcion</td>
-                            <td class="expandable-text">College of Information and Computing Sciences</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                        </tr>
+                        <% 
+                            if (requests != null && !requests.isEmpty()) {
+                                for (ClaimedRequest claimedRequest : requests) {
+                                    String proofDateStr = claimedRequest.getProofDate();
+                                    String formattedDate = "";
+                                    if (proofDateStr != null && !proofDateStr.isEmpty()) {
+                                        try {
+                                            Date date = inputFormat.parse(proofDateStr); 
+                                            formattedDate = outputFormat.format(date); 
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                        %>
+                            <tr class="clickable-row">
+                                <td><%= claimedRequest.getTransactionId() %></td>
+                                <td class="expandable-text"><%= claimedRequest.getName() %></td>
+                                <td class="expandable-text"><%= claimedRequest.getCollege() %></td>
+                                <td class="date-processed-column"><%= formattedDate %></td>
+                                <td class="expandable-text"><%= claimedRequest.getDocumentsRequested() %></td>
+                            </tr>
+                        <% 
+                                }
+                            } else {
+                        %>
+                            <tr>
+                                <td colspan="5">No claimed requests found.</td>
+                            </tr>
+                        <% 
+                            }
+                        %>
                     </tbody>
                     </table>
                 </div>
