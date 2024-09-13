@@ -25,6 +25,11 @@
             ClaimedRequestDetailsService service = new ClaimedRequestDetailsService();
             details = service.getClaimedRequestDetails(transactionId);
         }
+
+        if (details != null) {
+            // Passing 'details' to the request scope so that it's available in the included JSP
+            request.setAttribute("details", details);
+        }
     %>
     
     <%@ include file="/WEB-INF/components/header.jsp" %>
@@ -114,7 +119,9 @@
                             <button class="proof-btn2">Send Proof of Claim</button>
                         </div>
                     </div>
-                     <%@ include file="/WEB-INF/components/view_proof.jsp" %>
+                     <jsp:include page="/WEB-INF/components/view_proof.jsp">
+                        <jsp:param name="details" value="<%= details %>" />
+                    </jsp:include>
                 </div>
             <% } else { %>
                 <p>No details found for the selected transaction.</p>

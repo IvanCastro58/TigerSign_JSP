@@ -235,7 +235,7 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
-.status-paid {
+.status-pending {
     background-color: #3B83FB;
     color: var(--white);
 }
@@ -260,6 +260,12 @@ body {
     font-size: 14px;
     font-weight: 600;
     font-family: 'Montserrat', sans-serif;
+}
+
+.action-button:disabled {
+    cursor: not-allowed;
+    background-color: var(--light-gray);
+
 }
 
 .view-button {

@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page import="com.tigersign.dao.ClaimedRequestDetails" %>
 <!--View Signature,Photo, Letter & ID Comparison-->
-
+<%
+    ClaimedRequestDetails details = (ClaimedRequestDetails) request.getAttribute("details");
+%>
 <div id="claimer-signature-modal" class="popup-overlay">
     <div class="popup">
         <div class="popup-header">

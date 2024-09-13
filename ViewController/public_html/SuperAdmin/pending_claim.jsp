@@ -90,7 +90,11 @@
                                 <td>
                                     <form action="pending_claim.jsp" method="post">
                                         <input type="hidden" name="id" value="<%= claim.getId() %>">
-                                        <select name="status" class="status-dropdown" onchange="this.form.submit()">
+                                        <select name="status" class="status-dropdown 
+                                            <%= "PENDING".equalsIgnoreCase(claim.getStatus()) ? "status-pending" : 
+                                                "PROCESSING".equalsIgnoreCase(claim.getStatus()) ? "status-processing" : 
+                                                "AVAILABLE".equalsIgnoreCase(claim.getStatus()) ? "status-available" : "" %>" 
+                                            onchange="this.form.submit()">
                                             <option value="pending" <%= "PENDING".equals(claim.getStatus()) ? "selected" : "" %>>PENDING</option>
                                             <option value="processing" <%= "PROCESSING".equals(claim.getStatus()) ? "selected" : "" %>>PROCESSING</option>
                                             <option value="available" <%= "AVAILABLE".equals(claim.getStatus()) ? "selected" : "" %>>AVAILABLE</option>
@@ -101,8 +105,11 @@
                                 <td><%= formattedDate %></td>
                                 <td class="expandable-text"><%= claim.getFiles() %></td>
                                 <td>
-                                    <button type="submit" class="action-button">CLAIM</button>
-                               </td>
+                                    <button type="submit" class="action-button" 
+                                        <%= "PROCESSING".equalsIgnoreCase(claim.getStatus()) || "PENDING".equalsIgnoreCase(claim.getStatus()) ? "disabled" : "" %>>
+                                        CLAIM
+                                    </button>
+                                </td>
                             </tr>
                         <%
                                 }
