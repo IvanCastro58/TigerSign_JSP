@@ -109,7 +109,9 @@
                                             <button class="proof-btn">View Claimer's Photo</button>
                                         </div>
                                         <div class="claimer-id">
-                                            <button class="proof-btn">View Authorization Letter & ID Authenticity</button>
+                                             <% if (!"PRIMARY".equals(details.getClaimerRole())) { %>
+                                                <button class="proof-btn">View Authorization Letter & ID Authenticity</button>
+                                             <% } %>
                                         </div>
                                     </div>
                                 </div>      

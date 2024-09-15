@@ -13,7 +13,7 @@ public class PendingClaimsService {
 
     public List<PendingClaim> getPendingClaims() {
         List<PendingClaim> claimsList = new ArrayList<>();
-        String query = "SELECT id, transaction_id, name, email, status, college, date_processed, files FROM TS_REQUEST";
+        String query = "SELECT id, transaction_id, name, email, status, college, date_processed, files FROM TS_REQUEST WHERE is_claimed = 'N'";
 
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement();

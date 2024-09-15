@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.tigersign.dao.ClaimerDAO" %>
 <%@ page import="com.tigersign.dao.ProofDAO" %>
+<%@ page import="com.tigersign.dao.RequestDAO" %>
 <%@ page import="java.sql.SQLException" %>
 <html>
 <head>
@@ -51,14 +52,20 @@
                                     ClaimerDAO claimerDAO = new ClaimerDAO();
                                     int claimerId = claimerDAO.insertClaimer(name, email, role); 
 
-                                    if (claimerId > 0) {
+                                   if (claimerId > 0) {
                                         ProofDAO proofsDAO = new ProofDAO();
-                                        proofsDAO.insertProofs(photoData, signatureData, proofDate, idData, letterData, claimerId, transactionId);
+                                        proofsDAO.insertProofs(photoData, signatureData, proofDate, "", "", claimerId, transactionId);
+                            
+                                        // Update the is_claimed status
+                                        RequestDAO requestDAO = new RequestDAO();
+                                        requestDAO.updateClaimedStatus(transactionId);
+                                        
+                                        //response.sendRedirect("successPage.jsp");
                                     } else {
                                         throw new SQLException("Failed to retrieve the generated claimer_id.");
                                     }
                                 }
-                        %>
+                            %>
                         <h2 class="number-form"><span>Transaction ID: <%= transactionId != null ? "#" + transactionId : "" %></span></h2>
                         <form action="" class="form" method="POST">
                             <input type="hidden" name="photo-data" id="photo-data">
