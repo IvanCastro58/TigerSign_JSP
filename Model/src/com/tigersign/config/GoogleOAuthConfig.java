@@ -2,6 +2,10 @@ package com.tigersign.config;
 
 import com.tigersign.dao.DatabaseConnection;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
+
 import java.io.IOException;
 
 import java.security.SecureRandom;
@@ -42,75 +46,128 @@ public class GoogleOAuthConfig extends HttpServlet {
     private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USER_INFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
+    private GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
     @Override
-       protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-           String code = request.getParameter("code");
-           if (code != null) {
-               String tokenResponse = getTokenResponse(code);
-               JSONObject tokenJson = new JSONObject(tokenResponse);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String code = request.getParameter("code");
+        if (code != null) {
+            String tokenResponse = getTokenResponse(code);
+            JSONObject tokenJson = new JSONObject(tokenResponse);
 
-               if (tokenJson.has("error")) {
-                   response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error obtaining access token: " + tokenJson.getString("error"));
-                   return;
-               }
+            if (tokenJson.has("error")) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error obtaining access token: " + tokenJson.getString("error"));
+                return;
+            }
 
-               String accessToken = tokenJson.getString("access_token");
-               String userInfoResponse = getUserInfo(accessToken);
-               JSONObject userInfoJson = new JSONObject(userInfoResponse);
-               String email = userInfoJson.getString("email");
-               String firstName = userInfoJson.optString("given_name", "N/A");
-               String lastName = userInfoJson.optString("family_name", "N/A");
-               String picture = userInfoJson.optString("picture", "");
+            String accessToken = tokenJson.getString("access_token");
+            String userInfoResponse = getUserInfo(accessToken);
+            JSONObject userInfoJson = new JSONObject(userInfoResponse);
+            String email = userInfoJson.getString("email");
+            String firstName = userInfoJson.optString("given_name", "N/A");
+            String lastName = userInfoJson.optString("family_name", "N/A");
+            String picture = userInfoJson.optString("picture", "");
 
-               try (Connection conn = DatabaseConnection.getConnection()) {
-                   if (isAllowedSuperAdmin(conn, email)) {
-                       HttpSession session = request.getSession();
-                       session.setAttribute("userEmail", email);
-                       session.setAttribute("userFirstName", firstName);
-                       session.setAttribute("userLastName", lastName);
-                       session.setAttribute("userPicture", picture);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                if (isAllowedSuperAdmin(conn, email)) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("userEmail", email);
+                    session.setAttribute("userFirstName", firstName);
+                    session.setAttribute("userLastName", lastName);
+                    session.setAttribute("userPicture", picture);
 
-                       response.sendRedirect("SuperAdmin/dashboard.jsp");
-                   } else {
-                       response.sendRedirect("error/error_unauthorized.jsp");
-                   }
-               } catch (SQLException e) {
-                   response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
-               }
-           } else {
-               String authUrl = getAuthUrl();
-               response.sendRedirect(authUrl);
-           }
-       }
+                    String secret = getTOTPSecret(conn, email);
+                    if (secret != null) {
+                        response.sendRedirect("pages/verify_superadmin.jsp");
+                    } else {
+                        String setupUrl = getTOTPSetupUrl(request, email);  
+                        request.getRequestDispatcher("pages/totp_setup.jsp").forward(request, response);
+                    }
+                } else {
+                    response.sendRedirect("error/error_unauthorized.jsp");
+                }
+            } catch (SQLException e) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
+            }
+        } else {
+            String authUrl = getAuthUrl();
+            response.sendRedirect(authUrl);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String otp = request.getParameter("otp");
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute("userEmail");
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String secret = getTOTPSecret(conn, email);
+            if (secret != null) {
+                GoogleAuthenticator gAuth = new GoogleAuthenticator();
+                boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
+
+                if (isCodeValid) {
+                    response.sendRedirect("SuperAdmin/dashboard.jsp");
+                } else {
+                    response.sendRedirect("error/error_invalid_otp.jsp");
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "TOTP secret not found for user.");
+            }
+        } catch (SQLException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
+        }
+    }
 
     private boolean isAllowedSuperAdmin(Connection conn, String email) throws SQLException {
         String query = "SELECT COUNT(*) FROM TS_SUPERADMIN WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
+            return rs.next() && rs.getInt(1) > 0;
         }
-        return false;
     }
-    
-    private static String generateState() {
-        Random random = new SecureRandom();
-        String state = String.valueOf(random.nextLong());
-        return state;
+
+    private String getTOTPSecret(Connection conn, String email) throws SQLException {
+        String query = "SELECT totp_secret FROM TS_SUPERADMIN WHERE email = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getString("totp_secret") : null;
+        }
+    }
+
+    private String getTOTPSetupUrl(HttpServletRequest request, String email) {
+        GoogleAuthenticatorKey key = gAuth.createCredentials();
+        String secret = key.getKey();
+        String qrUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("TigerSign", email, key);
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String updateQuery = "UPDATE TS_SUPERADMIN SET totp_secret = ? WHERE email = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+                stmt.setString(1, secret);
+                stmt.setString(2, email);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        request.setAttribute("setupUrl", qrUrl);
+        request.setAttribute("setupKey", secret);
+
+        return qrUrl;
     }
 
     public static String getAuthUrl() {
         String state = generateState();
-        String authUrl = AUTH_URL + "?client_id=" + CLIENT_ID
+        return AUTH_URL + "?client_id=" + CLIENT_ID
                          + "&redirect_uri=" + REDIRECT_URI
                          + "&response_type=code"
                          + "&scope=openid+email+profile"
                          + "&state=" + state
                          + "&prompt=select_account";  
-        return authUrl;
     }
 
     private String getTokenResponse(String code) throws IOException {
@@ -126,11 +183,9 @@ public class GoogleOAuthConfig extends HttpServlet {
         params.add(new BasicNameValuePair("client_secret", CLIENT_SECRET));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 
-        CloseableHttpResponse response = httpClient.execute(httpPost);
-        String responseBody = EntityUtils.toString(response.getEntity());
-        System.out.println("Token Response: " + responseBody);
-
-        return responseBody;
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            return EntityUtils.toString(response.getEntity());
+        }
     }
 
     private String getUserInfo(String accessToken) throws IOException {
@@ -138,10 +193,14 @@ public class GoogleOAuthConfig extends HttpServlet {
         HttpGet httpGet = new HttpGet(USER_INFO_URL);
         httpGet.setHeader("Authorization", "Bearer " + accessToken);
 
-        CloseableHttpResponse response = httpClient.execute(httpGet);
-        String responseBody = EntityUtils.toString(response.getEntity());
-        System.out.println("User Info Response: " + responseBody);
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+            return EntityUtils.toString(response.getEntity());
+        }
+    }
 
-        return responseBody;
+    private static String generateState() {
+        Random random = new SecureRandom();
+        return String.valueOf(random.nextLong());
     }
 }
+

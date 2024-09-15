@@ -58,7 +58,6 @@ header {
 header .logo {
     display: flex;
     align-items: center;
-    margin-left: 20px;
 }
 
 header .logo img {
