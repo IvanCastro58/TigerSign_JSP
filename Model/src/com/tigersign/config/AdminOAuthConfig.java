@@ -2,6 +2,10 @@ package com.tigersign.config;
 
 import com.tigersign.dao.DatabaseConnection;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
+
 import java.io.IOException;
 
 import java.sql.Connection;
@@ -39,6 +43,7 @@ public class AdminOAuthConfig extends HttpServlet {
     private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USER_INFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
+    private GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -62,16 +67,18 @@ public class AdminOAuthConfig extends HttpServlet {
 
             try (Connection conn = DatabaseConnection.getConnection()) {
                 if (isAllowedAdmin(conn, email)) {
-                    // Update admin information in the database
-                    updateAdminInfo(conn, email, firstName, lastName, picture);
-
-                    HttpSession session = request.getSession();
-                    session.setAttribute("userEmail", email);
-                    session.setAttribute("userFirstName", firstName);
-                    session.setAttribute("userLastName", lastName);
-                    session.setAttribute("userPicture", picture);
-
-                    response.sendRedirect("Admin/dashboard.jsp");
+                    String secret = getTOTPSecret(conn, email);
+                    if (secret != null) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("userEmail", email);
+                        session.setAttribute("userFirstName", firstName);
+                        session.setAttribute("userLastName", lastName);
+                        session.setAttribute("userPicture", picture);
+                        response.sendRedirect("pages/verify_admin.jsp");
+                    } else {
+                        String setupUrl = getTOTPSetupUrl(request, email);  
+                        request.getRequestDispatcher("pages/totp_setup_admin.jsp").forward(request, response);
+                    }
                 } else {
                     response.sendRedirect("error/error_unauthorized.jsp");
                 }
@@ -81,6 +88,27 @@ public class AdminOAuthConfig extends HttpServlet {
         } else {
             String authUrl = getAuthUrl();
             response.sendRedirect(authUrl);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String otp = request.getParameter("otp");
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute("userEmail");
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String secret = getTOTPSecret(conn, email);
+            GoogleAuthenticator gAuth = new GoogleAuthenticator();
+            boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
+
+            if (isCodeValid) {
+                response.sendRedirect("Admin/dashboard.jsp");
+            } else {
+                response.sendRedirect("error/error_invalid_otp.jsp");
+            }
+        } catch (SQLException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
         }
     }
 
@@ -96,15 +124,39 @@ public class AdminOAuthConfig extends HttpServlet {
         return false;
     }
 
-    private void updateAdminInfo(Connection conn, String email, String firstName, String lastName, String pictureUrl) throws SQLException {
-        String query = "UPDATE TS_ADMIN SET firstname = ?, lastname = ?, picture = ?, is_verified = 'Y' WHERE email = ? AND is_verified = 'N'";
+    private String getTOTPSecret(Connection conn, String email) throws SQLException {
+        String query = "SELECT totp_secret FROM TS_ADMIN WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, firstName);
-            stmt.setString(2, lastName);
-            stmt.setString(3, pictureUrl); 
-            stmt.setString(4, email);
-            stmt.executeUpdate();
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("totp_secret");
+            }
         }
+        return null;
+    }
+
+    private String getTOTPSetupUrl(HttpServletRequest request, String email) {
+        GoogleAuthenticatorKey key = gAuth.createCredentials();
+        String secret = key.getKey();  // Get the secret key
+        String qrUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("TigerSign", email, key);
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String updateQuery = "UPDATE TS_ADMIN SET totp_secret = ? WHERE email = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+                stmt.setString(1, secret);
+                stmt.setString(2, email);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Set both the QR URL and the secret key as request attributes
+        request.setAttribute("setupUrl", qrUrl);
+        request.setAttribute("setupKey", secret);
+
+        return qrUrl;
     }
 
     public static String getAuthUrl() {

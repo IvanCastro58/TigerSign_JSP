@@ -11,11 +11,84 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../resources/css/sidebar.css">
     <link rel="stylesheet" href="../resources/css/profile.css">
-    <link rel="stylesheet" href="../resources/css/toastify.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
 </head>
+<style>
+    .toast-icon-success, .toast-icon-error {
+        margin-right: 8px; 
+        vertical-align: middle; 
+        font-size: 14px; 
+    }
+    
+    .toast-icon-success {
+        color: #1C8454; 
+    }
+    
+    .toast-icon-error {
+        color: #d9534f; 
+    }
+    
+    .toast-success {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        width: 300px; 
+        padding: 15px; 
+        color: #686D76;
+    }
+    
+    .toast-error {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        width: 300px; 
+        padding: 15px; 
+        color: #686D76;
+    }
+    
+    .toast-error::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: #d9534f;
+        animation: loading-error 3.2s linear infinite;
+    }
+    
+    .toast-success::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: #1C8454;
+        animation: loading-success 3.2s linear infinite;
+    }
+    
+    @keyframes loading-error {
+        0% {
+            width: 100%;
+            background: #d9534f;
+        }
+        100% {
+            width: 0;
+            background: #d9534f;
+        }
+    }
+@keyframes loading-success {
+    0% {
+        width: 100%;
+        background: #1C8454;
+    }
+    100% {
+        width: 0;
+        background: #1C8454;
+    }
+}
+</style>
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <%
@@ -68,7 +141,7 @@
                 <h1 class="title-page-claimed">MANAGE ACCOUNT</h1>
                 <i class="fa-solid fa-angle-right title-icon"></i>
                 <h1 class="title-page-number"><%= (user != null) ? (user.getFirstname() + " " + user.getLastname()) : "User Details" %></h1>
-                <button class="back-button" onclick="window.location.href='${contextPath}/SuperAdmin/manage_account.jsp';">Back</button>
+                <button class="back-button" onclick="window.location.href='manage_account.jsp';">Back</button>
             </div>
             <div class="profile-box">
                 <div class="admin-profile">
