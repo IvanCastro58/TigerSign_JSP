@@ -43,11 +43,12 @@ public class AdminOAuthConfig extends HttpServlet {
     private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USER_INFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
-    private GoogleAuthenticator gAuth = new GoogleAuthenticator();
+    private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String code = request.getParameter("code");
+
         if (code != null) {
             String tokenResponse = getTokenResponse(code);
             JSONObject tokenJson = new JSONObject(tokenResponse);
@@ -60,6 +61,7 @@ public class AdminOAuthConfig extends HttpServlet {
             String accessToken = tokenJson.getString("access_token");
             String userInfoResponse = getUserInfo(accessToken);
             JSONObject userInfoJson = new JSONObject(userInfoResponse);
+
             String email = userInfoJson.getString("email");
             String firstName = userInfoJson.optString("given_name", "N/A");
             String lastName = userInfoJson.optString("family_name", "N/A");
@@ -70,14 +72,15 @@ public class AdminOAuthConfig extends HttpServlet {
                     String secret = getTOTPSecret(conn, email);
                     if (secret != null) {
                         HttpSession session = request.getSession();
-                        session.setAttribute("userEmail", email);
-                        session.setAttribute("userFirstName", firstName);
-                        session.setAttribute("userLastName", lastName);
-                        session.setAttribute("userPicture", picture);
-                        response.sendRedirect("pages/verify_admin.jsp");
+                        session.setAttribute("adminEmail", email);
+                        session.setAttribute("adminFirstName", firstName);
+                        session.setAttribute("adminLastName", lastName);
+                        session.setAttribute("adminPicture", picture);
+                        response.sendRedirect("Admin/verify_admin.jsp");
                     } else {
-                        String setupUrl = getTOTPSetupUrl(request, email);  
-                        request.getRequestDispatcher("pages/totp_setup_admin.jsp").forward(request, response);
+                        String setupUrl = getTOTPSetupUrl(request, email);
+                        request.setAttribute("setupUrl", setupUrl);
+                        request.getRequestDispatcher("Admin/totp_setup_admin.jsp").forward(request, response);
                     }
                 } else {
                     response.sendRedirect("error/error_unauthorized.jsp");
@@ -95,7 +98,7 @@ public class AdminOAuthConfig extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String otp = request.getParameter("otp");
         HttpSession session = request.getSession();
-        String email = (String) session.getAttribute("userEmail");
+        String email = (String) session.getAttribute("adminEmail");
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             String secret = getTOTPSecret(conn, email);
@@ -103,12 +106,32 @@ public class AdminOAuthConfig extends HttpServlet {
             boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
 
             if (isCodeValid) {
+                // Retrieve user information before setting the session
+                String firstName = (String) session.getAttribute("adminFirstName");
+                String lastName = (String) session.getAttribute("adminLastName");
+                String picture = (String) session.getAttribute("adminPicture");
+                
+                // Update admin info in the database
+                updateAdminInfo(conn, email, firstName, lastName, picture);
+    
                 response.sendRedirect("Admin/dashboard.jsp");
             } else {
                 response.sendRedirect("error/error_invalid_otp.jsp");
             }
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
+        }
+    }
+
+
+    private void updateAdminInfo(Connection conn, String email, String firstName, String lastName, String picture) throws SQLException {
+        String updateQuery = "UPDATE TS_ADMIN SET firstname = ?, lastname = ?, picture = ?, is_verified = 'Y' WHERE email = ? AND is_verified = 'N'";
+        try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+            stmt.setString(1, firstName);
+            stmt.setString(2, lastName);
+            stmt.setString(3, picture);
+            stmt.setString(4, email);
+            stmt.executeUpdate();
         }
     }
 
@@ -138,7 +161,7 @@ public class AdminOAuthConfig extends HttpServlet {
 
     private String getTOTPSetupUrl(HttpServletRequest request, String email) {
         GoogleAuthenticatorKey key = gAuth.createCredentials();
-        String secret = key.getKey();  // Get the secret key
+        String secret = key.getKey();
         String qrUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("TigerSign", email, key);
 
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -152,7 +175,6 @@ public class AdminOAuthConfig extends HttpServlet {
             e.printStackTrace();
         }
 
-        // Set both the QR URL and the secret key as request attributes
         request.setAttribute("setupUrl", qrUrl);
         request.setAttribute("setupKey", secret);
 
@@ -161,17 +183,15 @@ public class AdminOAuthConfig extends HttpServlet {
 
     public static String getAuthUrl() {
         String state = generateState();
-        String authUrl = AUTH_URL + "?client_id=" + CLIENT_ID
+        return AUTH_URL + "?client_id=" + CLIENT_ID
                          + "&redirect_uri=" + REDIRECT_URI
                          + "&response_type=code"
                          + "&scope=openid+email+profile"
                          + "&state=" + state
-                         + "&prompt=select_account";  
-        return authUrl;
+                         + "&prompt=select_account";
     }
 
     private static String generateState() {
-        // Generate a random state string to prevent CSRF attacks
         return java.util.UUID.randomUUID().toString();
     }
 

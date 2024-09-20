@@ -12,8 +12,7 @@
         <input type="checkbox" id="profile-toggle" style="display: none;">
         <label for="profile-toggle">
             <!-- Dynamically display the user's profile picture -->
-            <img src="${userPicture != null ? userPicture : pageContext.request.contextPath + '/resources/images/tigersign.png'}" 
-                 alt="Profile Picture">
+            <img src="${userPicture != null ? userPicture : pageContext.request.contextPath + '/resources/images/tigersign.png'}" alt="Profile Picture">
         </label>
         <div class="profile-popup" id="profile-popup">
             <a href="${pageContext.request.contextPath}/SuperAdmin/profile.jsp"><i class="bi bi-person-circle"></i> View Profile</a>

@@ -54,7 +54,7 @@
         width: 100%;
         height: 4px;
         background: #d9534f;
-        animation: loading-error 3.2s linear infinite;
+        animation: loading-error 3s linear infinite;
     }
     
     .toast-success::after {
@@ -65,7 +65,7 @@
         width: 100%;
         height: 4px;
         background: #1C8454;
-        animation: loading-success 3.2s linear infinite;
+        animation: loading-success 3s linear infinite;
     }
     
     @keyframes loading-error {

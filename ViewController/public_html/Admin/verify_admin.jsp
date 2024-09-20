@@ -7,12 +7,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOTP - TigerSign</title>
+    <title>Admin TOTP - TigerSign</title>
     <link rel="stylesheet" href="../resources/css/totp.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <%@ include file="/WEB-INF/components/session_admin.jsp" %>
     <header>
         <div class="logo">
             <img src="${pageContext.request.contextPath}/resources/images/logo.png" alt="TigerSign Logo">
@@ -23,13 +24,13 @@
         <div class="totp-text">
             <img class="logo" src="${pageContext.request.contextPath}/resources/images/tigersign.png" alt="Profile Picture">
             <h2>Account Verification</h2>
-            <form action="${pageContext.request.contextPath}/oauth2callback" method="post">
+            <form action="${pageContext.request.contextPath}/adminOauth2callback" method="post">
                 <label for="otp">Enter the six-digit TOTP from Google Authenticator.</label>
                 <input type="text" id="otp" name="otp" required />
                 <button type="submit">Verify</button>
             </form>
             <hr>
-            <a href="/alternative-verification">Can't access your TOTP?</a>
+            <a class="reset-button" href="reset_totp_admin.jsp">Can't access your TOTP?</a>
         </div>
     </div>
 </body>

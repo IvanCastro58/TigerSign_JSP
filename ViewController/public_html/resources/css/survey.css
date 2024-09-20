@@ -81,12 +81,15 @@ header .logo img {
     border-bottom: 5px solid var(--primary-color);
     text-align: center;
     font-size: 32px;
-    margin: 20px;
+    margin: 30px 20px;
 }
 
 .form-container{
     background-color: var(--white);
     border: 1px solid var(--blackish);
+}
+
+.form-details{
     padding: 0 20px 20px 20px;
 }
 
@@ -162,6 +165,15 @@ input[type="date"] {
     margin-bottom: 20px;
     border: 1px solid var(--blackish);
     box-sizing: border-box; 
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+    border-radius: 5px;
+    outline: none;
+    border-color: var(--blue); 
+    box-shadow: 0 0 0 0.2rem rgba(59, 131, 251, 0.25); 
 }
 
 .service-options div {

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - TigerSign</title>
+    <title>Admin Profile - TigerSign</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
 </head>
 <body>
     <input type="checkbox" id="menu-toggle" hidden>
-    
+    <%@ include file="/WEB-INF/components/session_admin.jsp" %>
     <%
         String activePage = "profile";
     %>
@@ -29,7 +29,7 @@
             <div class="profile-box">
                 <div class="profile-pic">
                     <label for="profile-pic-toggle">
-                        <img src="${pageContext.request.contextPath}/resources/images/tigersign.png" alt="TigerSign Logo" id="profile-pic-img">
+                        <img src="<%= (adminPicture != null ? adminPicture : "../resources/images/tigersign.png") %>" alt="Profile Picture" id="profile-pic-img">
                         <div class="camera-icon">
                             <i class="bi bi-camera-fill"></i>
                         </div>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="profile-name">
                     <div class="name-line">
-                        <h3>Juan Dela Cruz</h3>
+                        <h3><%= adminFirstName %> <%= adminLastName %></h3>
                         <span>ACTIVE</span>
                     </div>
                     <p>Admin</p>
@@ -55,17 +55,17 @@
                         <div class="name">
                             <div class="firstname">
                                 <label>First Name</label>
-                                <p>Juan</p>
+                                 <p><%= adminFirstName %></p>
                             </div>
                             <div>
                                 <label>Last Name</label>
-                                <p>Dela Cruz</p>
+                                <p><%= adminLastName %></p>
                             </div>
                         </div>
                         <div class="email">
                             <div>
                                 <label>Email</label>
-                                <p>juan.delacruz.registrar@ust.edu.ph</p>
+                                <p><%= adminEmail %></p>
                             </div>
                         </div>
                     </div>

@@ -147,18 +147,21 @@ hr {
     margin: 10px auto;
     width: 100%;
     padding: 12px;
-    border: 1px solid #D3D3D3;
+    line-height: 1.5;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    background-clip: padding-box;
     font-size: 14px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     outline: none;
     box-sizing: border-box;
 }
 
 .form-box input[type="text"]:focus, 
-.form-box-totp input[type="text"]:focus{
-    border-color: var(--blue);
-    box-shadow: 0 0 10px rgba(59, 131, 251, 0.4);
-    background-color: var(--white);
+.form-box-totp input[type="text"]:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .form-box button, 
@@ -183,16 +186,70 @@ hr {
     transform: translateY(-3px);
 }
 
-.form-box a{
+.form-box .reset-button{
     color: #6d6d6d;
     font-size: 12px;
     font-weight: 500;
     text-decoration: none; 
 }
 
-.form-box a:hover{
+.form-box .reset-button:hover{
     color: var(--dark-gray);
 }
+
+.remember{
+    display: flex;
+    align-items: center;
+}
+
+.totp-button{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.reset-text{
+    font-size: 12px;
+}
+
+.reset-btn{
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: var(--blackish);
+    color: var(--white);
+    text-align: center;
+    padding: 10px 0;
+    margin: 10px 0;
+    text-decoration: none;
+    border: none;
+}
+
+.cancel-btn{
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: var(--white);
+    color: var(--blackish);
+    text-align: center;
+    padding: 10px 0;
+    text-decoration: none;
+    border: 1px solid var(--blackish);
+}
+
+.cancel-btn:hover {
+    background-color: var(--blackish);
+    color: var(--white);
+}
+
+
+
+
+
+
+
 
 
 

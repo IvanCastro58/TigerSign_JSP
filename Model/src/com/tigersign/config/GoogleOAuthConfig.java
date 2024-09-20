@@ -78,10 +78,10 @@ public class GoogleOAuthConfig extends HttpServlet {
 
                     String secret = getTOTPSecret(conn, email);
                     if (secret != null) {
-                        response.sendRedirect("pages/verify_superadmin.jsp");
+                        response.sendRedirect("SuperAdmin/verify_superadmin.jsp");
                     } else {
                         String setupUrl = getTOTPSetupUrl(request, email);  
-                        request.getRequestDispatcher("pages/totp_setup.jsp").forward(request, response);
+                        request.getRequestDispatcher("SuperAdmin/totp_setup.jsp").forward(request, response);
                     }
                 } else {
                     response.sendRedirect("error/error_unauthorized.jsp");
@@ -203,4 +203,3 @@ public class GoogleOAuthConfig extends HttpServlet {
         return String.valueOf(random.nextLong());
     }
 }
-

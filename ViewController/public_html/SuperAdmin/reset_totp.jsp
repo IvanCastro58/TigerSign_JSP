@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <header>
         <div class="logo">
             <img src="${pageContext.request.contextPath}/resources/images/logo.png" alt="TigerSign Logo">
@@ -22,14 +23,12 @@
         <div class="highlight-bar"></div>
         <div class="totp-text">
             <img class="logo" src="${pageContext.request.contextPath}/resources/images/tigersign.png" alt="Profile Picture">
-            <h2>Account Verification</h2>
-            <form action="${pageContext.request.contextPath}/adminOauth2callback" method="post">
-                <label for="otp">Enter the six-digit TOTP from Google Authenticator.</label>
-                <input type="text" id="otp" name="otp" required />
-                <button type="submit">Verify</button>
-            </form>
-            <hr>
-            <a href="${pageContext.request.contextPath}/alternative-verification">Can't access your TOTP?</a>
+            <h2>Reset Google Authenticator TOTP</h2>
+            <p class="reset-text">If you can't access your TOTP(Time-Based One-Time Password) Authenticator device, please click the button below. This action will initiate a reset activation process, which will be sent to your email address.</p>
+            <div class="reset-btn-div">
+                <a class="reset-btn" href="${pageContext.request.contextPath}/reset-totp">Reset TOTP</a>
+                <a class="cancel-btn" href="verify_superadmin.jsp">Cancel</a>
+            </div>
         </div>
     </div>
 </body>

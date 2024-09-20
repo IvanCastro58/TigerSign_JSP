@@ -15,7 +15,7 @@
 </head>
 <body>
     <input type="checkbox" id="menu-toggle" hidden>
-    
+    <%@ include file="/WEB-INF/components/session_admin.jsp" %>
     <%
         String activePage = "claimed_request";
     %>

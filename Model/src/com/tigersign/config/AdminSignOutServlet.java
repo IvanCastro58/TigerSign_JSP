@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/superadmin-signout")
-public class SuperAdminSignOutServlet extends HttpServlet {
+@WebServlet("/admin-signout")
+public class AdminSignOutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -23,6 +23,6 @@ public class SuperAdminSignOutServlet extends HttpServlet {
         response.setDateHeader("Expires", 0);
 
         // Redirect to login page
-        response.sendRedirect("SuperAdmin/main_login.jsp");
+        response.sendRedirect("Admin/login.jsp");
     }
 }

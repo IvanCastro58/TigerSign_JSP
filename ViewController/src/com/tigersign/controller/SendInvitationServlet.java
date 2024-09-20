@@ -51,7 +51,8 @@ public class SendInvitationServlet extends HttpServlet {
     }
 
     private boolean isValidDomain(String email) {
-        return email.endsWith("@ust.edu.ph");
+        return email.endsWith("@ust.edu.ph") || email.endsWith("@gmail.com");
+        //return email.endsWith("@ust.edu.ph");
     }
 
     private boolean isEmailExisting(String email) {
@@ -98,9 +99,9 @@ public class SendInvitationServlet extends HttpServlet {
             String content = "<div style='width: 100%; max-width: 1250px; margin: 0 auto; text-align: center; background-color: #f9f9f9; padding: 20px; font-family: Montserrat, sans-serif;'>"
                             + "<div style='display: inline-block; width: 100%; max-width: 400px; background-color: white; border: 1px solid #ddd; padding: 30px 20px; box-sizing: border-box;'>"
                             + "<img src='http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/tigersign-logo.png' alt='TigerSign Logo' style='width: 150px; margin-bottom: 20px;'>"
-                            + "<hr style='border: none; height: 3px; background-color: #F4BB00; margin-bottom: 20px;'>"
+                            + "<hr style='border: none; height: 2px; background-color: #F4BB00; margin-bottom: 20px;'>"
                             + "<h2 style='color: #333;'>Admin Invitation</h2>"
-                            + "<p style='font-size: 16px; color: #555;'>You have been invited to become an Admin for TigerSign. Please click the button below to accept the invitation and create your account.</p>"
+                            + "<p style='font-size: 14px; color: #555;'>You have been invited to become an Admin for TigerSign. Please click the button below to accept the invitation and create your account.</p>"
                             + "<a href='http://127.0.0.1:7101/TigerSign-ViewController-context-root/accept-invitation?email=" + recipientEmail + "' "
                             + "style='background-color: #F4BB00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; font-weight: 600; font-family: Montserrat, sans-serif;'>Accept Invitation</a>"
                             + "</div>"

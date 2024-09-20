@@ -77,16 +77,24 @@ header .logo img {
     margin-top: 80px;
 }
 
+.highlight-bar{
+    background-color: var(--primary-color);
+    height: 10px;
+}
+
 .title-page{
     border-bottom: 5px solid var(--primary-color);
     text-align: center;
     font-size: 32px;
-    margin: 20px;
+    margin: 30px 20px;
 }
 
 .form-container{
     background-color: var(--white);
     border: 1px solid var(--blackish);
+}
+
+.form-details{
     padding: 0 20px 20px 20px;
 }
 
@@ -183,18 +191,20 @@ input[type="date"] {
 #field-email:focus,
 #field-name:focus,
 #field-date:focus{
-    outline: none;
     border-radius: 5px;
-    border: 2px solid var(--blue);
+    outline: none;
+    border-color: var(--blue); 
+    box-shadow: 0 0 0 0.2rem rgba(59, 131, 251, 0.25); 
 }
 
 #signature-field:focus,
 #photo-field:focus,
 #photo-filename:focus{
     outline: none;
+    border-color: var(--blue); 
+    box-shadow: 0 0 0 0.2rem rgba(59, 131, 251, 0.25); 
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
-    border: 2px solid var(--blue);
 }
 
 #photo-filename,
