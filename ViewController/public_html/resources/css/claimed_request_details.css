@@ -169,6 +169,7 @@ body {
 .proof-btn {
     width: 220px;
     background-color: var(--primary-color);
+    color: var(--blackish); 
     font-size: 15px;
     font-weight: 600;
     padding: 5px;
@@ -176,10 +177,17 @@ body {
     border: none;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .proof-btn:hover {
+    box-shadow: none;
+}
+
+.proof-btn:disabled {
+    background-color: var(--light-gray); 
+    color: var(--lighter-gray);
+    cursor: not-allowed;
     box-shadow: none;
 }
 

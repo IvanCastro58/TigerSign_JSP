@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page import="com.tigersign.dao.PendingClaimsService" %>
+<%@ page import="com.tigersign.dao.PendingClaim" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.ParseException" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,10 +20,26 @@
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
 <body>
-    <input type="checkbox" id="menu-toggle" hidden>
     <%@ include file="/WEB-INF/components/session_admin.jsp" %>
-    <%
-        String activePage = "pending_claim";
+    
+    <% 
+        String statusUpdateId = request.getParameter("id");
+        String statusUpdateValue = request.getParameter("status");
+        if (statusUpdateId != null && statusUpdateValue != null) {
+            try {
+                int id = Integer.parseInt(statusUpdateId);
+                PendingClaimsService service = new PendingClaimsService();
+                service.updateClaimStatus(id, statusUpdateValue.toUpperCase()); 
+                response.sendRedirect("pending_claim.jsp"); 
+            } catch (NumberFormatException e) {
+                e.printStackTrace(); 
+            }
+        }
+
+        request.setAttribute("activePage", "pending_claim");  
+
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
     %>
     
     <%@ include file="/WEB-INF/components/header_admin.jsp" %>
@@ -27,239 +48,79 @@
     <div class="main-content">
         <div class="margin-content">
             <h1 class="title-page">PENDING CLAIMS</h1>
-            <div class="top-nav">
-                <div class="nav-item1">
-                    <div class="item1-label">Show</div>
-                    <div class="number">10</div>
-                    <div class="drop-icon">
-                        <i class="fa-solid fa-caret-down"></i>
-                    </div>
-                </div>
-                <div class="nav-item2">
-                    <div class="item2-label">Start Date</div>
-                    <div class="date-box">
-                        <div class="date start-date">10 Aug 2024</div>
-                        <div class="calendar-icon" data-target="start-date">
-                            <i class="fa-regular fa-calendar"></i>
-                        </div>
-                    </div>
-                    <div class="item2-label">End Date</div>
-                    <div class="date-box">
-                        <div class="date end-date">10 Aug 2024</div>
-                        <div class="calendar-icon" data-target="end-date">
-                            <i class="fa-regular fa-calendar"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="nav-item3">
-                    <div class="search-container">
-                        <input type="text" class="search-input" placeholder="Search...">
-                        <button class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
-                    </div>
-                </div>
-            </div>
+            <%@ include file="/WEB-INF/components/top_nav.jsp" %>
             <div class="table-container">
                 <div class="table-wrapper">
-                    <table class="transaction-table">
+                    <table class="transaction-table" id="pending_table">
                     <thead>
                         <tr>
-                            <th>
-                                O.R Number
-                            </th>
-                            <th>
-                                Name
-                                <span class="sort-icons">
-                                    <i class="fa-solid fa-caret-up"></i>
-                                    <i class="fa-solid fa-caret-down"></i>
-                                </span>
-                            </th>
-                            <th class="date-processed-column">
-                                Date Processed
-                                <span class="sort-icons">
-                                    <i class="fa-solid fa-caret-up"></i>
-                                    <i class="fa-solid fa-caret-down"></i>
-                                </span>
-                            </th>
-                            <th>
-                                Status
-                                <span class="sort-icons">
-                                    <i class="fa-solid fa-caret-up"></i>
-                                    <i class="fa-solid fa-caret-down"></i>
-                                </span>
-                            </th>
-                            <th>
-                                Documents Requested
-                            </th>
-                            <th>
-                                Action
-                            </th>
+                            <th>ID</th>
+                            <th>Transaction ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>College</th>
+                            <th>Date Processed</th>
+                            <th>Files</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>#123456789</td>
-                            <td class="expandable-text">Dominador Del Rosario</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#132465789</td>
-                            <td class="expandable-text">Rogelio Tampipi</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#274937651</td>
-                            <td class="expandable-text">Bienvenido Reyes</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#182647970</td>
-                            <td class="expandable-text">Esteban Dimaculangan</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#175482954</td>
-                            <td class="expandable-text">Juanito Mangubat</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#175482954</td>
-                            <td class="expandable-text">Nicanor Bustamante</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#175482954</td>
-                            <td class="expandable-text">Salvador Dimaguiba</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#175482954</td>
-                            <td class="expandable-text">Sofronio Buencamino</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#175423495</td>
-                            <td class="expandable-text">Fransisco Trinidad</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#254482954</td>
-                            <td class="expandable-text">Ernesto Concepcion</td>
-                            <td class="date-processed-column">10 Aug 2024</td>
-                            <td>
-                                <select class="status-dropdown">
-                                    <option value="paid" selected>PENDING</option>
-                                    <option value="processing">PROCESSING</option>
-                                    <option value="available">AVAILABLE</option>
-                                </select>
-                            </td>
-                            <td class="expandable-text">Transcript, Certificate, Proof of Enrollment</td>
-                            <td>
-                                <button class="action-button">CLAIM</button>
-                            </td>
-                        </tr>
+                        <tbody>
+                        <%
+                            PendingClaimsService service = new PendingClaimsService();
+                            List<PendingClaim> claims = service.getPendingClaims();
+                            if (claims != null) {
+                                for (PendingClaim claim : claims) {
+                                    String dateStr = claim.getDateProcessed();
+                                    String formattedDate = "";
+                                    if (dateStr != null && !dateStr.isEmpty()) {
+                                        try {
+                                            Date date = inputFormat.parse(dateStr); 
+                                            formattedDate = outputFormat.format(date);
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                        %>
+                            <tr>
+                                <td><%= claim.getId() %></td>
+                                <td><%= claim.getTransactionId() %></td>
+                                <td class="expandable-text"><%= claim.getName() %></td>
+                                <td class="expandable-text"><%= claim.getEmail() %></td>
+                                <td>
+                                    <form action="pending_claim.jsp" method="post">
+                                        <input type="hidden" name="id" value="<%= claim.getId() %>">
+                                        <select name="status" class="status-dropdown 
+                                            <%= "PENDING".equalsIgnoreCase(claim.getStatus()) ? "status-pending" : 
+                                                "PROCESSING".equalsIgnoreCase(claim.getStatus()) ? "status-processing" : 
+                                                "AVAILABLE".equalsIgnoreCase(claim.getStatus()) ? "status-available" : "" %>" 
+                                            onchange="this.form.submit()">
+                                            <option value="pending" <%= "PENDING".equals(claim.getStatus()) ? "selected" : "" %>>PENDING</option>
+                                            <option value="processing" <%= "PROCESSING".equals(claim.getStatus()) ? "selected" : "" %>>PROCESSING</option>
+                                            <option value="available" <%= "AVAILABLE".equals(claim.getStatus()) ? "selected" : "" %>>AVAILABLE</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="expandable-text"><%= claim.getCollege() %></td>
+                                <td><%= formattedDate %></td>
+                                <td class="expandable-text"><%= claim.getFiles() %></td>
+                                <td>
+                                    <button type="submit" class="action-button" 
+                                        <%= "PROCESSING".equalsIgnoreCase(claim.getStatus()) || "PENDING".equalsIgnoreCase(claim.getStatus()) ? "disabled" : "" %>>
+                                        CLAIM
+                                    </button>
+                                </td>
+                            </tr>
+                        <%
+                                }
+                            } else {
+                        %>
+                            <tr>
+                                <td colspan="9">No pending claims found.</td>
+                            </tr>
+                        <%
+                            }
+                        %>
                     </tbody>
                     </table>
                 </div>
@@ -275,24 +136,21 @@
                         <p class="bigger-text">Select the corresponding type of claimer to activate the Document Receiving Form.</p>
                         <div class="info-text">
                             <i class="bi bi-info-circle"></i>
-                            <p class="smaller-text">Select Primary Claimer if the original requester is present. If the original requester is not physically present, select Representative.</p>
+                            <p class="smaller-text">Select <strong>Primary Claimer</strong> if the original requester is present. If the original requester is not physically present, select <strong>Representative.</strong></p>
                         </div>
                         <div class="claimer-button">
-                            <a href="/pages/redirecting.html?redirect=../pages/receiving_form_primary.html" class="primary" target="_blank">
+                            <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp" class="primary" target="_blank">
                                 Primary Claimer<i class="bi bi-chevron-right"></i>
-                              </a>
-                              
-                              <a href="/pages/redirecting.html?redirect=../pages/receiving_form_representative.html" class="representative" target="_blank">
+                            </a>
+                            <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp" class="representative" target="_blank">
                                 Representative<i class="bi bi-chevron-right"></i>
-                              </a>                              
+                            </a>                              
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="overlay"></div>
-    
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>
 </html>

@@ -56,7 +56,7 @@
     
                                        if (claimerId > 0) {
                                             ProofDAO proofsDAO = new ProofDAO();
-                                            proofsDAO.insertProofs(photoData, signatureData, proofDate, "", "", claimerId, transactionId);
+                                            proofsDAO.insertProofs(photoData, signatureData, proofDate, idData, letterData, claimerId, transactionId);
                                 
                                             // Update the is_claimed status
                                             RequestDAO requestDAO = new RequestDAO();

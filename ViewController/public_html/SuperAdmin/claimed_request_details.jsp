@@ -27,7 +27,6 @@
         }
 
         if (details != null) {
-            // Passing 'details' to the request scope so that it's available in the included JSP
             request.setAttribute("details", details);
         }
     %>
@@ -109,9 +108,11 @@
                                             <button class="proof-btn">View Claimer's Photo</button>
                                         </div>
                                         <div class="claimer-id">
-                                             <% if (!"PRIMARY".equals(details.getClaimerRole())) { %>
-                                                <button class="proof-btn">View Authorization Letter & ID Authenticity</button>
-                                             <% } %>
+                                            <button class="proof-btn" 
+                                                <% if ("PRIMARY".equals(details.getClaimerRole())) { %>
+                                                    disabled
+                                                <% } %> 
+                                            >View Authorization Letter & ID Authenticity</button>
                                         </div>
                                     </div>
                                 </div>      

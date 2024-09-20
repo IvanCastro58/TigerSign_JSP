@@ -14,10 +14,9 @@
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
 <body>
-    <input type="checkbox" id="menu-toggle" hidden>
     <%@ include file="/WEB-INF/components/session_admin.jsp" %>
-    <%
-        String activePage = "evaluation";
+    <% 
+        request.setAttribute("activePage", "evaluation");  
     %>
     
     <%@ include file="/WEB-INF/components/header_admin.jsp" %>
