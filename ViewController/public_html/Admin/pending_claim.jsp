@@ -25,6 +25,9 @@
     <% 
         String statusUpdateId = request.getParameter("id");
         String statusUpdateValue = request.getParameter("status");
+        String firstName = (String) session.getAttribute("adminFirstName");
+        String lastName = (String) session.getAttribute("adminLastName");
+        String fullName = firstName + " " + lastName;
         if (statusUpdateId != null && statusUpdateValue != null) {
             try {
                 int id = Integer.parseInt(statusUpdateId);
@@ -35,6 +38,7 @@
                 e.printStackTrace(); 
             }
         }
+        
 
         request.setAttribute("activePage", "pending_claim");  
 
@@ -139,12 +143,12 @@
                             <p class="smaller-text">Select <strong>Primary Claimer</strong> if the original requester is present. If the original requester is not physically present, select <strong>Representative.</strong></p>
                         </div>
                         <div class="claimer-button">
-                            <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp" class="primary" target="_blank">
+                           <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp" class="primary" target="_blank">
                                 Primary Claimer<i class="bi bi-chevron-right"></i>
                             </a>
                             <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp" class="representative" target="_blank">
                                 Representative<i class="bi bi-chevron-right"></i>
-                            </a>                              
+                            </a>                                                     
                         </div>
                     </div>
                 </div>
@@ -152,5 +156,8 @@
         </div>
     </div>
     <%@ include file="/WEB-INF/components/script.jsp" %>
+    <script type="text/javascript">
+        const adminFullName = "<%= fullName %>";
+    </script>
 </body>
 </html>

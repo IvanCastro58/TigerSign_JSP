@@ -14,8 +14,9 @@ claimerButtons.forEach(button => {
         const primaryLink = claimerPopup.querySelector('.claimer-button .primary');
         const representativeLink = claimerPopup.querySelector('.claimer-button .representative');
 
-        primaryLink.href = `../pages/receiving_form_primary.jsp?id=${id}&transactionId=${encodeURIComponent(transactionId)}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&files=${encodeURIComponent(files)}`;
-        representativeLink.href = `../pages/receiving_form_representative.jsp?id=${id}&transactionId=${encodeURIComponent(transactionId)}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&files=${encodeURIComponent(files)}`;
+        primaryLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp&id=${id}&transactionId=${encodeURIComponent(transactionId)}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&files=${encodeURIComponent(files)}&fullname=${encodeURIComponent(adminFullName)}`;
+
+        representativeLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp&id=${id}&transactionId=${encodeURIComponent(transactionId)}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&files=${encodeURIComponent(files)}&fullname=${encodeURIComponent(adminFullName)}`;
 
         claimerPopup.style.display = 'flex';
         setTimeout(() => {

@@ -46,7 +46,14 @@
                                 String signatureData = request.getParameter("signature-data");
                                 String idData = null;
                                 String letterData = null;
+                                String fullName = request.getParameter("fullname");
                                 String submit = request.getParameter("submit"); 
+                                
+                                System.out.println("Transaction ID: " + transactionId);
+                                System.out.println("Name: " + name);
+                                System.out.println("Email: " + email);
+                                System.out.println("Files: " + files);
+                                System.out.println("Full Name: " + fullName);
                             
                                 if (submit != null && name != null && email != null) {
                                     ClaimerDAO claimerDAO = new ClaimerDAO();
@@ -54,7 +61,7 @@
 
                                     if (claimerId > 0) {
                                         ProofDAO proofsDAO = new ProofDAO();
-                                        proofsDAO.insertProofs(photoData, signatureData, proofDate, "", "", claimerId, transactionId);
+                                        proofsDAO.insertProofs(photoData, signatureData, proofDate, "", "", claimerId, transactionId, fullName);
                             
                                         // Update the is_claimed status
                                         RequestDAO requestDAO = new RequestDAO();
@@ -70,6 +77,7 @@
                             <form action="" class="form" method="POST">
                                 <input type="hidden" name="photo-data" id="photo-data">
                                 <input type="hidden" name="signature-data" id="signature-data">
+                                <input type="hidden" name="adminFullName" value="<%= fullName %>" />
                                 <div class="input-fields">
                                     <label for="claimer-name" class="form-label">Name</label>
                                     <input type="text" name="field-name" id="field-name" value="<%= name != null ? name : "" %>" placeholder="Enter Full Name" required>

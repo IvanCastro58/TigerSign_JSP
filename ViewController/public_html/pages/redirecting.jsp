@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -21,12 +21,14 @@
     </div>
     <div class="message">You are about to be transferred to a new page.</div>
   </div>
+
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const targetUrl = urlParams.get('redirect') || '/'; 
+    const targetUrl = urlParams.get('redirect'); 
+    const queryParams = window.location.search; 
     
     setTimeout(function() {
-      window.location.href = targetUrl;
+      window.location.href = targetUrl + queryParams;
     }, 1000); 
   </script>
 </body>

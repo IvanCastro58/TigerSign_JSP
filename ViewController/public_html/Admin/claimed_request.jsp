@@ -38,7 +38,7 @@
             <%@ include file="/WEB-INF/components/top_nav.jsp" %>
             <div class="table-container">
                 <div class="table-wrapper">
-                    <table class="transaction-table">
+                    <table class="transaction-table" id="pending_table">
                     <thead>
                         <tr>
                             <th>

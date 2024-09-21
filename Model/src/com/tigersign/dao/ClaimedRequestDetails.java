@@ -14,6 +14,7 @@ public class ClaimedRequestDetails {
     private String signatureBase64;
     private String idPhotoBase64;
     private String letterPhotoBase64;
+    private String releasedBy;
 
     // Getters and Setters
     public String getTransactionId() {
@@ -118,5 +119,13 @@ public class ClaimedRequestDetails {
 
     public void setLetterPhotoBase64(String letterPhotoBase64) {
         this.letterPhotoBase64 = letterPhotoBase64;
+    }
+    
+    public String getReleasedBy() {
+            return releasedBy;
+        }
+
+    public void setReleasedBy(String releasedBy) {
+        this.releasedBy = releasedBy;
     }
 }

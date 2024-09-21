@@ -23,8 +23,11 @@
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     
     <% 
-        String statusUpdateId = request.getParameter("id");
+       String statusUpdateId = request.getParameter("id");
         String statusUpdateValue = request.getParameter("status");
+        String firstName = (String) session.getAttribute("adminFirstName");
+        String lastName = (String) session.getAttribute("adminLastName");
+        String fullName = firstName + " " + lastName;
         if (statusUpdateId != null && statusUpdateValue != null) {
             try {
                 int id = Integer.parseInt(statusUpdateId);
@@ -152,5 +155,8 @@
         </div>
     </div>
     <%@ include file="/WEB-INF/components/script.jsp" %>
+    <script type="text/javascript">
+        const adminFullName = "<%= fullName %>";
+    </script>
 </body>
 </html>

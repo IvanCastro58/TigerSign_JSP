@@ -48,6 +48,7 @@
                                 String signatureData = request.getParameter("signature-data");
                                 String idData = request.getParameter("id-data");
                                 String letterData = request.getParameter("letter-data");
+                                String fullName = request.getParameter("fullname");
                                 String submit = request.getParameter("submit"); 
                                 
                                    if (submit != null && name != null && email != null) {
@@ -56,7 +57,7 @@
     
                                        if (claimerId > 0) {
                                             ProofDAO proofsDAO = new ProofDAO();
-                                            proofsDAO.insertProofs(photoData, signatureData, proofDate, idData, letterData, claimerId, transactionId);
+                                            proofsDAO.insertProofs(photoData, signatureData, proofDate, idData, letterData, claimerId, transactionId, fullName);
                                 
                                             // Update the is_claimed status
                                             RequestDAO requestDAO = new RequestDAO();
@@ -74,6 +75,7 @@
                                 <input type="hidden" name="signature-data" id="signature-data">
                                 <input type="hidden" name="id-data" id="id-data">
                                 <input type="hidden" name="letter-data" id="letter-data">
+                                <input type="hidden" name="adminFullName" value="<%= fullName %>" />
                                 <div class="input-fields">
                                     <label for="claimer-name" class="form-label">Name:</label>
                                     <input type="text" name="field-name" id="field-name" placeholder="Enter Full Name" required>

@@ -96,7 +96,7 @@
                                             Role: <strong><%= details.getClaimerRole() %></strong>
                                         </div>
                                         <div class="info-item" id="claimer-released">
-                                            Released by: <strong>Juan Dela Cruz</strong> 
+                                            Released by: <strong><%= (details.getReleasedBy() != null && !details.getReleasedBy().isEmpty()) ? details.getReleasedBy() : "Juan Dela Cruz" %></strong>
                                         </div>
                                     </div>
                                     <div class="claimer-proof">
