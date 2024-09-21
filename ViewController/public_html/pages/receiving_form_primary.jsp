@@ -49,11 +49,6 @@
                                 String fullName = request.getParameter("fullname");
                                 String submit = request.getParameter("submit"); 
                                 
-                                System.out.println("Transaction ID: " + transactionId);
-                                System.out.println("Name: " + name);
-                                System.out.println("Email: " + email);
-                                System.out.println("Files: " + files);
-                                System.out.println("Full Name: " + fullName);
                             
                                 if (submit != null && name != null && email != null) {
                                     ClaimerDAO claimerDAO = new ClaimerDAO();

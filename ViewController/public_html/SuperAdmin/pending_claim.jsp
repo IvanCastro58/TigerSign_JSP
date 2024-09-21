@@ -25,8 +25,8 @@
     <% 
        String statusUpdateId = request.getParameter("id");
         String statusUpdateValue = request.getParameter("status");
-        String firstName = (String) session.getAttribute("adminFirstName");
-        String lastName = (String) session.getAttribute("adminLastName");
+        String firstName = (String) session.getAttribute("userFirstName");
+        String lastName = (String) session.getAttribute("userLastName");
         String fullName = firstName + " " + lastName;
         if (statusUpdateId != null && statusUpdateValue != null) {
             try {
