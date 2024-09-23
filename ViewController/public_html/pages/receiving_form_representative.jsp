@@ -14,11 +14,12 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../resources/css/receiving_form.css">
+    <link rel="stylesheet" href="../resources/css/manage_account.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
 
 <body>
-    <input type="checkbox" id="menu-toggle" hidden>
+    <%@ include file="/WEB-INF/components/privacy_modal.jsp" %>
     <header>
         <div class="logo">
             <img src="../resources/images/logo.png" alt="TigerSign Logo">
@@ -63,14 +64,14 @@
                                             RequestDAO requestDAO = new RequestDAO();
                                             requestDAO.updateClaimedStatus(transactionId);
                                             
-                                            //response.sendRedirect("successPage.jsp");
+                                            response.sendRedirect("success_page.jsp");
                                         } else {
                                             throw new SQLException("Failed to retrieve the generated claimer_id.");
                                         }
                                     }
                                 %>
                             <h2 class="number-form"><span>Transaction ID: <%= transactionId != null ? "#" + transactionId : "" %></span></h2>
-                            <form action="" class="form" method="POST">
+                            <form action="" class="form" method="POST" id="document-receiving-form">
                                 <input type="hidden" name="photo-data" id="photo-data">
                                 <input type="hidden" name="signature-data" id="signature-data">
                                 <input type="hidden" name="id-data" id="id-data">
@@ -148,7 +149,7 @@
                                 <%@ include file="/WEB-INF/components/form_modals.jsp" %>
     
                                 <div class="submit-button-container">
-                                        <button type="submit" name="submit" value="submit" class="submit-btn">Submit</button>
+                                    <button type="submit" name="submit" value="submit" class="submit-button" id="submit-button">Submit</button>
                                 </div>
                             </form>
                         </div>

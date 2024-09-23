@@ -11,7 +11,7 @@
         <h1>Access Denied</h1>
         <p>You do not have permission to access this page.</p>
         <p>Please contact your system administrator if you believe this is an error.</p>
-        <a href="${pageContext.request.contextPath}/SuperAdmin/main_login.jsp">Go to Login Page</a>
+        <a href="${pageContext.request.contextPath}/Admin/login.jsp">Go to Login Page</a>
     </div>
 </body>
 </html>

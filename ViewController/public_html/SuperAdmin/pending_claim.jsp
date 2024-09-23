@@ -23,7 +23,7 @@
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     
     <% 
-       String statusUpdateId = request.getParameter("id");
+        String statusUpdateId = request.getParameter("id");
         String statusUpdateValue = request.getParameter("status");
         String firstName = (String) session.getAttribute("userFirstName");
         String lastName = (String) session.getAttribute("userLastName");

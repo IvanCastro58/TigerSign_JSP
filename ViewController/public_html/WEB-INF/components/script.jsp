@@ -21,6 +21,7 @@
 <script src="<%= request.getContextPath() %>/resources/javascript/signature.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/survey.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/toggle.js"></script>
+<script src="<%= request.getContextPath() %>/resources/javascript/data_privacy.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
