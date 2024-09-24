@@ -8,8 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Setup Google Authenticator - TigerSign</title>
-    <link rel="stylesheet" href="../resources/css/totp.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/totp.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/totp.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -38,7 +37,7 @@
                         <input type="checkbox" id="rememberMe" name="rememberMe">
                         <label for="rememberMe">Remember Me</label>
                     </div>
-                    <button type="submit">Verify</button>
+                    <button class="submit" type="submit">Verify</button>
                 </div>
             </form>
         </div>

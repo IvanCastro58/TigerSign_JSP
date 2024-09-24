@@ -63,51 +63,6 @@ header .logo img {
     height: 10px;
 }
 
-.form-details{
-    background-color: var(--white);
-    border: 1px solid var(--blackish);
-    padding: 0 20px 20px 20px;
-}
-
-.success-icon img{
-    width: 100px; 
-    height: 100px;
-}
-
-.success-text{
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    text-align: justify;
-}
-
-.success-text p{
-    width: 80%;
-    font-size: 14px;
-}
-
-.bi.bi-info-circle{
-    color: #3B83FB; 
-    font-size: 14px; 
-    margin-right: 5px;
-}
-
-.title-sucess{
-    text-align: center;
-    font-size: 32px;
-    margin: 30px 20px;
-    padding: 0 100px;
-}
-
-.success-icon{
-    text-align: center;
-}
-
-.success-icon img{
-    width: 150px;
-    height: auto;
-}
-
 .qr-box{
     margin: 20px 0;
     padding: 20px;
@@ -161,7 +116,7 @@ header .logo img {
 }
 
 .form-box-success{
-    max-width: 800px;
+    max-width: 600px;
     width: 100%;
     border: 1px solid #D3D3D3;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -215,31 +170,62 @@ hr {
 
 .form-box input[type="text"]:focus, 
 .form-box-totp input[type="text"]:focus {
-    border-color: #80bdff;
+    border: 1px solid #80bdff;
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.form-box button, 
-.form-box-totp button {
+.form-box input[type="text"].is-invalid, 
+.form-box-totp input[type="text"].is-invalid {
+    border: 1px solid var(--red); 
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-box .submit, 
+.form-box-totp .submit {
     width: fit-content;
     margin: 20px auto;
-    padding: 10px 30px;
+    padding: 10px;
     background-color: var(--green);
     color: var(--white);
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border: 1px solid var(--green);
+    font-size: 14px;
     font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.form-box button:hover, 
-.form-box-totp button:hover{
+.form-box .cancel, 
+.form-box-totp .cancel {
+    width: fit-content;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: var(--white);
+    color: var(--blackish);
+    border: 1px solid var(--blackish);
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.form-box .cancel:hover, 
+.form-box-totp .cancel:hover{
+    background-color: var(--blackish);
+    color: var(--white);
+}
+
+.form-box i {
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.form-box .submit:hover, 
+.form-box-totp .submit:hover{
     background-color: #146b43;
-    transform: translateY(-3px);
 }
 
 .form-box .reset-button{
@@ -300,32 +286,66 @@ hr {
     color: var(--white);
 }
 
+.form-details{
+    background-color: var(--white);
+    padding: 20px;
+}
+
+.success-icon img{
+    width: 200px; 
+    height: auto;
+}
+
+.success-text{
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    text-align: justify;
+}
+
+.success-text p{
+    width: 80%;
+    font-size: 14px;
+}
+
+.bi.bi-info-circle{
+    color: #3B83FB; 
+    font-size: 14px; 
+    margin-right: 5px;
+}
+
+.title-sucess{
+    text-align: center;
+    font-size: 28px;
+    margin: 20px 20px 30px 20px;
+}
+
+.success-icon{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.invalid-feedback{
+    color: var(--red);
+    text-align: left;
+    font-size: 12px;
+    font-weight: 500;
+}
+
 @media (max-width: 830px) {
     .title-sucess{
         font-size: 24px;
     }
 
     .form-box-success{
-        max-width: 600px;
+        max-width: 500px;
     }
 
     .success-icon img{
-        width: 100px;
+        width: 150px;
     }
 
     .success-text p{
         font-size: 12px;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

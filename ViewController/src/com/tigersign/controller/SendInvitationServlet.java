@@ -1,5 +1,6 @@
 package com.tigersign.controller;
 
+import com.tigersign.dao.Admin;
 import com.tigersign.dao.DatabaseConnection;
 
 import java.io.IOException;
@@ -29,21 +30,55 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/SuperAdmin/send-invitation")
 public class SendInvitationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    
+    private Admin getAdminDetails(String email) {
+        Admin admin = null;
+        String query = "SELECT ID, FIRSTNAME, LASTNAME, EMAIL, STATUS, PICTURE FROM TS_ADMIN WHERE EMAIL = ?";
 
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, email);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    admin = new Admin();
+                    admin.setId(rs.getInt("ID"));
+                    admin.setFirstname(rs.getString("FIRSTNAME"));
+                    admin.setLastname(rs.getString("LASTNAME"));
+                    admin.setEmail(rs.getString("EMAIL"));
+                    admin.setStatus(rs.getString("STATUS"));
+                    admin.setPicture(rs.getString("PICTURE")); 
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return admin;
+    }
+    
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("admin-email");
 
         if (email != null && !email.isEmpty()) {
             if (!isValidDomain(email)) {
-                response.getWriter().write("Invalid email domain. Only 'ust.edu.ph' emails are allowed.");
-                return;
+                request.setAttribute("showModal", true);
+                request.setAttribute("invalidDomain", true);
+                request.getRequestDispatcher("manage_account.jsp").forward(request, response);
             }
 
-            if (isEmailExisting(email)) {
-                response.getWriter().write("User with this email already exists as an admin.");
+            Admin admin = getAdminDetails(email);
+            if (admin != null) {
+                request.setAttribute("userId", admin.getId());
+                request.setAttribute("existingFirstname", admin.getFirstname());
+                request.setAttribute("existingLastname", admin.getLastname());
+                request.setAttribute("existingEmail", admin.getEmail());
+                request.setAttribute("existingStatus", admin.getStatus());
+                request.setAttribute("existingPicture", admin.getPicture());
+
+                request.getRequestDispatcher("manage_account.jsp").forward(request, response);
             } else {
                 sendInvitationEmail(email);
-                response.getWriter().write("Invitation sent successfully.");
+                response.sendRedirect(request.getContextPath() + "/SuperAdmin/manage_account.jsp?success=true");
             }
         } else {
             response.getWriter().write("Invalid email address.");
@@ -51,8 +86,8 @@ public class SendInvitationServlet extends HttpServlet {
     }
 
     private boolean isValidDomain(String email) {
-        return email.endsWith("@ust.edu.ph") || email.endsWith("@gmail.com");
-        //return email.endsWith("@ust.edu.ph");
+        //return email.endsWith("@ust.edu.ph") || email.endsWith("@gmail.com");
+        return email.endsWith("@ust.edu.ph");
     }
 
     private boolean isEmailExisting(String email) {
@@ -98,7 +133,7 @@ public class SendInvitationServlet extends HttpServlet {
 
             String content = "<div style='width: 100%; max-width: 1250px; margin: 0 auto; text-align: center; background-color: #f9f9f9; padding: 20px; font-family: Montserrat, sans-serif;'>"
                             + "<div style='display: inline-block; width: 100%; max-width: 400px; background-color: white; border: 1px solid #ddd; padding: 30px 20px; box-sizing: border-box;'>"
-                            + "<img src='http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/tigersign-logo.png' alt='TigerSign Logo' style='width: 150px; margin-bottom: 20px;'>"
+                            + "<img src='https://drive.google.com/uc?id=1BU7bQH5ZnZGwokJlNhyhHGGPn_nk_R7h' alt='TigerSign Logo' style='width: 100px; height: 100px; margin-bottom: 20px; border-radius: 20px; pointer-events: none;'>"
                             + "<hr style='border: none; height: 2px; background-color: #F4BB00; margin-bottom: 20px;'>"
                             + "<h2 style='color: #333;'>Admin Invitation</h2>"
                             + "<p style='font-size: 14px; color: #555;'>You have been invited to become an Admin for TigerSign. Please click the button below to accept the invitation and create your account.</p>"
@@ -106,7 +141,7 @@ public class SendInvitationServlet extends HttpServlet {
                             + "style='background-color: #F4BB00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; font-weight: 600; font-family: Montserrat, sans-serif;'>Accept Invitation</a>"
                             + "</div>"
                             + "</div>";
-
+            
             message.setContent(content, "text/html");
 
             Transport.send(message);

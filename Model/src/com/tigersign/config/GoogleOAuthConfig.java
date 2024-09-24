@@ -110,7 +110,8 @@ public class GoogleOAuthConfig extends HttpServlet {
                 if (isCodeValid) {
                     response.sendRedirect("SuperAdmin/dashboard.jsp");
                 } else {
-                    response.sendRedirect("error/error_invalid_otp.jsp");
+                    request.setAttribute("errorMessage", "Invalid TOTP");
+                    request.getRequestDispatcher("/SuperAdmin/verify_superadmin.jsp").forward(request, response);
                 }
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "TOTP secret not found for user.");

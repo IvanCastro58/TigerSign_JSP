@@ -8,87 +8,15 @@
     <title>Manage Account - TigerSign</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../resources/css/sidebar.css">
-    <link rel="stylesheet" href="../resources/css/profile.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/sidebar.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/profile.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
 </head>
-<style>
-    .toast-icon-success, .toast-icon-error {
-        margin-right: 8px; 
-        vertical-align: middle; 
-        font-size: 14px; 
-    }
-    
-    .toast-icon-success {
-        color: #1C8454; 
-    }
-    
-    .toast-icon-error {
-        color: #d9534f; 
-    }
-    
-    .toast-success {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 12px;
-        width: 300px; 
-        padding: 15px; 
-        color: #686D76;
-    }
-    
-    .toast-error {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 12px;
-        width: 300px; 
-        padding: 15px; 
-        color: #686D76;
-    }
-    
-    .toast-error::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #d9534f;
-        animation: loading-error 3s linear infinite;
-    }
-    
-    .toast-success::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #1C8454;
-        animation: loading-success 3s linear infinite;
-    }
-    
-    @keyframes loading-error {
-        0% {
-            width: 100%;
-            background: #d9534f;
-        }
-        100% {
-            width: 0;
-            background: #d9534f;
-        }
-    }
-@keyframes loading-success {
-    0% {
-        width: 100%;
-        background: #1C8454;
-    }
-    100% {
-        width: 0;
-        background: #1C8454;
-    }
-}
-</style>
+<%@ include file="/WEB-INF/components/toastify_style.jsp" %>
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <%
@@ -97,9 +25,9 @@
             boolean success = userService.deactivateUser(Integer.parseInt(request.getParameter("userId")));
             
             if (success) {
-                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account successfully deactivated!', backgroundColor: '#ffffff', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000}).showToast();</script>");
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account Successfully Deactivated !', backgroundColor: '#ffffff',  gravity: 'bottom', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000}).showToast();</script>");
             } else {
-                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to deactivate account!', backgroundColor: '#ffffff', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000}).showToast();</script>");
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to deactivate account!', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000}).showToast();</script>");
             }
         }
     %>
@@ -110,9 +38,9 @@
             boolean success = userService.activateUser(Integer.parseInt(request.getParameter("userId")));
             
             if (success) {
-                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account successfully activated!', backgroundColor: '#ffffff', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000}).showToast();</script>");
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account Successfully Activated !', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000}).showToast();</script>");
             } else {
-                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to activate account!', backgroundColor: '#ffffff', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000}).showToast();</script>");
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to activate account!', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000}).showToast();</script>");
             }
         }
     %>

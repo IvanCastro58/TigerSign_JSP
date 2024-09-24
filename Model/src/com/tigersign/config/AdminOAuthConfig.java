@@ -80,6 +80,11 @@ public class AdminOAuthConfig extends HttpServlet {
                     } else {
                         String setupUrl = getTOTPSetupUrl(request, email);
                         request.setAttribute("setupUrl", setupUrl);
+                        HttpSession session = request.getSession();
+                        session.setAttribute("adminEmail", email);
+                        session.setAttribute("adminFirstName", firstName);
+                        session.setAttribute("adminLastName", lastName);
+                        session.setAttribute("adminPicture", picture);
                         request.getRequestDispatcher("Admin/totp_setup_admin.jsp").forward(request, response);
                     }
                 } else {
@@ -116,7 +121,8 @@ public class AdminOAuthConfig extends HttpServlet {
     
                 response.sendRedirect("Admin/dashboard.jsp");
             } else {
-                response.sendRedirect("error/error_invalid_otp.jsp");
+                request.setAttribute("errorMessage", "Invalid TOTP");
+                request.getRequestDispatcher("/Admin/verify_admin.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());

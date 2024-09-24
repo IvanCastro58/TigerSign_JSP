@@ -206,14 +206,46 @@ body {
     font-size: 14px;
     font-family: 'Montserrat', sans-serif;
     padding: 15px;
-    margin-bottom: 20px;
     margin-left: 20px;
     border: 1px solid var(--light-gray);
 }
 
 #add-admin-form input:focus {
-    border-color: #0099FF; 
-    outline: none; 
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#add-admin-form .is-invalid {
+    border: 1px solid var(--red); 
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-text{
+    color: var(--red);
+    font-size: 12px;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+.admin-details{
+    display: flex;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    border: 1px solid var(--light-gray);
+}
+
+.user-info p{
+    font-size: 12px;
+}
+
+.user-pic img{
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+    border-radius: 5px;
 }
 
 .submit-btn {
@@ -223,10 +255,28 @@ body {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     width: max-content;
+    margin-top: 20px;
     margin-left: auto;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+}
+
+.view-btn {
+    background-color: var(--blackish);
+    color: var(--white);
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    width: max-content;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.view-btn i {
+    margin-right: 8px;
 }
 
 .submit-btn i{
@@ -359,6 +409,10 @@ body {
     }
 
     .submit-btn i{
+        font-size: 10px;
+    }
+    
+    .invalid-text{
         font-size: 10px;
     }
 }

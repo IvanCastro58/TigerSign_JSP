@@ -10,11 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
-    <link rel="stylesheet" href="../resources/css/sidebar.css">
-    <link rel="stylesheet" href="../resources/css/table.css">
-    <link rel="stylesheet" href="../resources/css/manage_account.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/sidebar.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/table.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/manage_account.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
+<%@ include file="/WEB-INF/components/toastify_style.jsp" %>
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <% 
@@ -28,6 +29,7 @@
     
     <%@ include file="/WEB-INF/components/header.jsp" %>
     <%@ include file="/WEB-INF/components/sidebar.jsp" %>
+    <%@ include file="/WEB-INF/components/existing_account.jsp" %>
     
     <div class="main-content">
         <div class="margin-content">
@@ -126,6 +128,85 @@
     </div>
     
     <div class="overlay"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+    <script>
+        window.onload = function() {
+            const successMessage = '<%= request.getParameter("success") != null ? "Invitation sent successfully." : "" %>';
+            
+            if (successMessage) {
+                Toastify({
+                    text: "<i class='bi bi-check-circle-fill toast-icon-success'></i> Invitation Sent Successfully !",
+                    backgroundColor: '#ffffff',
+                    gravity: 'bottom',
+                    close: true,
+                    position: 'right',
+                    className: 'toast-success',
+                    escapeMarkup: false,
+                    duration: 3000
+                }).showToast();
+            }
+
+            const adminName = '<%= request.getAttribute("existingFirstname") != null ? request.getAttribute("existingFirstname") : "" %>';
+            const existingAdminPopup = document.getElementById('existing-admin-popup');
+            const closeExistingAdminPopup = document.getElementById('popup-close-existing');
+    
+            if (adminName !== "") {
+                existingAdminPopup.style.display = 'flex'; 
+                setTimeout(() => {
+                    existingAdminPopup.querySelector('.popup').classList.add('show'); 
+                }, 10);
+            }
+    
+            closeExistingAdminPopup.addEventListener('click', () => {
+                existingAdminPopup.querySelector('.popup').classList.remove('show'); 
+                setTimeout(() => {
+                    existingAdminPopup.style.display = 'none'; 
+                }, 600);
+            });
+    
+            window.addEventListener('click', (event) => {
+                if (event.target === existingAdminPopup) {
+                    existingAdminPopup.querySelector('.popup').classList.remove('show'); 
+                    setTimeout(() => {
+                        existingAdminPopup.style.display = 'none'; 
+                    }, 600);
+                }
+            });
+        };
+    </script>
+    
+    <script>
+        const adminPopup = document.getElementById('add-admin-popup');
+        const addAdmin = document.querySelector('.add-user-btn');
+        const closeAddAdmin = document.getElementById('popup-close');
+        
+        if (adminPopup.style.display === 'flex') {
+            adminPopup.querySelector('.popup').classList.add('show');
+        }
+        
+        addAdmin.addEventListener('click', () => {
+            adminPopup.style.display = 'flex';
+            setTimeout(() => {
+                adminPopup.querySelector('.popup').classList.add('show');
+            }, 10);
+        });
+        
+        closeAddAdmin.addEventListener('click', () => {
+            adminPopup.querySelector('.popup').classList.remove('show');
+            setTimeout(() => {
+                adminPopup.style.display = 'none';
+            }, 600);
+        });
+        
+        window.addEventListener('click', (event) => {
+            if (event.target === adminPopup) {
+                adminPopup.querySelector('.popup').classList.remove('show');
+                setTimeout(() => {
+                    adminPopup.style.display = 'none';
+                }, 600);
+            }
+        });
+    </script>
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>
 </html>

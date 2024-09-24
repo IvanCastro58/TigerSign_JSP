@@ -29,7 +29,7 @@
             <form action="${pageContext.request.contextPath}/adminOauth2callback" method="post">
                 <label for="otp">Enter the six-digit TOTP from Google Authenticator.</label>
                 <input type="text" id="otp" name="otp" required />
-                <button type="submit">Verify</button>
+                <button class="submit" type="submit">Verify</button>
             </form>
         </div>
     </div>
