@@ -34,10 +34,12 @@
                 <input type="text" id="otp" name="otp" required />
                 <div class="totp-button">
                     <div class="remember">
-                        <input type="checkbox" id="rememberMe" name="rememberMe">
-                        <label for="rememberMe">Remember Me</label>
+                        <input type="checkbox" id="rememberMe" name="rememberMe" class="custom-checkbox">
+                        <label for="rememberMe" class="custom-label">Remember Me</label>
+                    </div> 
+                    <div>
+                        <button class="submit" type="submit"><i class="bi bi-check-lg"></i>Verify</button>
                     </div>
-                    <button class="submit" type="submit">Verify</button>
                 </div>
             </form>
         </div>

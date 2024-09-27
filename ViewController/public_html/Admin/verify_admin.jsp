@@ -38,9 +38,9 @@
             
                 <div class="totp-button">
                     <div class="remember">
-                        <input type="checkbox" id="rememberMe" name="rememberMe">
-                        <label for="rememberMe">Remember Me</label>
-                    </div>  
+                        <input type="checkbox" id="rememberMe" name="rememberMe" class="custom-checkbox">
+                        <label for="rememberMe" class="custom-label">Remember Me</label>
+                    </div>    
                     <div>
                         <button class="submit" type="submit"><i class="bi bi-check-lg"></i>Verify</button>
                         <button class="cancel" onclick="window.location.href='<%= request.getContextPath() %>/Admin/login.jsp';"><i class="bi bi-x-lg"></i>Cancel</button>

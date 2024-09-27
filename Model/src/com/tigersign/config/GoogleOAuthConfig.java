@@ -21,6 +21,7 @@ import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,12 +55,12 @@ public class GoogleOAuthConfig extends HttpServlet {
         if (code != null) {
             String tokenResponse = getTokenResponse(code);
             JSONObject tokenJson = new JSONObject(tokenResponse);
-
+    
             if (tokenJson.has("error")) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error obtaining access token: " + tokenJson.getString("error"));
                 return;
             }
-
+    
             String accessToken = tokenJson.getString("access_token");
             String userInfoResponse = getUserInfo(accessToken);
             JSONObject userInfoJson = new JSONObject(userInfoResponse);
@@ -67,7 +68,7 @@ public class GoogleOAuthConfig extends HttpServlet {
             String firstName = userInfoJson.optString("given_name", "N/A");
             String lastName = userInfoJson.optString("family_name", "N/A");
             String picture = userInfoJson.optString("picture", "");
-
+    
             try (Connection conn = DatabaseConnection.getConnection()) {
                 if (isAllowedSuperAdmin(conn, email)) {
                     HttpSession session = request.getSession();
@@ -75,13 +76,30 @@ public class GoogleOAuthConfig extends HttpServlet {
                     session.setAttribute("userFirstName", firstName);
                     session.setAttribute("userLastName", lastName);
                     session.setAttribute("userPicture", picture);
-
-                    String secret = getTOTPSecret(conn, email);
-                    if (secret != null) {
-                        response.sendRedirect("SuperAdmin/verify_superadmin.jsp");
+    
+                    // Check for remember me cookie
+                    Cookie[] cookies = request.getCookies();
+                    boolean rememberMe = false;
+    
+                    if (cookies != null) {
+                        for (Cookie cookie : cookies) {
+                            if ("rememberMe".equals(cookie.getName()) && cookie.getValue().equals(email)) {
+                                rememberMe = true;
+                                break;
+                            }
+                        }
+                    }
+    
+                    if (rememberMe) {
+                        response.sendRedirect("SuperAdmin/dashboard.jsp");
                     } else {
-                        String setupUrl = getTOTPSetupUrl(request, email);  
-                        request.getRequestDispatcher("SuperAdmin/totp_setup.jsp").forward(request, response);
+                        String secret = getTOTPSecret(conn, email);
+                        if (secret != null) {
+                            response.sendRedirect("SuperAdmin/verify_superadmin.jsp");
+                        } else {
+                            String setupUrl = getTOTPSetupUrl(request, email);  
+                            request.getRequestDispatcher("SuperAdmin/totp_setup.jsp").forward(request, response);
+                        }
                     }
                 } else {
                     response.sendRedirect("error/error_unauthorized.jsp");
@@ -95,11 +113,14 @@ public class GoogleOAuthConfig extends HttpServlet {
         }
     }
 
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String otp = request.getParameter("otp");
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("userEmail");
+
+        boolean rememberMe = request.getParameter("rememberMe") != null;
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             String secret = getTOTPSecret(conn, email);
@@ -108,6 +129,11 @@ public class GoogleOAuthConfig extends HttpServlet {
                 boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
 
                 if (isCodeValid) {
+                    if (rememberMe) {
+                        Cookie rememberMeCookie = new Cookie("rememberMe", email);
+                        rememberMeCookie.setMaxAge(60); 
+                        response.addCookie(rememberMeCookie);
+                    }
                     response.sendRedirect("SuperAdmin/dashboard.jsp");
                 } else {
                     request.setAttribute("errorMessage", "Invalid TOTP");
@@ -120,6 +146,7 @@ public class GoogleOAuthConfig extends HttpServlet {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
         }
     }
+
 
     private boolean isAllowedSuperAdmin(Connection conn, String email) throws SQLException {
         String query = "SELECT COUNT(*) FROM TS_SUPERADMIN WHERE email = ?";

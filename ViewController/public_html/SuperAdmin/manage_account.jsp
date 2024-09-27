@@ -131,39 +131,59 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
     <script>
         window.onload = function() {
-            const successMessage = '<%= request.getParameter("success") != null ? "Invitation sent successfully." : "" %>';
+            const url = new URL(window.location.href);
+        
+            const successMessage = url.searchParams.get("success") ? "Invitation sent successfully." : "";
             
             if (successMessage) {
                 Toastify({
                     text: "<i class='bi bi-check-circle-fill toast-icon-success'></i> Invitation Sent Successfully !",
                     backgroundColor: '#ffffff',
                     gravity: 'bottom',
-                    close: true,
                     position: 'right',
                     className: 'toast-success',
                     escapeMarkup: false,
                     duration: 3000
                 }).showToast();
+        
+                url.searchParams.delete("success");
+                window.history.replaceState(null, null, url.toString());
             }
-
+        
+            const failedMessage = url.searchParams.get("failed") ? "Failed to Sent Invitation." : "";
+            if (failedMessage) {
+                Toastify({
+                    text: "<i class='bi bi-exclamation-circle-fill toast-icon-error'></i> Failed to Sent Invitation !",
+                    backgroundColor: '#ffffff',
+                    gravity: 'bottom',
+                    position: 'right',
+                    className: 'toast-error',
+                    escapeMarkup: false,
+                    duration: 3000
+                }).showToast();
+        
+                url.searchParams.delete("failed");
+                window.history.replaceState(null, null, url.toString());
+            }
+        
             const adminName = '<%= request.getAttribute("existingFirstname") != null ? request.getAttribute("existingFirstname") : "" %>';
             const existingAdminPopup = document.getElementById('existing-admin-popup');
             const closeExistingAdminPopup = document.getElementById('popup-close-existing');
-    
+        
             if (adminName !== "") {
                 existingAdminPopup.style.display = 'flex'; 
                 setTimeout(() => {
                     existingAdminPopup.querySelector('.popup').classList.add('show'); 
                 }, 10);
             }
-    
+        
             closeExistingAdminPopup.addEventListener('click', () => {
                 existingAdminPopup.querySelector('.popup').classList.remove('show'); 
                 setTimeout(() => {
                     existingAdminPopup.style.display = 'none'; 
                 }, 600);
             });
-    
+        
             window.addEventListener('click', (event) => {
                 if (event.target === existingAdminPopup) {
                     existingAdminPopup.querySelector('.popup').classList.remove('show'); 

@@ -55,7 +55,7 @@ public class ResetTOTPServlet extends HttpServlet {
                         + "<div style='display: inline-block; width: 100%; max-width: 400px; background-color: white; border: 1px solid #ddd; padding: 30px 20px; box-sizing: border-box;'>"
                         + "<img src='https://drive.google.com/uc?id=1BU7bQH5ZnZGwokJlNhyhHGGPn_nk_R7h' alt='TigerSign Logo' style='width: 100px; height: 100px; margin-bottom: 20px; border-radius: 20px; pointer-events: none;'>"
                         + "<hr style='border: none; height: 3px; background-color: #F4BB00; margin-bottom: 20px;'>"
-                        + "<h2 style='color: #333;'>Reset Your TOTP Authentication</h2>"
+                        + "<h2 style='color: #333; width: fit-content; border-bottom: 3px solid #F4BB00;'>Reset Your TOTP Authentication</h2>"
                         + "<p style='font-size: 14px; color: #555;'>Click the button below to reset your TOTP secret for TigerSign.</p>"
                         + "<form action='" + resetLink + "' method='POST'>"
                         + "<input type='hidden' name='action' value='confirm'>"

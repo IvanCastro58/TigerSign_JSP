@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,23 +70,36 @@ public class AdminOAuthConfig extends HttpServlet {
 
             try (Connection conn = DatabaseConnection.getConnection()) {
                 if (isAllowedAdmin(conn, email)) {
-                    String secret = getTOTPSecret(conn, email);
-                    if (secret != null) {
-                        HttpSession session = request.getSession();
-                        session.setAttribute("adminEmail", email);
-                        session.setAttribute("adminFirstName", firstName);
-                        session.setAttribute("adminLastName", lastName);
-                        session.setAttribute("adminPicture", picture);
-                        response.sendRedirect("Admin/verify_admin.jsp");
+                    HttpSession session = request.getSession();
+                    session.setAttribute("adminEmail", email);
+                    session.setAttribute("adminFirstName", firstName);
+                    session.setAttribute("adminLastName", lastName);
+                    session.setAttribute("adminPicture", picture);
+
+                    // Check for remember me cookie
+                    Cookie[] cookies = request.getCookies();
+                    boolean rememberMe = false;
+
+                    if (cookies != null) {
+                        for (Cookie cookie : cookies) {
+                            if ("rememberMe".equals(cookie.getName()) && cookie.getValue().equals(email)) {
+                                rememberMe = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (rememberMe) {
+                        response.sendRedirect("Admin/dashboard.jsp");
                     } else {
-                        String setupUrl = getTOTPSetupUrl(request, email);
-                        request.setAttribute("setupUrl", setupUrl);
-                        HttpSession session = request.getSession();
-                        session.setAttribute("adminEmail", email);
-                        session.setAttribute("adminFirstName", firstName);
-                        session.setAttribute("adminLastName", lastName);
-                        session.setAttribute("adminPicture", picture);
-                        request.getRequestDispatcher("Admin/totp_setup_admin.jsp").forward(request, response);
+                        String secret = getTOTPSecret(conn, email);
+                        if (secret != null) {
+                            response.sendRedirect("Admin/verify_admin.jsp");
+                        } else {
+                            String setupUrl = getTOTPSetupUrl(request, email);
+                            request.setAttribute("setupUrl", setupUrl);
+                            request.getRequestDispatcher("Admin/totp_setup_admin.jsp").forward(request, response);
+                        }
                     }
                 } else {
                     response.sendRedirect("error/error_unauthorized.jsp");
@@ -105,24 +119,26 @@ public class AdminOAuthConfig extends HttpServlet {
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("adminEmail");
 
+        boolean rememberMe = request.getParameter("rememberMe") != null;
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             String secret = getTOTPSecret(conn, email);
-            GoogleAuthenticator gAuth = new GoogleAuthenticator();
-            boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
+            if (secret != null) {
+                boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
 
-            if (isCodeValid) {
-                // Retrieve user information before setting the session
-                String firstName = (String) session.getAttribute("adminFirstName");
-                String lastName = (String) session.getAttribute("adminLastName");
-                String picture = (String) session.getAttribute("adminPicture");
-                
-                // Update admin info in the database
-                updateAdminInfo(conn, email, firstName, lastName, picture);
-    
-                response.sendRedirect("Admin/dashboard.jsp");
+                if (isCodeValid) {
+                    if (rememberMe) {
+                        Cookie rememberMeCookie = new Cookie("rememberMe", email);
+                        rememberMeCookie.setMaxAge(60 * 60 * 24 * 7); // 7 days
+                        response.addCookie(rememberMeCookie);
+                    }
+                    response.sendRedirect("Admin/dashboard.jsp");
+                } else {
+                    request.setAttribute("errorMessage", "Invalid TOTP");
+                    request.getRequestDispatcher("/Admin/verify_admin.jsp").forward(request, response);
+                }
             } else {
-                request.setAttribute("errorMessage", "Invalid TOTP");
-                request.getRequestDispatcher("/Admin/verify_admin.jsp").forward(request, response);
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "TOTP secret not found for user.");
             }
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());

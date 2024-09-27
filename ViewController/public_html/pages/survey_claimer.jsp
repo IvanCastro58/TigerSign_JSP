@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -38,7 +39,7 @@
                                     </div>
                                     <div class="input-fields">
                                         <label for="claimer-date" class="form-label">Date<span style="color: #DB3444;"> *</span></label>
-                                        <input type="date" name="field-date" id="field-date">
+                                        <input type="date" name="field-date" id="field-date" required>
                                     </div>
                                     <div class="input-fields">
                                         <label for="claimer-email" class="form-label">Email Address<span style="color: #DB3444;"> *</span></label>
@@ -183,7 +184,7 @@
         <div class="footer-container">
             <div class="footer-logo">
                 <img src="../resources/images/logo.png" alt="University of Santo Tomas">
-            </div>
+            </div>  
             <div class="footer-contact">
                 <h3>Contact Us</h3>
                 <p><i class="fas fa-map-marker-alt"></i> 2nd floor Main Bldg, University of Santo Tomas España, Manila C-1015</p>
@@ -203,3 +204,5 @@
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>
 </html>
+
+

@@ -3,6 +3,7 @@
 <%@ page import="com.tigersign.dao.ClaimerDAO" %>
 <%@ page import="com.tigersign.dao.ProofDAO" %>
 <%@ page import="com.tigersign.dao.RequestDAO" %>
+<%@ page import="com.tigersign.dao.EmailService" %>
 <%@ page import="java.sql.SQLException" %>
 <html>
     <head>
@@ -54,18 +55,22 @@
                                 if (submit != null && name != null && email != null) {
                                     ClaimerDAO claimerDAO = new ClaimerDAO();
                                     int claimerId = claimerDAO.insertClaimer(name, email, role); 
-
+                            
                                     if (claimerId > 0) {
                                         ProofDAO proofsDAO = new ProofDAO();
                                         proofsDAO.insertProofs(photoData, signatureData, proofDate, "", "", claimerId, transactionId, fullName);
                             
-                                        // Update the is_claimed status
                                         RequestDAO requestDAO = new RequestDAO();
                                         requestDAO.updateClaimedStatus(transactionId);
-                                        
-                                        response.sendRedirect("success_page.jsp");
-                                    } else {
-                                        throw new SQLException("Failed to retrieve the generated claimer_id.");
+                            
+                                        EmailService emailService = new EmailService();
+                                        boolean emailSent = emailService.sendSurveyEmail(email, request);
+                            
+                                        if (emailSent) {
+                                            response.sendRedirect("success_page.jsp");
+                                        } else {
+                                            out.println("Failed to send email.");
+                                        }
                                     }
                                 }
                             %>

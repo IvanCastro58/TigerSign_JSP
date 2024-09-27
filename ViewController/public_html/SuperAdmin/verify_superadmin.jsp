@@ -31,16 +31,15 @@
                        class="<%= request.getAttribute("errorMessage") != null ? "is-invalid" : "" %>"
                        required />
                 
-                <!-- Error message display -->
                 <div class="invalid-feedback" style="display: <%= request.getAttribute("errorMessage") != null ? "block" : "none" %>;">
                     <%= request.getAttribute("errorMessage") != null ? request.getAttribute("errorMessage") : "" %>
                 </div>
             
                 <div class="totp-button">
                     <div class="remember">
-                        <input type="checkbox" id="rememberMe" name="rememberMe">
-                        <label for="rememberMe">Remember Me</label>
-                    </div>  
+                        <input type="checkbox" id="rememberMe" name="rememberMe" class="custom-checkbox">
+                        <label for="rememberMe" class="custom-label">Remember Me</label>
+                    </div>   
                     <div>
                         <button class="submit" type="submit"><i class="bi bi-check-lg"></i>Verify</button>
                         <button class="cancel" onclick="window.location.href='<%= request.getContextPath() %>/SuperAdmin/main_login.jsp';"><i class="bi bi-x-lg"></i>Cancel</button>

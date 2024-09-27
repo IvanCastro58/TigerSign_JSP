@@ -2,7 +2,23 @@
 
 <!-- Toastify Style Component -->
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+    
+    .loading-icon {
+        display: none;
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border: 4px solid #F4BB00;
+        border-top: 4px solid #f4f4f4;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
     
     .toast-icon-success, .toast-icon-error {
         margin-right: 8px; 
@@ -19,25 +35,27 @@
     }
     
     .toast-success {
-        font-family: "Roboto", sans-serif;
+        font-family: "Nunito", sans-serif;
+        font-optical-sizing: auto;
         font-weight: 500;
         font-style: normal;
-        font-size: 16px;
+        font-size: 14px;
         border-radius: 5px;
-        width: 320px; 
-        padding: 25px 20px; 
+        width: fit-content; 
+        padding: 25px 40px 25px 20px;
         color: #808080;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     
     .toast-error {
-        font-family: "Roboto", sans-serif;
+        font-family: "Nunito", sans-serif;
+        font-optical-sizing: auto;
         font-weight: 500;
         font-style: normal;
-        font-size: 16px;
+        font-size: 14px;
         border-radius: 5px;
-        width: 320px; 
-        padding: 25px 20px; 
+        width: fit-content; 
+        padding: 25px 40px 25px 20px;
         color: #808080;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
