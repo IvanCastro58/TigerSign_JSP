@@ -32,7 +32,7 @@
                                     <i class="bi bi-info-circle"></i>
                                     <p class="smaller-text">Questions with<span style="color: #DB3444;"> *</span> are required to be answered.</p>
                                 </div>
-                                <form action="" class="form">
+                                <form action="${pageContext.request.contextPath}/submitSurvey" method="post" class="form">
                                     <div class="input-fields">
                                         <label for="claimer-name" class="form-label">Enter Name (Optional)</label>
                                         <input type="text" name="field-name" id="field-name" placeholder="Enter Full Name">
@@ -50,59 +50,59 @@
                                         <label class="form-label">Choose Service<span style="color: #DB3444;"> *</span></label>
                                         <div class="service-options">
                                             <div>
-                                                <input type="radio" id="service1" name="service" value="service1" required>
+                                                <input type="radio" id="service1" name="service" value="IW" required>
                                                 <label for="service1" class="form-label2"><strong>Information Window</strong></label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service2" name="service" value="service2">
+                                                <input type="radio" id="service2" name="service" value="WA">
                                                 <label for="service2" class="form-label2"><strong>Window A</strong> (Foreign Students)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service3" name="service" value="service3">
+                                                <input type="radio" id="service3" name="service" value="WB">
                                                 <label for="service3" class="form-label2"><strong>Window B</strong> (Faculty of Civil Law, Faculty of Medicine and Surgery, Institute of Physical Education and Athletics)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service4" name="service" value="service4">
+                                                <input type="radio" id="service4" name="service" value="WC">
                                                 <label for="service4" class="form-label2"><strong>Window C</strong> (College of Commerce and College of Science)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service5" name="service" value="service5">
+                                                <input type="radio" id="service5" name="service" value="WD">
                                                 <label for="service5" class="form-label2"><strong>Window D</strong> (College of Tourism and Hospitality Management, College of Fine Arts and Design)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service6" name="service" value="service6">
+                                                <input type="radio" id="service6" name="service" value="WE">
                                                 <label for="service6" class="form-label2"><strong>Window E</strong> (College of Nursing, College of Education, Conservatory of Music)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service7" name="service" value="service7">
+                                                <input type="radio" id="service7" name="service" value="WF">
                                                 <label for="service7" class="form-label2"><strong>Window F</strong> (Faculty of Pharmacy, Graduate School, Graduate School of Law)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service8" name="service" value="service8">
+                                                <input type="radio" id="service8" name="service" value="WG">
                                                 <label for="service8" class="form-label2"><strong>Window G</strong> (Faculty of Arts and Letters, College of Rehabilitation Science)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service9" name="service" value="service9">
+                                                <input type="radio" id="service9" name="service" value="WH">
                                                 <label for="service9" class="form-label2"><strong>Window H</strong> (College of Architecture, AMV-College of Accountancy)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service10" name="service" value="service10">
+                                                <input type="radio" id="service10" name="service" value="WI">
                                                 <label for="service10" class="form-label2"><strong>Window I</strong> (Faculty of Engineering, College of Information and Computing Sciences)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service11" name="service" value="service11">
+                                                <input type="radio" id="service11" name="service" value="WJ">
                                                 <label for="service11" class="form-label2"><strong>Window J</strong> (Enrollment Related Concerns, Cross Enrollment)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service12" name="service" value="service12">
+                                                <input type="radio" id="service12" name="service" value="WK">
                                                 <label for="service12" class="form-label2"><strong>Window K</strong> (Honorable Dismissal, Transfer Credential)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service13" name="service" value="service13">
+                                                <input type="radio" id="service13" name="service" value="WL">
                                                 <label for="service13" class="form-label2"><strong>Window L</strong> (Diploma, Certified True Copy)</label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="service14" name="service" value="service14">
+                                                <input type="radio" id="service14" name="service" value="WM">
                                                 <label for="service14" class="form-label2"><strong>Window M</strong> (CAV-DFA Apostille, Endorsement)</label>
                                             </div>
                                             <div>
@@ -142,19 +142,19 @@
                                         <label class="form-label">Which Service stand out for you?<span style="color: #DB3444;"> *</span></label>
                                         <div class="standout-options">
                                             <div>
-                                                <input type="radio" id="standout1" name="standout" value="service1">
+                                                <input type="radio" id="standout1" name="standout" value="response">
                                                 <label for="standout1" class="form-label"><strong>Response Time</strong></label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="standout2" name="standout" value="service2">
+                                                <input type="radio" id="standout2" name="standout" value="accuracy">
                                                 <label for="standout2" class="form-label"><strong>Accuracy of Information</strong></label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="standout3" name="standout" value="service3">
+                                                <input type="radio" id="standout3" name="standout" value="helpful">
                                                 <label for="standout3" class="form-label"><strong>Helpful</strong></label>
                                             </div>
                                             <div>
-                                                <input type="radio" id="standout4" name="standout" value="service4">
+                                                <input type="radio" id="standout4" name="standout" value="respect">
                                                 <label for="standout4" class="form-label"><strong>Respectful</strong></label>
                                             </div>
                                             <div>

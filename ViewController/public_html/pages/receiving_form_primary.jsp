@@ -81,12 +81,13 @@
                                 <input type="hidden" name="adminFullName" value="<%= fullName %>" />
                                 <div class="input-fields">
                                     <label for="claimer-name" class="form-label">Name</label>
-                                    <input type="text" name="field-name" id="field-name" value="<%= name != null ? name : "" %>" placeholder="Enter Full Name" required>
+                                    <input type="text" name="field-name" id="field-name" value="<%= name != null ? name : "" %>" placeholder="Enter Full Name" readonly>
                                 </div>
-                                <div class="input-fields">
+                               <div class="input-fields">
                                     <label for="claimer-date" class="form-label">Date</label>
-                                    <input type="date" name="field-date" id="field-date" required>
+                                    <input type="date" name="field-date" id="field-date" value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" readonly>
                                 </div>
+
                                 <div class="input-fields">
                                     <label for="claimer-email" class="form-label">Email Address</label>
                                     <input type="text" name="field-email" id="field-email" value="<%= email != null ? email : "" %>" placeholder="Enter email address" required>
