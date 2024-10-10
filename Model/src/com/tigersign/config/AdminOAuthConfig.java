@@ -70,13 +70,27 @@ public class AdminOAuthConfig extends HttpServlet {
 
             try (Connection conn = DatabaseConnection.getConnection()) {
                 if (isAllowedAdmin(conn, email)) {
+                    // Update the admin's information in the database
+                    updateAdminInfo(conn, email, firstName, lastName, picture);
+
                     HttpSession session = request.getSession();
                     session.setAttribute("adminEmail", email);
                     session.setAttribute("adminFirstName", firstName);
                     session.setAttribute("adminLastName", lastName);
                     session.setAttribute("adminPicture", picture);
 
-                    // Check for remember me cookie
+                    // Get TOTP secret
+                    String secret = getTOTPSecret(conn, email);
+
+                    // If TOTP secret is null, redirect to setup page
+                    if (secret == null) {
+                        String setupUrl = getTOTPSetupUrl(request, email);
+                        request.setAttribute("setupUrl", setupUrl);
+                        request.getRequestDispatcher("Admin/totp_setup_admin.jsp").forward(request, response);
+                        return;
+                    }
+
+                    // Check for remember me cookie only if the TOTP secret is not null
                     Cookie[] cookies = request.getCookies();
                     boolean rememberMe = false;
 
@@ -92,14 +106,7 @@ public class AdminOAuthConfig extends HttpServlet {
                     if (rememberMe) {
                         response.sendRedirect("Admin/dashboard.jsp");
                     } else {
-                        String secret = getTOTPSecret(conn, email);
-                        if (secret != null) {
-                            response.sendRedirect("Admin/verify_admin.jsp");
-                        } else {
-                            String setupUrl = getTOTPSetupUrl(request, email);
-                            request.setAttribute("setupUrl", setupUrl);
-                            request.getRequestDispatcher("Admin/totp_setup_admin.jsp").forward(request, response);
-                        }
+                        response.sendRedirect("Admin/verify_admin.jsp");
                     }
                 } else {
                     response.sendRedirect("error/error_unauthorized.jsp");
@@ -145,7 +152,6 @@ public class AdminOAuthConfig extends HttpServlet {
         }
     }
 
-
     private void updateAdminInfo(Connection conn, String email, String firstName, String lastName, String picture) throws SQLException {
         String updateQuery = "UPDATE TS_ADMIN SET firstname = ?, lastname = ?, picture = ?, is_verified = 'Y' WHERE email = ? AND is_verified = 'N'";
         try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
@@ -158,7 +164,7 @@ public class AdminOAuthConfig extends HttpServlet {
     }
 
     private boolean isAllowedAdmin(Connection conn, String email) throws SQLException {
-        String query = "SELECT COUNT(*) FROM TS_ADMIN WHERE email = ?";
+        String query = "SELECT COUNT(*) FROM TS_ADMIN WHERE email = ? AND status='ACTIVE'";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -228,10 +234,11 @@ public class AdminOAuthConfig extends HttpServlet {
             params.add(new BasicNameValuePair("redirect_uri", REDIRECT_URI));
             params.add(new BasicNameValuePair("client_id", CLIENT_ID));
             params.add(new BasicNameValuePair("client_secret", CLIENT_SECRET));
+
             httpPost.setEntity(new UrlEncodedFormEntity(params));
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                return EntityUtils.toString(response.getEntity());
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                return EntityUtils.toString(httpResponse.getEntity());
             }
         }
     }
@@ -241,8 +248,8 @@ public class AdminOAuthConfig extends HttpServlet {
             HttpGet httpGet = new HttpGet(USER_INFO_URL);
             httpGet.setHeader("Authorization", "Bearer " + accessToken);
 
-            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                return EntityUtils.toString(response.getEntity());
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
+                return EntityUtils.toString(httpResponse.getEntity());
             }
         }
     }

@@ -6,11 +6,11 @@
     
     .loading-icon {
         display: none;
-        width: 20px;
-        height: 20px;
+        width: 25px;
+        height: 25px;
         margin-right: 10px;
-        border: 4px solid #F4BB00;
-        border-top: 4px solid #f4f4f4;
+        border: 3px solid #F4BB00;
+        border-top: 3px solid #f4f4f4;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }

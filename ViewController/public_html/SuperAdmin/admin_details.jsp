@@ -66,9 +66,9 @@
     <div class="main-content">
         <div class="margin-content">
             <div class="title-section">
-                <h1 class="title-page-claimed">MANAGE ACCOUNT</h1>
+                <h2 class="title-page-claimed">MANAGE ACCOUNT</h2>
                 <i class="fa-solid fa-angle-right title-icon"></i>
-                <h1 class="title-page-number"><%= (user != null) ? (user.getFirstname() + " " + user.getLastname()) : "User Details" %></h1>
+                <h2 class="title-page-number"><%= (user != null) ? (user.getFirstname() + " " + user.getLastname()) : "User Details" %></h2>
                 <button class="back-button" onclick="window.location.href='manage_account.jsp';">Back</button>
             </div>
             <div class="profile-box">

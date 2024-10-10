@@ -116,7 +116,7 @@ header .logo img {
 }
 
 .form-box-success{
-    max-width: 600px;
+    max-width: 650px;
     width: 100%;
     border: 1px solid #D3D3D3;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -318,6 +318,12 @@ hr {
     text-align: center;
     font-size: 28px;
     margin: 20px 20px 30px 20px;
+}
+
+.title-survey{
+    text-align: center;
+    font-size: 28px;
+    color: var(--green);
 }
 
 .success-icon{

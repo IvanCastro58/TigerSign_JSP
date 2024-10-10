@@ -15,6 +15,17 @@
     --red: #d9534f;
 }
 
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: url('../images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
 .container {
     display: flex;
     align-items: center;
@@ -38,17 +49,6 @@
 
 .registrar-logo1 span{
     display: none;
-}
-
-body {
-    font-family: 'Montserrat', sans-serif;
-    background: url('../images/background.jpg') no-repeat center center fixed;
-    background-size: cover;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow: hidden;
 }
 
 .overlay {

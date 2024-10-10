@@ -21,17 +21,24 @@ public class SurveyServlet extends HttpServlet {
     public void init() throws ServletException {
         surveyDAO = new SurveyDAO();
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Survey survey = new Survey();
-        survey.setName(request.getParameter("field-name"));
+        
+        String name = request.getParameter("field-name");
+        if (name == null || name.trim().isEmpty()) {
+            survey.setName("Anonymous"); // Default value when name is missing
+        } else {
+            survey.setName(name);
+        }
+        
         survey.setDate(request.getParameter("field-date"));
         survey.setEmail(request.getParameter("field-email"));
 
         String service = request.getParameter("service");
         if ("other".equalsIgnoreCase(service)) {
-            survey.setService(request.getParameter("other-service")); 
+            survey.setService(request.getParameter("other-service"));
         } else {
             survey.setService(service);
         }
@@ -40,7 +47,7 @@ public class SurveyServlet extends HttpServlet {
 
         String standout = request.getParameter("standout");
         if ("other".equalsIgnoreCase(standout)) {
-            survey.setStandout(request.getParameter("standout-other")); 
+            survey.setStandout(request.getParameter("standout-other"));
         } else {
             survey.setStandout(standout);
         }
@@ -48,9 +55,9 @@ public class SurveyServlet extends HttpServlet {
         survey.setFeedback(request.getParameter("feedback"));
 
         boolean isSuccess = surveyDAO.submitSurvey(survey);
-        
+
         if (isSuccess) {
-            response.sendRedirect(request.getContextPath() + "/success.jsp");
+            response.sendRedirect(request.getContextPath() + "/pages/success_claimer.jsp");
         } else {
             response.sendRedirect(request.getContextPath() + "/error.jsp");
         }

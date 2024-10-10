@@ -11,6 +11,7 @@ public class Survey {
     private String feedback;
     private String otherService;
     private String standoutOther;
+    private int evaluationCount;
 
     public String getName() {
         return name;
@@ -47,6 +48,10 @@ public class Survey {
     public String getStandoutOther() {
         return standoutOther;
     }
+    
+    public int getEvaluationCount() {
+        return evaluationCount;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -82,5 +87,9 @@ public class Survey {
 
     public void setStandoutOther(String standoutOther) {
         this.standoutOther = standoutOther;
+    }
+    
+    public void setEvaluationCount(int evaluationCount) {
+        this.evaluationCount = evaluationCount;
     }
 }

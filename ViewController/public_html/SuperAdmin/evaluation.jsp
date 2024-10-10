@@ -26,7 +26,7 @@
     
     <div class="main-content">
         <div class="margin-content">
-            <h1 class="title-page">SEND SURVEY & EVALUATION FORM</h1>
+            <h2 class="title-page">SEND SURVEY & EVALUATION FORM</h2>
             <div class="box">
                 <h2 class="title-email">Enter Email Address<span style="color: #DB3444;">*</span></h2>
                 <form action="SendSurveyServlet" method="POST" id="surveyForm" class="send-container">
@@ -81,8 +81,14 @@
     
     <script>
         document.getElementById("surveyForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
             const loadingIcon = document.getElementById('loadingIcon');
             loadingIcon.style.display = 'inline-block';
+    
+            setTimeout(() => {
+                this.submit();
+            }, 2000);
         });
     </script>
     <%@ include file="/WEB-INF/components/script.jsp" %>

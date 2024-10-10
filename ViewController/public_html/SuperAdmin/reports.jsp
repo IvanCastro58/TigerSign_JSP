@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.time.ZoneId" %>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -14,20 +16,31 @@
         <link rel="stylesheet" href="../resources/css/reports.css ">
         <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     </head>
+    <style>
+        .transaction-table th, .transaction-table td{
+            padding: 15px;
+        }
+    </style>
     <body>
         <%@ include file="/WEB-INF/components/session_check.jsp" %>
     
         <% 
             request.setAttribute("activePage", "reports");  
         %>
+        <%
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+            
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+            String formattedDate = now.format(formatter);
+        %>
         
         <%@ include file="/WEB-INF/components/header.jsp" %>
         <%@ include file="/WEB-INF/components/sidebar.jsp" %>
         
-         <div class="main-content">
-        <div class="highlight-bar"><span>Sunday,&nbsp; September&nbsp; 16,&nbsp; 2023</span></div>
+        <div class="main-content">
+        <div class="highlight-bar"><span><%= formattedDate %></span></div>
         <div class="margin-content">
-            <h1 class="title-page">REPORTS AND ANALYTICS</h1>
+            <h2 class="title-page">REPORTS AND ANALYTICS</h2>
             <div class="nav-buttons">
                 <div class="status-btn">
                     <button class="reports-btn current-page-btn">Document Status Report</button>

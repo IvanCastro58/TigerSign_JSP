@@ -16,8 +16,8 @@
 <style>
     .success-checkmark {
     width: 163.2px;
-    height: 234.6px;
-    margin: 0 auto;
+    height: 200.6px;
+    margin: 20px auto 0 auto;
 
     .check-icon {
         width: 163.2px;
@@ -179,7 +179,6 @@
     <div class="form-box-success">
         <div class="highlight-bar"></div>
         <div class="form-details">
-            <h1 class="title-sucess">DOCUMENT RECEIVING FORM SUBMITTED</h1>
             <div class="success-checkmark">
                 <div class="check-icon">
                   <span class="icon-line line-tip"></span>
@@ -188,10 +187,10 @@
                   <div class="icon-fix"></div>
                 </div>
             </div>
+            <h1 class="title-survey">Success</h1>
             <div class="success-text">
-                <i class="bi bi-info-circle"></i>
-                <p>A <strong>Survey Evaluation Form</strong> will be sent to the Email Address you provided in the Document Receiving Form. 
-                Your response will be highly appreciated for the improvement of our service. Thank you!</p>
+                <p>Thank you for submitting the <strong>Survey Evaluation Form</strong>! Your response has been successfully recorded. We appreciate 
+                your feedback, as it helps us improve our service.</p>
             </div>
         </div>
     </div>

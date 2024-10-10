@@ -16,7 +16,7 @@
 .highlight-bar2{
     background-color: var(--blackish);
     height: 3px;
-    margin-bottom: 20px;
+    margin: 20px 0px;
 }
 
 .nav-buttons {
@@ -42,11 +42,12 @@
 }
 
 .reports-btn{
+    font-family: 'Montserrat', sans-serif;
     width: 220px;
     background-color: var(--blackish);
     color: var(--white);
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     padding: 5px;
     border: none;
     margin-right: 20px;
@@ -62,13 +63,18 @@
     border: 1px solid var(--blackish);
 }
 
+.gen-btn i{
+    margin-left: 5px;
+}
+
 .gen-btn{
-    width: 220px;
+    font-family: 'Montserrat', sans-serif;
+    width: fit-content;
     background-color: var(--green);
     color: var(--white);
     font-size: 15px;
     font-weight: 500;
-    padding: 5px;
+    padding: 10px 20px;
     border: none;
     margin-right: 20px;
     cursor: pointer;
@@ -78,9 +84,6 @@
 
 .gen-btn:hover {
     box-shadow: none;
-    background-color: var(--white);
-    color: var(--blackish);
-    border: 1px solid var(--blackish);
 }
 
 .current-page-btn {
@@ -141,11 +144,56 @@
     margin: 0 auto; 
 }
 
-.comments-section{
-    grid-column: span 2; 
-    background-color: var(--lighter-gray);
+.feedback-container{
     padding: 10px;
-    border: 1px solid var(--blackish);
+}
+
+.feedback-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.feedback-header .feedback-name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.feedback-header .feedback-date {
+    font-size: 12px;
+    color: var(--medium-gray);
+}
+
+.feedback-item .star-rating {
+    color: var(--primary-color);
+    font-size: 12px;
+}
+
+.feedback-item .feedback-text {
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+.responsive-canvas {
+    width: 100% !important;
+    max-width: 700px;
+    height: auto !important;
+}
+
+.report-column.left .canvas-container{
+    display: flex;
+    justify-content: center;
 }
 
 @media (max-width: 1445px) {
@@ -300,22 +348,6 @@
     .latest-reports {
         display: flex;
         flex-direction: column; 
-    }
-
-    .report-column {
-        width: 100%;
-    }
-
-    .comments-section {
-        margin-top: 20px; 
-        background-color: var(--lighter-gray);
-        padding: 10px;
-        border: 1px solid var(--blackish);
-        order: 3; 
-    }
-
-    .report-column.left, .report-column.right {
-        order: 1; 
     }
 
     #overall-score .card-heading {

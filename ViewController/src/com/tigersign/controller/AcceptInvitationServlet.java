@@ -44,7 +44,7 @@ public class AcceptInvitationServlet extends HttpServlet {
             pstmt.setString(1, email);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1) > 0; // Return true if the count is greater than 0
+                    return rs.getInt(1) > 0; 
                 }
             }
         } catch (SQLException e) {

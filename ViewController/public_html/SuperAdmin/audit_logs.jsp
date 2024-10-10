@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="../resources/css/pendingclaim.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
+<style>
+    .transaction-table th, .transaction-table td{
+        padding: 15px;
+    }
+</style>
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <% 
@@ -25,7 +30,7 @@
     
     <div class="main-content">
         <div class="margin-content">
-            <h1 class="title-page">AUDIT LOGS</h1>
+            <h2 class="title-page">AUDIT LOGS</h2>
             <%@ include file="/WEB-INF/components/top_nav.jsp" %>
             <div class="table-container">
                 <div class="table-wrapper">

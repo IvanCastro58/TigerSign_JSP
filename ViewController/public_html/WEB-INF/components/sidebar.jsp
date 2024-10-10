@@ -23,24 +23,24 @@
             </a>
         </li>
         <li>
-            <a href="${pageContext.request.contextPath}/SuperAdmin/manage_account.jsp" class="<%= "manage_account".equals(request.getAttribute("activePage")) ? "active" : "" %>">
-                <i class="fas fa-users"></i>
-                <span>Manage Accounts</span>
-                <span class="tooltip">Manage Accounts</span>
-            </a>
-        </li>
-        <li>
             <a href="${pageContext.request.contextPath}/SuperAdmin/pending_claim.jsp" class="<%= "pending_claim".equals(request.getAttribute("activePage")) ? "active" : "" %>">
-                <i class="bi bi-clock-history"></i>
+                <i class="bi bi-clock-fill"></i>
                 <span>Pending Claims</span>
                 <span class="tooltip">Pending Claims</span>
             </a>
         </li>
         <li>
             <a href="${pageContext.request.contextPath}/SuperAdmin/claimed_request.jsp" class="<%= "claimed_request".equals(request.getAttribute("activePage")) ? "active" : "" %>">
-                <i class="bi bi-check-circle-fill"></i>
+                <i class="bi bi-check-circle"></i>
                 <span>Claimed Request</span>
                 <span class="tooltip">Claimed Request</span>
+            </a>
+        </li>
+        <li>
+            <a href="${pageContext.request.contextPath}/SuperAdmin/manage_account.jsp" class="<%= "manage_account".equals(request.getAttribute("activePage")) ? "active" : "" %>">
+                <i class="fas fa-users"></i>
+                <span>Manage Accounts</span>
+                <span class="tooltip">Manage Accounts</span>
             </a>
         </li>
         <li>

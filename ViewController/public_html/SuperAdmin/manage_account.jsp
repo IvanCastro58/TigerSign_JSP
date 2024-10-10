@@ -16,6 +16,15 @@
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
 <%@ include file="/WEB-INF/components/toastify_style.jsp" %>
+<style>
+    .transaction-table th{
+        padding: 15px;
+    }
+    
+    .transaction-table td{
+        padding: 10px;
+    }
+</style>
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <% 
@@ -33,7 +42,7 @@
     
     <div class="main-content">
         <div class="margin-content">
-            <h1 class="title-page">MANAGE ACCOUNT</h1>
+            <h2 class="title-page">MANAGE ACCOUNT</h2>
             
             <%@ include file="/WEB-INF/components/account_navbar.jsp" %>
             
@@ -72,54 +81,60 @@
                             </tr>
                         </thead>
                         <tbody id="account-table-body">
-                            <!-- Skeleton loader rows -->
-                            <tr class="skeleton-row">
-                                <td><span class="skeleton"></span></td>
-                                <td class="profile-column"><span class="skeleton-picture"></span></td>
-                                <td class="expandable-text"><span class="skeleton"></span></td>
-                                <td class="expandable-text"><span class="skeleton"></span></td>
-                                <td><span class="skeleton"></span></td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td><span class="skeleton"></span></td>
-                                <td class="profile-column"><span class="skeleton-picture"></span></td>
-                                <td class="expandable-text"><span class="skeleton"></span></td>
-                                <td class="expandable-text"><span class="skeleton"></span></td>
-                                <td><span class="skeleton"></span></td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td><span class="skeleton"></span></td>
-                                <td class="profile-column"><span class="skeleton-picture"></span></td>
-                                <td class="expandable-text"><span class="skeleton"></span></td>
-                                <td class="expandable-text"><span class="skeleton"></span></td>
-                                <td><span class="skeleton"></span></td>
-                            </tr>
-                            
-                            <!-- Actual data rows -->
                             <% 
                                 List<User> userList = (List<User>) request.getAttribute("users");
-                                for (User user : userList) {
-                                    String statusClass = "status-active"; 
-                                    if ("DEACTIVATED".equals(user.getStatus())) {
-                                        statusClass = "status-deactivate";
-                                    }
+                                int userCount = userList != null ? userList.size() : 0;
+                            
+                                // Display skeleton rows based on the user count
+                                for (int i = 0; i < userCount; i++) { 
                             %>
-                                <tr class="actual-data account-row" data-user-id="<%= user.getId() %>">
-                                    <td><%= user.getId() %></td>
-                                    <td class="profile-column">
-                                        <img src="<%= user.getPicture() %>" alt="Profile Picture" /> 
-                                    </td>
-                                    <td class="expandable-text"><%= user.getFirstname() + " " + user.getLastname() %></td>
-                                    <td class="expandable-text"><%= user.getEmail() %></td>
-                                    <td class="<%= statusClass %>">
-                                        <span><%= user.getStatus() %></span>
-                                    </td>
+                                <tr class="skeleton-row">
+                                    <td><span class="skeleton"></span></td>
+                                    <td class="profile-column"><span class="skeleton-picture"></span></td>
+                                    <td class="expandable-text"><span class="skeleton"></span></td>
+                                    <td class="expandable-text"><span class="skeleton"></span></td>
+                                    <td><span class="skeleton"></span></td>
                                 </tr>
                             <% 
                                 } 
+                            
+                                // After skeleton rows, display actual user data if available
+                                if (userList != null && !userList.isEmpty()) { 
+                                    for (User user : userList) {
+                                        String statusClass = "status-active"; 
+                                        if ("DEACTIVATED".equals(user.getStatus())) {
+                                            statusClass = "status-deactivate";
+                                        }
+                            %>
+                                        <tr class="actual-data account-row" data-user-id="<%= user.getId() %>">
+                                            <td><%= user.getId() %></td>
+                                            <td class="profile-column">
+                                                <img src="<%= user.getPicture() %>" alt="Profile Picture" /> 
+                                            </td>
+                                            <td class="expandable-text"><%= user.getFirstname() + " " + user.getLastname() %></td>
+                                            <td class="expandable-text"><%= user.getEmail() %></td>
+                                            <td class="<%= statusClass %>">
+                                                <span><%= user.getStatus() %></span>
+                                            </td>
+                                        </tr>
+                            <% 
+                                    } 
+                                } 
                             %>
                         </tbody>
-                    </table>
+                        </table>
+                        
+                        <% 
+                            // Check if userList is empty and display the message
+                            if (userList == null || userList.isEmpty()) { 
+                        %>
+                            <div style="text-align: center;">
+                                <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 120px; height: 120px;" />
+                                <p style="font-size: 12px; font-weight: 500;">No account information available at the moment.</p>
+                            </div>
+                        <% 
+                            } 
+                        %>
                 </div>
             </div>
             <%@ include file="/WEB-INF/components/pagination.jsp" %>

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.time.ZoneId" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,11 +19,17 @@
     <% 
         request.setAttribute("activePage", "dashboard");  
     %>
+    <%
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+            
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+        String formattedDate = now.format(formatter);
+    %>
     <%@ include file="/WEB-INF/components/header.jsp" %>
     <%@ include file="/WEB-INF/components/sidebar.jsp" %>
     
     <div class="main-content dashboard-main-content">
-        <div class="highlight-bar"><span>Sunday,&nbsp; September&nbsp; 16,&nbsp; 2023</span></div>
+        <div class="highlight-bar"><span><%= formattedDate %></span></div>
         <div class="margin-content">
             <!-- Display the user's first name dynamically -->
             <h1>Welcome back, <%= userFirstName %>!</h1>
