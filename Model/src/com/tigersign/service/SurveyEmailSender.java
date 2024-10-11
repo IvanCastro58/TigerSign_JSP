@@ -19,8 +19,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-@WebServlet("/SuperAdmin/SendSurveyServlet")
+@WebServlet("/SendSurveyServlet")
 public class SurveyEmailSender extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private ExecutorService emailExecutor;
@@ -39,20 +40,24 @@ public class SurveyEmailSender extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         String email = request.getParameter("email");
+
+        String adminEmail = (String) session.getAttribute("adminEmail");
+        String userEmail = (String) session.getAttribute("userEmail");
 
         if (email != null && !email.isEmpty()) {
             emailExecutor.submit(() -> {
                 boolean emailSent = sendSurveyEmail(email, request);
                 try {
                     if (!emailSent) {
-                        response.sendRedirect(request.getContextPath() + "/SuperAdmin/evaluation.jsp?failed=true");
+                        redirectToSessionBasedPage(request, response, adminEmail, userEmail, false);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
-            response.sendRedirect(request.getContextPath() + "/SuperAdmin/evaluation.jsp?success=true");
+            redirectToSessionBasedPage(request, response, adminEmail, userEmail, true);
         } else {
             response.sendRedirect("error.jsp");
         }
@@ -110,6 +115,20 @@ public class SurveyEmailSender extends HttpServlet {
         } catch (MessagingException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void redirectToSessionBasedPage(HttpServletRequest request, HttpServletResponse response, String adminEmail, String userEmail, boolean success)
+            throws IOException {
+        String contextPath = request.getContextPath();
+        String redirectPage = success ? "evaluation.jsp?success=true" : "evaluation.jsp?failed=true";
+
+        if (adminEmail != null) {
+            response.sendRedirect(contextPath + "/Admin/" + redirectPage);
+        } else if (userEmail != null) {
+            response.sendRedirect(contextPath + "/SuperAdmin/" + redirectPage);
+        } else {
+            response.sendRedirect(contextPath + "/error.jsp");
         }
     }
 }

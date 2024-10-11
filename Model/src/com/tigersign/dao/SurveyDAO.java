@@ -167,6 +167,24 @@ public class SurveyDAO {
         return count;
     }
 
+    // Fetch total count of surveys
+    public int getTotalCount() {
+        String query = "SELECT COUNT(*) AS total_count FROM TS_SURVEY";
+        int totalCount = 0;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet rs = statement.executeQuery()) {
+
+            if (rs.next()) {
+                totalCount = rs.getInt("total_count");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalCount;
+    }
 
     // Submit a new survey
     public boolean submitSurvey(Survey survey) {

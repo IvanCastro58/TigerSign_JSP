@@ -29,7 +29,7 @@
             <h2 class="title-page">SEND SURVEY & EVALUATION FORM</h2>
             <div class="box">
                 <h2 class="title-email">Enter Email Address<span style="color: #DB3444;">*</span></h2>
-                <form action="SendSurveyServlet" method="POST" id="surveyForm" class="send-container">
+                <form action="${pageContext.request.contextPath}/SendSurveyServlet" method="POST" id="surveyForm" class="send-container">
                     <div class="loading-icon" id="loadingIcon"></div>
                     <input type="email" name="email" class="send-input" placeholder="Ex. juandelacruz@gmail.com" required>
                     <button type="submit" class="send-button">

@@ -139,7 +139,7 @@
                                     <tbody>
                                         <% for (Survey survey : serviceScores) { 
                                             String serviceValue = survey.getService(); 
-                                            String serviceTitle = serviceMap.getOrDefault(serviceValue, "Unknown Service"); 
+                                            String serviceTitle = serviceMap.getOrDefault(serviceValue, "Other"); 
                                         %>
                                             <tr>
                                                 <td><%= serviceTitle %></td>                       
@@ -161,7 +161,6 @@
                                 List<Survey> feedbacks = surveyDAO.getAllSurveys(); 
                                 DateTimeFormatter feedbackFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy"); // Renamed to avoid conflict
                                 for (Survey survey : feedbacks) { 
-                                    String name = survey.getName(); 
                                     String feedback = survey.getFeedback(); 
                                     String dateString = survey.getDate(); // Assuming it's a String
                                     int rating = survey.getRating(); 
@@ -169,7 +168,7 @@
                                     // Convert date string to LocalDateTime if it's in a valid format
                                     LocalDateTime feedbackDate = LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); 
                                     String formattedFeedbackDate = feedbackDate.format(feedbackFormatter); // Renamed variable to avoid conflict
-                            
+                                
                                     // Create star rating
                                     StringBuilder starRating = new StringBuilder();
                                     for (int i = 1; i <= 4; i++) {
@@ -182,7 +181,7 @@
                             %>
                                 <div class="feedback-item">
                                     <div class="feedback-header">
-                                        <strong class="feedback-name"><%= name %></strong>
+                                        <strong class="feedback-name"><%= survey.getMaskedName() %></strong> <!-- Use the masked name here -->
                                         <em class="feedback-date"><%= formattedFeedbackDate %></em> <!-- Display formatted date here -->
                                     </div>
                                     <div class="star-rating">
@@ -212,16 +211,25 @@
         standoutCounts.put("Accuracy of Information", surveyDAO.getStandoutCount("accuracy"));
         standoutCounts.put("Helpful", surveyDAO.getStandoutCount("helpful"));
         standoutCounts.put("Respectful", surveyDAO.getStandoutCount("respect"));
-        standoutCounts.put("Other", surveyDAO.getStandoutCount("other"));
+        
+        // Initialize total responses
+        int totalResponses = surveyDAO.getTotalCount();
+        
+        // Count the "Other" category
+        standoutCounts.put("Other", totalResponses 
+            - (standoutCounts.get("Response Time") 
+               + standoutCounts.get("Accuracy of Information") 
+               + standoutCounts.get("Helpful") 
+               + standoutCounts.get("Respectful")));
         
         StringBuilder standoutData = new StringBuilder("[");
         StringBuilder standoutLabels = new StringBuilder("[");
-    
+        
         for (Map.Entry<String, Integer> entry : standoutCounts.entrySet()) {
             standoutLabels.append("\"").append(entry.getKey()).append("\",");
             standoutData.append(entry.getValue()).append(",");
         }
-    
+        
         if (standoutLabels.length() > 1) {
             standoutLabels.setLength(standoutLabels.length() - 1);
             standoutData.setLength(standoutData.length() - 1);
