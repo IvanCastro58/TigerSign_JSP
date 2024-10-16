@@ -11,6 +11,17 @@
     <link rel="stylesheet" href="../resources/css/totp.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var images = [
+                "../resources/images/background.jpg",
+                "../resources/images/background2.jpg",
+                "../resources/images/background3.jpg"
+            ];
+            var randomImage = images[Math.floor(Math.random() * images.length)];
+            document.body.style.backgroundImage = "url('" + randomImage + "')";
+        });
+    </script>
 </head>
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>

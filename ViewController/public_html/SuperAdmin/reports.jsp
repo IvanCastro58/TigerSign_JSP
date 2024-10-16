@@ -3,6 +3,7 @@
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.ZoneId" %>
+<%@ page import="java.sql.*, com.tigersign.dao.DatabaseConnection" %>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -26,12 +27,64 @@
     
         <% 
             request.setAttribute("activePage", "reports");  
-        %>
-        <%
+
             LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Manila"));
             
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
             String formattedDate = now.format(formatter);
+            
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            ResultSet rs = null;
+        
+            int pendingCount = 0;
+            int processingCount = 0;
+            int availableCount = 0;
+            int claimedCount = 0;
+
+            try {
+                // Get connection from the DatabaseConnection class
+                conn = DatabaseConnection.getConnection();
+        
+                // Query for Pending Requests
+                String pendingQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'PENDING'";
+                stmt = conn.prepareStatement(pendingQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    pendingCount = rs.getInt(1);
+                }
+        
+                // Query for Processing Requests
+                String processingQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'PROCESSING'";
+                stmt = conn.prepareStatement(processingQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    processingCount = rs.getInt(1);
+                }
+        
+                // Query for Available Requests
+                String availableQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'AVAILABLE'";
+                stmt = conn.prepareStatement(availableQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    availableCount = rs.getInt(1);
+                }
+        
+                // Query for Claimed Requests
+                String claimedQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE IS_CLAIMED = 'Y'";
+                stmt = conn.prepareStatement(claimedQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    claimedCount = rs.getInt(1);
+                }
+        
+            } catch (SQLException e) {
+                e.printStackTrace(); // Handle the SQL exception
+            } finally {
+                if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+                if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+                if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+            }
         %>
         
         <%@ include file="/WEB-INF/components/header.jsp" %>
@@ -54,18 +107,22 @@
             </div>
             <div class="highlight-bar2"></div>
             <div class="card-view">
-                <div class="card" id="request-card-reports">
-                    <h3 class="card-heading">Requests Received</h3>
-                    <div class="card-number">10</div>
-                </div>
                 <div class="card" id="pending-card-reports">
-                    <h3 class="card-heading">Pending Requests</h3>
-                    <div class="card-number">15</div>
-                </div>
-                <div class="card" id="claimed-card-reports">
-                    <h3 class="card-heading">Requests Claimed</h3>
-                    <div class="card-number">20</div>
-                </div>
+                <h3 class="card-heading">Pending Requests</h3>
+                <div class="card-number"><%= pendingCount %></div>
+            </div>
+            <div class="card" id="processing-card-reports">
+                <h3 class="card-heading">Processing Request</h3>
+                <div class="card-number"><%= processingCount %></div>
+            </div>
+            <div class="card" id="available-card-reports">
+                <h3 class="card-heading">Available Request</h3>
+                <div class="card-number"><%= availableCount %></div>
+            </div>
+            <div class="card" id="claimed-card-reports">
+                <h3 class="card-heading">Claimed Request</h3>
+                <div class="card-number"><%= claimedCount %></div>
+            </div>
             </div>
             <div class="reports">
                 <div class="highlight-bar2"></div>

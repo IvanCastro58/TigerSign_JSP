@@ -47,7 +47,6 @@ header .logo img {
 }
 
 .main-content {
-    background: url('../images/background.jpg') fixed;
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
