@@ -29,10 +29,12 @@
                 <div class="requirements-text">
                     To access TigerSign, please make sure you meet the following requirements:
                 </div>
-                <ul class="google-requirements">
-                    <li class="google-text">1. UST Google Workspace Personal Account</li>
-                    <li class="google-text">2. Google Authenticator Application</li>
-                </ul>
+                <div class="google-text">
+                    1. UST Google Workspace Personal Account
+                </div>
+                <div class="google-text">
+                    2. Google Authenticator Application
+                </div> 
                 <div>
                     <!-- The 'href' attribute is dynamically generated to point to the Google OAuth URL -->
                     <a href="<%= com.tigersign.config.AdminOAuthConfig.getAuthUrl() %>" class="google-button">

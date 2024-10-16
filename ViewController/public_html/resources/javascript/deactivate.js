@@ -2,7 +2,7 @@ const deactivateButton = document.querySelector('.deactivate-btn');
 const deactivationPopup = document.getElementById('confirm-deactivation-popup');
 const deactivationPopupElement = deactivationPopup.querySelector('.popup');
 const deactivationCloseButton = deactivationPopup.querySelector('.popup-close');
-const deactivationConfirmInput = document.getElementById('confirm-input-deactivation');
+const deactivationReasonInput = document.getElementById('deactivation-reason');
 const deactivationSubmitBtn = deactivationPopup.querySelector('.submit-btn');
 
 deactivateButton.addEventListener('click', () => {
@@ -28,8 +28,8 @@ window.addEventListener('click', (event) => {
     }
 });
 
-deactivationConfirmInput.addEventListener('input', () => {
-    if (deactivationConfirmInput.value.toUpperCase() === 'CONFIRM') {
+deactivationReasonInput.addEventListener('input', () => {
+    if (deactivationReasonInput.value.trim() !== '') {
         deactivationSubmitBtn.disabled = false;
     } else {
         deactivationSubmitBtn.disabled = true;

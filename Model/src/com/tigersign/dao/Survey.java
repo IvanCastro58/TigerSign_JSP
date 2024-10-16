@@ -14,6 +14,10 @@ public class Survey {
     private int evaluationCount;
 
     public String getMaskedName() {
+        if ("Anonymous".equals(name)) {
+            return "Anonymous"; 
+        }
+
         if (name == null || name.isEmpty()) {
             return "****";
         }

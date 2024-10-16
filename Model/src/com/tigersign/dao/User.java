@@ -8,8 +8,8 @@ public class User {
     private String lastname;
     private String email;
     private String status;
+    private String position;
 
-    // Getter and Setter for id
     public int getId() {
         return id;
     }
@@ -18,7 +18,6 @@ public class User {
         this.id = id;
     }
 
-    // Getter and Setter for picture (URL of the picture)
     public String getPicture() {
         return picture;
     }
@@ -27,7 +26,6 @@ public class User {
         this.picture = picture;
     }
 
-    // Getter and Setter for firstname
     public String getFirstname() {
         return firstname;
     }
@@ -36,7 +34,6 @@ public class User {
         this.firstname = firstname;
     }
 
-    // Getter and Setter for lastname
     public String getLastname() {
         return lastname;
     }
@@ -45,7 +42,6 @@ public class User {
         this.lastname = lastname;
     }
 
-    // Getter and Setter for email
     public String getEmail() {
         return email;
     }
@@ -54,7 +50,6 @@ public class User {
         this.email = email;
     }
 
-    // Getter and Setter for status
     public String getStatus() {
         return status;
     }
@@ -62,4 +57,33 @@ public class User {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getPosition() {
+        if (position == null) {
+            return null;
+        }
+
+        switch (position) {
+            case "academic-clerk":
+                return "Academic Clerk";
+            case "records-officer":
+                return "Records Officer";
+            case "ict-support-representative":
+                return "ICT Support Representative";
+            case "supervisor":
+                return "Supervisor";
+            case "secretary":
+                return "Secretary";
+            case "liaison-officer":
+                return "Liaison Officer";
+            default:
+                return position;
+        }
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+    
+    
 }

@@ -34,7 +34,7 @@
     </div>
     <div class="nav-item3">
         <div class="search-container">
-            <input type="text" class="search-input" placeholder="Search...">
+            <input type="text" class="search-input" id="search-admin" placeholder="Search...">
             <button class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
     </div>

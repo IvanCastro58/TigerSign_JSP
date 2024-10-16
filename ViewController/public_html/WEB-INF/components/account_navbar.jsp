@@ -10,7 +10,8 @@
 <div class="button-div">
     <button class="add-user-btn"><i class="bi bi-person-plus"></i>Create User</button>
     <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search...">
-        <button class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <input type="text" id="search-input" class="search-input" placeholder="Search...">
     </div>
 </div>
+
+

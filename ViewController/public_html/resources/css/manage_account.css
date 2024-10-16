@@ -98,9 +98,16 @@ body {
 
 .search-input {
     font-size: 12px;
-    padding: 5px 10px;
-    height: 100%;
-    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    padding: 10px;
+    border: 1px solid var(--light-gray);
+    width: 200px;
+}
+
+.search-input:focus {
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .search-button {
@@ -196,17 +203,20 @@ body {
 #add-admin-form {
     display: flex;
     flex-direction: column;
+    margin-top: 10px;
+    margin-left: 20px;
 }
 
 #add-admin-form label {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 #add-admin-form input {
-    font-size: 14px;
+    font-size: 12px;
     font-family: 'Montserrat', sans-serif;
-    padding: 15px;
-    margin-left: 20px;
+    padding: 10px;
     border: 1px solid var(--light-gray);
 }
 
@@ -225,7 +235,6 @@ body {
 .invalid-text{
     color: var(--red);
     font-size: 12px;
-    margin-left: 20px;
     margin-top: 5px;
 }
 
@@ -285,7 +294,13 @@ body {
 }
 
 .skeleton {
-    background-color: #e0e0e0;
+    background: linear-gradient(
+        90deg, 
+        #e0e0e0 25%, 
+        #f0f0f0 50%, 
+        #e0e0e0 75%
+    );
+    background-size: 200% 100%;
     border-radius: 4px;
     display: inline-block;
     height: 1em;
@@ -298,16 +313,22 @@ body {
     height: 40px;
     border-radius: 50%;
     display: inline-block;
-    background-color: #e0e0e0;
+    background: linear-gradient(
+        90deg, 
+        #e0e0e0 25%, 
+        #f0f0f0 50%, 
+        #e0e0e0 75%
+    );
+    background-size: 200% 100%;
     animation: shimmer 1.5s infinite linear;
 }
 
 @keyframes shimmer {
     0% {
-        background-position: -1000px 0;
+        background-position: -200% 0;
     }
     100% {
-        background-position: 1000px 0;
+        background-position: 200% 0;
     }
 }
 

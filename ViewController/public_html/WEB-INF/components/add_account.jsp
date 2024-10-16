@@ -1,5 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
 <div id="add-admin-popup" class="popup-overlay" style="<%= request.getAttribute("showModal") != null ? "display: flex;" : "display: none;" %>">
     <div class="popup">
         <div class="popup-header">
@@ -14,14 +12,30 @@
             </div>
 
             <form id="add-admin-form" action="send-invitation" method="post" onsubmit="return showLoading();">
-                <input type="email" id="admin-email" name="admin-email" 
-                    class="<%= request.getAttribute("invalidDomain") != null ? "is-invalid" : "" %>"
-                    placeholder="Enter UST GSuite Address to send invitations" required>
-                    
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <input type="text" id="admin-email" name="admin-email"
+                        class="<%= request.getAttribute("invalidDomain") != null ? "is-invalid" : "" %>"
+                        placeholder="Enter UST GSuite Address" required>
+                </div>
+                
                 <% if (request.getAttribute("invalidDomain") != null) { %>
-                    <span class="invalid-text">Invalid Account: Use only the domain ust.edu.ph.</span>
+                    <span class="invalid-text">Invalid account: Please use only the domain ust.edu.ph.</span>
                 <% } %>
                 
+                <br>
+                
+                <label for="position">Select Position</label>
+                <select id="admin-position" name="admin-position" required>
+                    <option value="" disabled selected>Select Position</option>
+                    <option value="academic-clerk">Academic Clerk</option>
+                    <option value="records-officer">Records Officer</option>
+                    <option value="ict-support-representative">ICT Support Representative</option>
+                    <option value="supervisor">Supervisor</option>
+                    <option value="secretary">Secretary</option>
+                    <option value="liaison-officer">Liaison Officer</option>
+                </select>
+
                 <div style="display: inline-flex; align-items: center; width: fit-content; margin-left: auto;">
                     <div id="loading-spinner" class="loading-spinner" style="display: none;">
                         <div class="spinner"></div>
@@ -34,6 +48,44 @@
 </div>
 
 <style>
+    select {
+        font-family: 'Montserrat', sans-serif;
+        width: 100%;
+        padding: 10px 5px;
+        margin-bottom: 15px;
+        font-size: 12px;
+        border: 1px solid #a1a1a1;
+        box-sizing: border-box;
+    }
+    
+    select:focus{
+        border: 1px solid #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .input-wrapper {
+        position: relative;
+        display: inline-flex;
+        width: 100%;
+    }
+
+    .input-wrapper input {
+        padding-right: 120px; 
+        width: 100%;
+    }
+
+    .input-wrapper::after {
+        content: "@ust.edu.ph";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #1a1a1a;
+        font-size: 12px;
+        pointer-events: none;
+    }
+
     .loading-spinner {
         display: inline-flex; 
         align-items: center; 
@@ -60,13 +112,21 @@
 
 <script>
     function showLoading() {
+        const emailInput = document.getElementById('admin-email');
+        const domain = '@ust.edu.ph';
+    
+        // Check if the email already has a domain (anything after '@')
+        if (!emailInput.value.includes('@')) {
+            emailInput.value = emailInput.value + domain;
+        }
+    
         const spinner = document.getElementById('loading-spinner');
-        spinner.style.display = 'inline-flex'; 
-
+        spinner.style.display = 'inline-flex';
+    
         setTimeout(() => {
-            document.getElementById('add-admin-form').submit(); 
-        }, 1500); 
-
-        return false; 
+            document.getElementById('add-admin-form').submit();
+        }, 1500);
+    
+        return false;
     }
 </script>

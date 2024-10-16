@@ -17,12 +17,11 @@ public class UserService {
 
     public User getUserById(int userId) {
         User user = null;
-        String query = "SELECT id, picture, firstname, lastname, email, status FROM TS_ADMIN WHERE id = ?";
+        String query = "SELECT id, picture, firstname, lastname, email, status, position FROM TS_ADMIN WHERE id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            // Set the user ID parameter in the SQL query
             statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -33,6 +32,7 @@ public class UserService {
                     user.setLastname(resultSet.getString("lastname"));
                     user.setEmail(resultSet.getString("email"));
                     user.setStatus(resultSet.getString("status"));
+                    user.setPosition(resultSet.getString("position"));
                 }
             }
 
@@ -43,14 +43,16 @@ public class UserService {
         return user;
     }
 
-    public boolean deactivateUser(int userId) {
-        String query = "UPDATE TS_ADMIN SET status = 'DEACTIVATED' WHERE id = ? AND status = 'ACTIVE'";
+    public boolean deactivateUser(int userId, String reason) {
+        String query = "UPDATE TS_ADMIN SET status = 'DEACTIVATED', reason = ? WHERE id = ? AND status = 'ACTIVE'";
         boolean isDeactivated = false;
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setInt(1, userId);
+            statement.setString(1, reason);
+            statement.setInt(2, userId);
+
             int rowsUpdated = statement.executeUpdate();
             isDeactivated = (rowsUpdated > 0);
 
@@ -62,7 +64,7 @@ public class UserService {
     }
     
     public boolean activateUser(int userId) {
-        String query = "UPDATE TS_ADMIN SET status = 'ACTIVE' WHERE id = ? AND status = 'DEACTIVATED'";
+        String query = "UPDATE TS_ADMIN SET status = 'ACTIVE', reason = NULL WHERE id = ? AND status = 'DEACTIVATED'";
         boolean isActivated = false;
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -78,4 +80,25 @@ public class UserService {
 
         return isActivated;
     }
+    
+    public String getDeactivationReason(int userId) {
+        String query = "SELECT reason FROM TS_ADMIN WHERE id = ? AND status = 'DEACTIVATED'";
+        String deactivationReason = null;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                deactivationReason = resultSet.getString("reason");
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error retrieving deactivation reason", e);
+        }
+
+        return deactivationReason;
+    }
+
 }

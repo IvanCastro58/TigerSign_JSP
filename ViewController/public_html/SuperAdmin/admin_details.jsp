@@ -20,17 +20,20 @@
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <%
-        if (request.getParameter("confirm-input") != null && request.getParameter("confirm-input").equalsIgnoreCase("CONFIRM")) {
+        String deactivationReason = request.getParameter("deactivation-reason");
+        if (deactivationReason != null && !deactivationReason.trim().isEmpty()) {
             UserService userService = new UserService();
-            boolean success = userService.deactivateUser(Integer.parseInt(request.getParameter("userId")));
-            
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean success = userService.deactivateUser(userId, deactivationReason);
+    
             if (success) {
-                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account Successfully Deactivated !', backgroundColor: '#ffffff',  gravity: 'bottom', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000}).showToast();</script>");
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account Successfully Deactivated!', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000 }).showToast();</script>");
             } else {
-                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to deactivate account!', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000}).showToast();</script>");
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to deactivate account!', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000 }).showToast();</script>");
             }
         }
     %>
+
     
     <%
         if (request.getParameter("confirm-input-activation") != null && request.getParameter("confirm-input-activation").equalsIgnoreCase("CONFIRM")) {
@@ -51,12 +54,17 @@
         String userIdParam = request.getParameter("userId");
         User user = null;
         String accountStatus = "Unknown";
-
+        String reason = null;
+        
         if (userIdParam != null) {
             int userId = Integer.parseInt(userIdParam);
             UserService userService = new UserService();
             user = userService.getUserById(userId);
             accountStatus = (user != null) ? user.getStatus() : "Unknown";
+            
+            if ("DEACTIVATED".equalsIgnoreCase(accountStatus)) {
+                reason = userService.getDeactivationReason(userId);
+            }
         }
     %>
     
@@ -81,7 +89,7 @@
                     <div class="name-line">
                         <h3><%= (user != null) ? (user.getFirstname() + " " + user.getLastname()) : "Unknown User" %></h3>
                     </div>
-                    <p>Admin</p>
+                    <p>Admin - <%= (user != null) ? user.getPosition() : "N/A" %></p>
                     <p>Office of the Registrar</p>
                 </div>
             </div>
@@ -106,13 +114,23 @@
                             </div>
                             <div class="account-status">
                                 <label>Account Status</label>
-                                <p class="<%= accountStatus.equals("ACTIVE") ? "status-active" : "status-deactivated" %>">
+                                <p class="<%= accountStatus.equals("ACTIVE") ? "status-active" : "status-deactivate" %>">
                                     <%= accountStatus %>
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
+                <% if ("DEACTIVATED".equalsIgnoreCase(accountStatus)){ %>
+                    <div class="custom-alert" role="alert">
+                        <div class="alert-icon">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </div>
+                        <div class="alert-content">
+                            <strong>Reason for Deactivation: &nbsp</strong> <%= reason %>
+                        </div>
+                    </div>
+                <% } %>
             </div>     
 
             <!-- Button and Modal based on Account Status -->
@@ -149,10 +167,10 @@
                             <span class="popup-close" id="popup-close">&times;</span>
                         </div>
                         <div class="popup-content">
-                            <p class="bigger-text">Please type "CONFIRM" to proceed with deactivating this account.</p>
+                            <p class="bigger-text">Please provide a reason for deactivating this account.</p>
                             <form id="confirm-deactivation-form" method="post">
                                 <input type="hidden" name="userId" value="<%= userIdParam %>">
-                                <input type="text" id="confirm-input-deactivation" name="confirm-input" placeholder="Type 'CONFIRM' to proceed" required>
+                                <textarea id="deactivation-reason" name="deactivation-reason" placeholder="Enter the reason for deactivation" required></textarea>
                                 <button type="submit" class="submit-btn" disabled>Deactivate Account</button>
                             </form>
                         </div>

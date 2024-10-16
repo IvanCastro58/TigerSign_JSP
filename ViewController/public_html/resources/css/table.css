@@ -74,12 +74,15 @@ body {
     border-bottom: 1px solid var(--light-gray);
 }
 
-.transaction-table th {
+.transaction-table thead th {
+    position: sticky;
+    top: 0;
     background-color: var(--blackish);
     color: var(--white);
-    position: relative;
     font-size: 10px;
     text-align: left;
+    z-index: 1;
+    border-bottom: 1px solid var(--light-gray);
 }
 
 .transaction-table tr {

@@ -109,8 +109,14 @@
                                         <tr class="actual-data account-row" data-user-id="<%= user.getId() %>">
                                             <td><%= user.getId() %></td>
                                             <td class="profile-column">
-                                                <img src="<%= user.getPicture() %>" alt="Profile Picture" /> 
+                                                <%
+                                                    String picture = user.getPicture();
+                                                    String defaultPicture = request.getContextPath() + "/resources/images/default-profile.jpg";
+                                                %>
+                                                <img src="<%= picture != null ? picture : defaultPicture %>" alt="Profile Picture" />
                                             </td>
+
+
                                             <td class="expandable-text"><%= user.getFirstname() + " " + user.getLastname() %></td>
                                             <td class="expandable-text"><%= user.getEmail() %></td>
                                             <td class="<%= statusClass %>">
@@ -123,14 +129,16 @@
                             %>
                         </tbody>
                         </table>
-                        
+                        <div style="text-align: center; margin-top: 20px; display: none;" id="no-results">
+                            <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 200px; height: 200px;" />
+                            <p style="font-size: 14px; font-weight: 500;">No matching accounts found.</p>
+                        </div>
                         <% 
-                            // Check if userList is empty and display the message
                             if (userList == null || userList.isEmpty()) { 
                         %>
-                            <div style="text-align: center;">
-                                <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 120px; height: 120px;" />
-                                <p style="font-size: 12px; font-weight: 500;">No account information available at the moment.</p>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 200px; height: 200px;" />
+                                <p style="font-size: 14px; font-weight: 500;">No admin accounts available at the moment.</p>
                             </div>
                         <% 
                             } 
@@ -239,6 +247,33 @@
                 setTimeout(() => {
                     adminPopup.style.display = 'none';
                 }, 600);
+            }
+        });
+    </script>
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const tableRows = document.querySelectorAll('#account_table tbody tr.actual-data');
+        const noResultsDiv = document.getElementById('no-results'); 
+    
+        searchInput.addEventListener('input', () => {
+            const searchValue = searchInput.value.toLowerCase();
+            let hasMatches = false; 
+    
+            tableRows.forEach((row) => {
+                const rowData = row.textContent.toLowerCase();
+    
+                if (rowData.includes(searchValue)) {
+                    row.style.display = 'table-row';
+                    hasMatches = true; 
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+    
+            if (!hasMatches && searchValue) {
+                noResultsDiv.style.display = 'block'; 
+            } else {
+                noResultsDiv.style.display = 'none'; 
             }
         });
     </script>

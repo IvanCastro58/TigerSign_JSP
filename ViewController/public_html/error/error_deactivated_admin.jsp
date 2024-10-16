@@ -16,10 +16,11 @@
         <div>
             <h1>Access Denied</h1>
         </div>
-        <div class="message">You do not have permission to access this system.</div>
+        <div class="message">Your account has been deactivated by the Super Admin.</div>
         <div class="button-div">
-            <a href="${pageContext.request.contextPath}/SuperAdmin/main_login.jsp">Go to Login Page</a>
+            <a href="${pageContext.request.contextPath}/Admin/login.jsp">Go to Login Page</a>
         </div>
     </div>
 </body>
 </html>
+

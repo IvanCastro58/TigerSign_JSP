@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*, java.util.List" %>
+<%@ page import="com.tigersign.dao.AuditLog" %>
+<%@ page import="com.tigersign.dao.AuditLogDAO" %>
+<%
+    List<AuditLog> auditList = null;
 
+    try {
+        AuditLogDAO auditDAO = new AuditLogDAO();
+        auditList = auditDAO.getAllAudits();
+    } catch (Exception e) {
+        e.printStackTrace(); 
+    }
+%>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -36,67 +48,39 @@
                 <div class="table-wrapper">
                     <table class="transaction-table" id="audit_logs">
                         <thead>
+                        <tr>
+                            <th>PICTURE</th>
+                            <th>NAME</th>
+                            <th>ADMIN ID</th>
+                            <th>POSITION</th>
+                            <th>ACTIVITY</th>
+                            <th>DATE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
+                            if (auditList != null) {
+                                for (AuditLog audit : auditList) {
+                        %>
                             <tr>
-                                <th class="date-processed-column">
-                                    Date
-                                    <span class="sort-icons">
-                                        <i class="fa-solid fa-caret-up"></i>
-                                        <i class="fa-solid fa-caret-down"></i>
-                                    </span>
-                                </th>
-                                <th>
-                                    Event
-                                </th>
-                                <th>
-                                    User
-                                    <span class="sort-user">
-                                        <i class="bi bi-sort-alpha-down"></i>
-                                        <i class="bi bi-sort-alpha-down-alt" style="display: none;"></i>
-                                    </span>
-                                </th>
-                                <th>
-                                    Role
-                                </th>
+                                <td>
+                                    <%
+                                        String picture = audit.getPicture();
+                                        String defaultPicture = request.getContextPath() + "/resources/images/default-profile.jpg";
+                                    %>
+                                    <img src="<%= picture != null ? picture : defaultPicture %>" alt="Admin Picture" style="border-radius: 50%;" width="40" height="40"/>
+                                </td>
+                                <td><%= audit.getFirstName() + " " + audit.getLastName() %></td>
+                                <td><%= audit.getAdminId() %></td>
+                                <td><%= audit.getPosition() %></td>
+                                <td><%= audit.getActivity() %></td>
+                                <td><%= audit.getActivityDateTime() %></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="date-processed-column">10 Aug 2024</td>
-                                <td class="expandable-text">User logged in</td>
-                                <td class="expandable-text">Ivan Castro</td>
-                                <td>Admin</td> 
-                            </tr>
-                            <tr>
-                                <td class="date-processed-column">10 Aug 2024</td>
-                                <td class="expandable-text">Claimed Form #123456789</td>
-                                <td class="expandable-text">Joshua Embestro</td>
-                                <td>Admin</td> 
-                            </tr>
-                            <tr>
-                                <td class="date-processed-column">10 Aug 2024</td>
-                                <td class="expandable-text">Claimed Form #123456789</td>
-                                <td class="expandable-text">Jarred Reyes</td>
-                                <td>Admin</td> 
-                            </tr>
-                            <tr>
-                                <td class="date-processed-column">10 Aug 2024</td>
-                                <td class="expandable-text">User logged in</td>
-                                <td class="expandable-text">Karl Barce</td>
-                                <td>Admin</td> 
-                            </tr>
-                            <tr>
-                                <td class="date-processed-column">10 Aug 2024</td>
-                                <td class="expandable-text">Claimed Form #123456789</td>
-                                <td class="expandable-text">Jarred Reyes</td>
-                                <td>Admin</td> 
-                            </tr>
-                            <tr>
-                                <td class="date-processed-column">10 Aug 2024</td>
-                                <td class="expandable-text">Claimed Form #123456789</td>
-                                <td class="expandable-text">Joshua Embestro</td>
-                                <td>Admin</td> 
-                            </tr>
-                        </tbody>
+                        <%
+                                }
+                            }
+                        %>
+                    </tbody>
                     </table>
                 </div>
             </div>
