@@ -17,6 +17,15 @@
     <link rel="stylesheet" href="../resources/css/pendingclaim.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
+<style>
+    .transaction-table th{
+        padding: 15px 5px; 
+    } 
+    
+    .transaction-table td{
+        padding: 5px 5px;
+    }
+</style>
 <body>
     <%@ include file="/WEB-INF/components/session_admin.jsp" %>
     
@@ -28,12 +37,12 @@
         request.setAttribute("activePage", "pending_claim");  
     %>
     
-     <%@ include file="/WEB-INF/components/header_admin.jsp" %>
+    <%@ include file="/WEB-INF/components/header_admin.jsp" %>
     <%@ include file="/WEB-INF/components/sidebar_admin.jsp" %>
     
     <div class="main-content">
         <div class="margin-content">
-            <h1 class="title-page">PENDING CLAIMS</h1>
+            <h2 class="title-page">PENDING CLAIMS</h2>
             <%@ include file="/WEB-INF/components/top_nav.jsp" %>
             <div class="table-container">
                 <div class="table-wrapper">
@@ -43,27 +52,19 @@
                             <th>O.R. Number</th>
                             <th>Name</th>
                             <th>Date of Payment</th>
-                            <th>Status</th>
+                            <th style="text-align: center;">Status</th>
                             <th>College</th>
                             <th>Request</th>
-                            <th>Action</th>
+                            <th style="text-align: center;">Action</th>
                         </tr>
                     </thead>
-                        <tbody>
+                        <tbody id="pending-table-body">
                             <%
                                 PendingClaimsService service = new PendingClaimsService();
                                 List<PendingClaim> pendingClaims = null;
                             
                                 try {
                                     pendingClaims = service.getActivePendingClaims();
-                                    service.insertPendingClaims(pendingClaims);
-                            
-                                    
-                                    for (PendingClaim claim : pendingClaims) {
-                                        
-                                        String fileStatus = service.getFileStatus(claim.getOrNumber(), claim.getFeeName());
-                                        claim.setFileStatus(fileStatus); 
-                                    }
                                 } catch (SQLException e) {
                                     e.printStackTrace();
                                 }
@@ -71,7 +72,7 @@
                                 if (pendingClaims != null && !pendingClaims.isEmpty()) {
                                     for (PendingClaim claim : pendingClaims) {
                             %>
-                                        <tr>
+                                        <tr class="actual-data">
                                             <td class="expandable-text"><%= claim.getOrNumber() %></td>
                                             <td class="expandable-text"><%= claim.getCustomerName() %></td>
                                             <td>
@@ -81,38 +82,28 @@
                                                 %>
                                                 <%= formattedDateProcessed %>
                                             </td>
-                                            <td>
-                                                <form method="POST" action="${pageContext.request.contextPath}/UpdateStatusServlet">
-                                                    <input type="hidden" name="orNumber" value="<%= claim.getOrNumber() %>">
-                                                    <input type="hidden" name="feeName" value="<%= claim.getFeeName() %>">
-                                                    <input type="hidden" name="userType" value="admin">
-                                                    <select class="status-dropdown 
-                                                        <%= "PENDING".equalsIgnoreCase(claim.getFileStatus()) ? "status-PENDING" : 
-                                                            "PROCESSING".equalsIgnoreCase(claim.getFileStatus()) ? "status-PROCESSING" : 
-                                                            "AVAILABLE".equalsIgnoreCase(claim.getFileStatus()) ? "status-AVAILABLE" : "" %>"
-                                                        name="fileStatus" onchange="this.form.submit()">
-                                                        
-                                                        <option value="PENDING" <%= "PENDING".equalsIgnoreCase(claim.getFileStatus()) ? "selected" : "" %>>PENDING</option>
-                                                        <option value="PROCESSING" <%= "PROCESSING".equalsIgnoreCase(claim.getFileStatus()) ? "selected" : "" %>>PROCESSING</option>
-                                                        <option value="AVAILABLE" <%= "AVAILABLE".equalsIgnoreCase(claim.getFileStatus()) ? "selected" : "" %>>AVAILABLE</option>
-                                                    </select>
-                                            
-                                                    <% if ("PROCESSING".equalsIgnoreCase(claim.getFileStatus())) { %>
+                                            <td style="text-align: center;">
+                                                <select class="status-dropdown" data-request-id="<%= claim.getRequestId() %>">
+                                                    <option value="PENDING" <%= claim.getFileStatus().equals("PENDING") ? "selected" : "" %>>PENDING</option>
+                                                    <option value="PROCESSING" <%= claim.getFileStatus().equals("PROCESSING") ? "selected" : "" %>>PROCESSING</option>
+                                                    <option value="HOLD" <%= claim.getFileStatus().equals("HOLD") ? "selected" : "" %>>ON HOLD</option>
+                                                    <option value="AVAILABLE" <%= claim.getFileStatus().equals("AVAILABLE") ? "selected" : "" %>>AVAILABLE</option>
+                                                </select>
+                                                <% if ("PROCESSING".equalsIgnoreCase(claim.getFileStatus())) { %>
                                                         <div style="margin-top: 5px; color: #6c757d;">
                                                             <% 
                                                             
-                                                                int daysSinceProcessing = service.getDaysSinceProcessing(claim.getOrNumber(), claim.getFeeName());
+                                                                int daysSinceProcessing = service.getDaysSinceProcessing(claim.getRequestId());
                                                                 out.print("(" + daysSinceProcessing + " days)");
                                                             %>
                                                         </div>
                                                     <% } %>
-                                                </form>
                                             </td>
                                             <td class="expandable-text"><%= claim.getCollege() %></td>
                                             <td><%= claim.getFeeName() %></td>
-                                            <td>
+                                            <td style="text-align: center;">
                                                 <button type="submit" class="action-button" 
-                                                    <%= "PROCESSING".equalsIgnoreCase(claim.getFileStatus()) || "PENDING".equalsIgnoreCase(claim.getFileStatus()) ? "disabled" : "" %>>
+                                                    <%= "PROCESSING".equalsIgnoreCase(claim.getFileStatus()) || "PENDING".equalsIgnoreCase(claim.getFileStatus()) || "HOLD".equalsIgnoreCase(claim.getFileStatus()) ? "disabled" : "" %>>
                                                     CLAIM
                                                 </button>
                                             </td>
@@ -129,6 +120,10 @@
                             %>
                     </tbody>
                     </table>
+                    <div style="text-align: center; margin-top: 20px;" id="no-results">
+                        <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 200px; height: 200px;" />
+                        <p style="font-size: 14px; font-weight: 500;">No matching claims found.</p>
+                    </div>
                 </div>
             </div>
             <%@ include file="/WEB-INF/components/pagination.jsp" %>
@@ -138,7 +133,7 @@
                         <strong>CLAIMER TYPE</strong>
                         <span class="popup-close" id="popup-close">&times;</span>
                     </div>
-                    <div class="popup-content">
+                   <div class="popup-content">
                         <p class="bigger-text">Select the corresponding type of claimer to activate the Document Receiving Form.</p>
                         <div class="info-text">
                             <i class="bi bi-info-circle"></i>
@@ -155,17 +150,160 @@
                     </div>
                 </div>
             </div>
+            <div id="confirm-hold-popup" class="popup-overlay">
+                <div class="popup">
+                    <div class="popup-header">
+                        <strong>CONFIRM HOLD STATUS</strong>
+                        <span class="popup-close" id="confirm-hold-popup-close">&times;</span>
+                    </div>
+                    <div class="popup-content">
+                        <p class="bigger-text">Please provide a reason for holding this request.</p>
+                        <form id="confirm-hold-form" method="post">
+                            <textarea id="deactivation-reason" name="deactivation-reason" placeholder="Enter the reason for holding" required></textarea>
+                            <input type="hidden" id="request-id-hold" name="request-id" value=""/>
+                            <button type="submit" class="submit-btn">Hold</button>
+                        </form>
+                    </div>
+                </div> 
+            </div>
         </div>
     </div>
     <%@ include file="/WEB-INF/components/script.jsp" %>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">
-        const adminFullName = "<%= fullName %>";
-    </script>
+    const adminFullName = "<%= fullName %>";
+    $(document).ready(function() {
+    var contextPath = '<%= request.getContextPath() %>';
+        // Function to update the available options based on the current status
+        function updateDropdownOptions(dropdown) {
+            const currentStatus = dropdown.val();
+
+            // Enable all options initially
+            dropdown.find('option').prop('disabled', false);
+
+            // Apply restrictions based on the current status
+            if (currentStatus === 'PENDING') {
+                dropdown.find('option[value="HOLD"]').prop('disabled', true);
+            } else if (currentStatus === 'PROCESSING') {
+                dropdown.find('option[value="PENDING"]').prop('disabled', true);
+                dropdown.find('option[value="HOLD"]').prop('disabled', false);
+            } else if (currentStatus === 'HOLD') {
+                dropdown.find('option[value="PENDING"]').prop('disabled', true);
+                dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
+            }
+        }
+    
+        // Apply the initial restriction when the page loads
+        $('.status-dropdown').each(function() {
+            updateDropdownOptions($(this));
+        });
+    
+        // Update options when the dropdown value changes
+       $('.status-dropdown').change(function() {
+        const newStatus = $(this).val();
+        const requestId = $(this).data('request-id');
+        const currentDropdown = $(this); // Set the current dropdown for reference
+        const previousStatusValue = currentDropdown.val(); // Store previous value
+        
+        if (newStatus === "HOLD") {
+            $('#request-id-hold').val(requestId); // Set request ID in hidden input
+            showPopup($('#confirm-hold-popup')[0]); // Display the confirm-hold-popup
+        } else {
+            // Update the status if it’s not HOLD
+            $.ajax({
+                url: '<%= request.getContextPath() %>/UpdateStatusServlet',
+                type: 'POST',
+                data: { requestId: requestId, newStatus: newStatus },
+                success: function(response) {
+                    // Assuming response indicates success, update the dropdown
+                    currentDropdown.val(newStatus); // Update the dropdown to reflect the new status
+                    updateStatusStyle(currentDropdown); // Call to update the UI style
+                    updateButtonState(currentDropdown.closest('tr').find('.action-button'), newStatus); // Update button state
+                    updateDropdownOptions(currentDropdown); // Update available options
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error updating Status:", error);
+                }
+            });
+        }
+    });
+
+    function updateStatusStyle(dropdown) {
+        const status = dropdown.val();
+
+        // Remove previous status classes
+        dropdown.removeClass('status-PENDING status-PROCESSING status-HOLD status-AVAILABLE');
+
+        // Add the appropriate class based on the status
+        switch (status) {
+            case 'PENDING':
+                dropdown.addClass('status-PENDING');
+                break;
+            case 'PROCESSING':
+                dropdown.addClass('status-PROCESSING');
+                break;
+            case 'HOLD':
+                dropdown.addClass('status-HOLD');
+                break;
+            case 'AVAILABLE':
+                dropdown.addClass('status-AVAILABLE');
+                break;
+        }
+    }
+
+    function updateButtonState(button, status) {
+        // Enable or disable the button based on the status
+        if (["PROCESSING", "PENDING", "HOLD"].includes(status)) {
+            button.prop("disabled", true);
+        } else if (status === "AVAILABLE") {
+            button.prop("disabled", false);
+        }
+    }
+
+    // Initialize styles and button states for existing dropdowns when the page loads
+    $('.status-dropdown').each(function() {
+        var dropdown = $(this);
+        var button = dropdown.closest('tr').find('.action-button'); // Find the associated button
+        updateStatusStyle(dropdown); // Set initial dropdown style
+        updateButtonState(button, dropdown.val()); // Set initial button state
+    });
+});
+const searchInput = document.getElementById('search-admin');
+        const tableRows = document.querySelectorAll('#pending-table-body tr.actual-data');
+        const noResultsDiv = document.getElementById('no-results');
+
+        // Function to check if any rows are visible and update the no-results message accordingly
+        function checkNoResults() {
+            let hasVisibleRows = Array.from(tableRows).some(row => row.style.display !== 'none');
+            noResultsDiv.style.display = hasVisibleRows ? 'none' : 'block'; 
+        }
+
+        // Initially check if there are results on page load
+        checkNoResults();
+
+        searchInput.addEventListener('input', () => {
+            const searchValue = searchInput.value.toLowerCase();
+            let hasMatches = false; 
+
+            tableRows.forEach((row) => {
+                const nameCell = row.querySelector('td:nth-child(2)').textContent.toLowerCase(); // Name
+                const transactionIdCell = row.querySelector('td:nth-child(1)').textContent.toLowerCase(); // Transaction ID
+
+                if (nameCell.includes(searchValue) || transactionIdCell.includes(searchValue)) {
+                    row.style.display = 'table-row';
+                    hasMatches = true; 
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Check for results after filtering
+            checkNoResults();
+        });
+</script>
 </body>
 </html>
 
-
-Ivan Castro
 <%--<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.tigersign.dao.PendingClaimsService" %>

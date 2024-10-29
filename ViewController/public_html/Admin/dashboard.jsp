@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.time.ZoneId" %>
+<%@ page import="java.sql.*, com.tigersign.dao.DatabaseConnection" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,13 +20,69 @@
    <%@ include file="/WEB-INF/components/session_admin.jsp" %>
     <% 
         request.setAttribute("activePage", "dashboard");  
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+            
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+        String formattedDate = now.format(formatter);
+        
+         Connection conn = null;
+            PreparedStatement stmt = null;
+            ResultSet rs = null;
+        
+            int pendingCount = 0;
+            int processingCount = 0;
+            int holdCount = 0;
+            int claimedCount = 0;
+
+            try {
+                // Get connection from the DatabaseConnection class
+                conn = DatabaseConnection.getConnection();
+        
+                // Query for Pending Requests
+                String pendingQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'PENDING'";
+                stmt = conn.prepareStatement(pendingQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    pendingCount = rs.getInt(1);
+                }
+        
+                // Query for Processing Requests
+                String processingQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'PROCESSING'";
+                stmt = conn.prepareStatement(processingQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    processingCount = rs.getInt(1);
+                }
+        
+                // Query for Available Requests
+                String holdQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'HOLD'";
+                stmt = conn.prepareStatement(holdQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    holdCount = rs.getInt(1);
+                }
+        
+                // Query for Claimed Requests
+                String claimedQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE IS_CLAIMED = 'Y'";
+                stmt = conn.prepareStatement(claimedQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    claimedCount = rs.getInt(1);
+                }
+        
+            } catch (SQLException e) {
+                e.printStackTrace(); // Handle the SQL exception
+            } finally {
+                if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+                if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+                if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+            }
     %>
-    
     <%@ include file="/WEB-INF/components/header_admin.jsp" %>
     <%@ include file="/WEB-INF/components/sidebar_admin.jsp" %>
     
      <div class="main-content dashboard-main-content">
-        <div class="highlight-bar"><span>Sunday,&nbsp; September&nbsp; 16,&nbsp; 2023</span></div>
+        <div class="highlight-bar"><span><%= formattedDate %></span></div>
         <div class="margin-content">
             <!-- Display the user's first name dynamically -->
             <h1>Welcome back, <%= adminFirstName %>!</h1>
@@ -43,19 +102,19 @@
             <div class="card-view">
                 <div class="card" id="pending-card">
                     <h3 class="card-heading">Pending Requests</h3>
-                    <div class="card-number">10</div>
+                    <div class="card-number"><%= pendingCount %></div>
                 </div>
                 <div class="card" id="processing-card">
                     <h3 class="card-heading">Processing Requests</h3>
-                    <div class="card-number">15</div>
+                     <div class="card-number"><%= processingCount %></div>
                 </div>
                 <div class="card" id="available-card">
-                    <h3 class="card-heading">Available Requests</h3>
-                    <div class="card-number">20</div>
+                    <h3 class="card-heading">On Hold Requests</h3>
+                   <div class="card-number"><%= holdCount %></div>
                 </div>
                 <div class="card" id="completed-card">
-                    <h3 class="card-heading">Completed Requests</h3>
-                    <div class="card-number">30</div>
+                    <h3 class="card-heading">Claimed Requests</h3>
+                    <div class="card-number"><%= claimedCount %></div>
                     <a href="./claimed_request.jsp" class="see-more">See More <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>

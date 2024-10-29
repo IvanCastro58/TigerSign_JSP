@@ -129,6 +129,12 @@ body {
 .documents-list li {
     font-size: 14px;
     padding-bottom: 10px;
+    cursor:pointer;
+    text-decoration: underline;
+}
+
+.documents-list li:hover {
+    color:var(--blue);
 }
 
 .claim-information {

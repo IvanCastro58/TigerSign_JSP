@@ -12,6 +12,17 @@
         <link rel="stylesheet" href="../resources/css/tracker.css">
         <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     </head>
+     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var images = [
+                "../resources/images/background.jpg",
+                "../resources/images/background2.jpg",
+                "../resources/images/background3.jpg"
+            ];
+            var randomImage = images[Math.floor(Math.random() * images.length)];
+            document.body.style.backgroundImage = "url('" + randomImage + "')";
+        });
+    </script>
     <body>
         <input type="checkbox" id="menu-toggle" hidden>
         <header>
@@ -25,15 +36,11 @@
             <div class="highlight-bar"></div>
             <div class="box">
                 <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Enter Transaction ID">
+                    <input type="text" class="search-input" placeholder="Enter O.R Number (Ex. 01-100374932)">
                     <button class="search-button">Search</button>
                 </div>
                 <div class="results">
-                    <div class="heading-results">Your Request is ready to be claimed.</div>
-                    <div class="check-icon">
-                        <i class='bx bx-check-circle' style='color:#ffffff'></i>
-                    </div>
-                    <div class="heading-results">Available</div>
+                    
                 </div>
             </div>
         </div>
@@ -127,5 +134,53 @@
             <p>© 2016 Copyright University of Santo Tomas, Office of the Registrar. Proudly powered by <strong>UST-ICT Santo Tomas E-Service Providers</strong></p>
         </div>
     </footer>
-    </body>
+    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(".search-button").click(function() {
+                var orNumber = $(".search-input").val().trim();
+                if (orNumber) {
+                    $.ajax({
+                        url: "<%= request.getContextPath() %>/SearchRequestsServlet",
+                        type: "GET",
+                        dataType: "json",
+                        data: { or_number: orNumber },
+                        success: function(data) {
+                            $(".results").empty().show(); // Clear previous results and show the results section
+                        
+                            if (Array.isArray(data) && data.length > 0) {
+                                $.each(data, function(index, item) {
+                                    const fileStatusRow = $("<div>").addClass("file-status-row");
+                                    const fileName = $("<div>").addClass("file-name").text(item.request);
+                                    const statusClass = item.status ? item.status.toLowerCase().replace(" ", "-") : "";
+                                    const statusBadge = $("<div>").addClass("status-badge " + statusClass).text(item.status ? item.status.toUpperCase() : "UNKNOWN");
+
+                                    fileStatusRow.append(fileName).append(statusBadge);
+
+                                    if (item.status && item.status.toUpperCase() === "HOLD" && item.onHoldReason) {
+                                        const note = $("<div>").addClass("note").text("*" + item.onHoldReason);
+                                        fileStatusRow.append(note);
+                                    }
+
+                                    $(".results").append(fileStatusRow);
+                                });
+                            } else {
+                                $(".results").append('<div class="no-results">No requests found.</div>');
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            $(".results").empty().append('<div class="error">Error retrieving data.</div>').show();
+                        }
+                    });
+                } else {
+                    console.warn("OR Number is empty");
+                }
+            });
+        });
+    </script>
+
+
+
+</body>
 </html>

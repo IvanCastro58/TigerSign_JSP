@@ -11,7 +11,7 @@
     <title>Super Admin Dashboard - TigerSign</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../resources/css/sidebar.css">
+    <link rel="stylesheet" href="../resources/css/sidebar.css">s
     <link rel="stylesheet" href="../resources/css/dashboard.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
@@ -19,8 +19,6 @@
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     <% 
         request.setAttribute("activePage", "dashboard");  
-    %>
-    <%
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Manila"));
             
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
@@ -32,7 +30,7 @@
         
             int pendingCount = 0;
             int processingCount = 0;
-            int availableCount = 0;
+            int holdCount = 0;
             int claimedCount = 0;
 
             try {
@@ -56,11 +54,11 @@
                 }
         
                 // Query for Available Requests
-                String availableQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'AVAILABLE'";
-                stmt = conn.prepareStatement(availableQuery);
+                String holdQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'HOLD'";
+                stmt = conn.prepareStatement(holdQuery);
                 rs = stmt.executeQuery();
                 if (rs.next()) {
-                    availableCount = rs.getInt(1);
+                    holdCount = rs.getInt(1);
                 }
         
                 // Query for Claimed Requests
@@ -110,8 +108,8 @@
                      <div class="card-number"><%= processingCount %></div>
                 </div>
                 <div class="card" id="available-card">
-                    <h3 class="card-heading">Available Requests</h3>
-                   <div class="card-number"><%= availableCount %></div>
+                    <h3 class="card-heading">On Hold Requests</h3>
+                   <div class="card-number"><%= holdCount %></div>
                 </div>
                 <div class="card" id="completed-card">
                     <h3 class="card-heading">Claimed Requests</h3>

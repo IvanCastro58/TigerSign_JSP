@@ -81,7 +81,7 @@ confirmBtn.addEventListener('click', () => {
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
         photoField.files = dataTransfer.files;
-        photoFilename.value = "photo.png";
+        photoFilename.value = "Self Captured Photo Uploaded";
         confirmedDataUrl = croppedDataUrl; // Store confirmed cropped image URL
         document.getElementById('photo-data').value = croppedDataUrl;
         cropper.destroy(); // Remove cropper after confirmation

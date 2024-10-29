@@ -81,7 +81,7 @@ letterConfirmBtn.addEventListener('click', () => {
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
         letterPhotoField.files = dataTransfer.files;
-        letterPhotoFilename.value = "authorization_letter.png";
+        letterPhotoFilename.value = "Authorization Letter Photo Uploaded";
         letterConfirmedDataUrl = croppedDataUrl; // Store confirmed cropped image URL
         document.getElementById('letter-data').value = croppedDataUrl;
         letterCropper.destroy(); // Remove cropper after confirmation

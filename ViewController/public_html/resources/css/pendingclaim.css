@@ -51,7 +51,6 @@ body {
     padding: 5px 10px;
     color: var(--blackish);
     font-size: 12px;
-    appearance: none;
 }
 
 .nav-item1 .drop-icon i {
@@ -120,9 +119,16 @@ body {
 
 .search-input {
     font-size: 12px;
-    padding: 5px 10px;
-    height: 100%;
-    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    padding: 7px 10px;
+    border: 1px solid var(--light-gray);
+    width: 200px;
+}
+
+.search-input:focus {
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .search-button {
@@ -206,6 +212,49 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
+
+#confirm-hold-form{
+    display: flex;
+    flex-direction: column;
+}
+
+#confirm-hold-form input{
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid var(--light-gray);
+}
+
+#confirm-hold-form input:focus{
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.submit-btn {
+    background-color: var(--blackish);
+    color: var(--white);
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    width: max-content;
+    margin-left: auto;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.submit-btn i {
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.submit-btn:disabled {
+    background-color: var(--light-gray);
+    cursor: not-allowed;
+}
+
 
 .bi.bi-info-circle{
     color: #3B83FB; 

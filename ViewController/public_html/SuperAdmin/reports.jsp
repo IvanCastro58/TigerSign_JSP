@@ -1,9 +1,8 @@
-<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.ZoneId" %>
-<%@ page import="java.sql.*, com.tigersign.dao.DatabaseConnection" %>
+<%@ page import="java.sql.*, java.util.ArrayList, java.util.List, com.tigersign.dao.DatabaseConnection" %>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -22,75 +21,82 @@
             padding: 15px;
         }
     </style>
-    <body>
-        <%@ include file="/WEB-INF/components/session_check.jsp" %>
+<body>
+    <%@ include file="/WEB-INF/components/session_check.jsp" %>
     
-        <% 
-            request.setAttribute("activePage", "reports");  
+    <% 
+        request.setAttribute("activePage", "reports");  
 
-            LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Manila"));
-            
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
-            String formattedDate = now.format(formatter);
-            
-            Connection conn = null;
-            PreparedStatement stmt = null;
-            ResultSet rs = null;
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+        String formattedDate = now.format(formatter);
         
-            int pendingCount = 0;
-            int processingCount = 0;
-            int availableCount = 0;
-            int claimedCount = 0;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        int pendingCount = 0;
+        int processingCount = 0;
+        int availableCount = 0;
+        int claimedCount = 0;
+        List<String> documentTypes = new ArrayList<>();
+        List<Integer> documentCounts = new ArrayList<>();
 
-            try {
-                // Get connection from the DatabaseConnection class
-                conn = DatabaseConnection.getConnection();
-        
-                // Query for Pending Requests
-                String pendingQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'PENDING'";
-                stmt = conn.prepareStatement(pendingQuery);
-                rs = stmt.executeQuery();
-                if (rs.next()) {
-                    pendingCount = rs.getInt(1);
-                }
-        
-                // Query for Processing Requests
-                String processingQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'PROCESSING'";
-                stmt = conn.prepareStatement(processingQuery);
-                rs = stmt.executeQuery();
-                if (rs.next()) {
-                    processingCount = rs.getInt(1);
-                }
-        
-                // Query for Available Requests
-                String availableQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'AVAILABLE'";
-                stmt = conn.prepareStatement(availableQuery);
-                rs = stmt.executeQuery();
-                if (rs.next()) {
-                    availableCount = rs.getInt(1);
-                }
-        
-                // Query for Claimed Requests
-                String claimedQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE IS_CLAIMED = 'Y'";
-                stmt = conn.prepareStatement(claimedQuery);
-                rs = stmt.executeQuery();
-                if (rs.next()) {
-                    claimedCount = rs.getInt(1);
-                }
-        
-            } catch (SQLException e) {
-                e.printStackTrace(); // Handle the SQL exception
-            } finally {
-                if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-                if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-                if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        try {
+            // Get connection from the DatabaseConnection class
+            conn = DatabaseConnection.getConnection();
+    
+            // Existing queries for counts...
+            String pendingQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'PENDING'";
+            stmt = conn.prepareStatement(pendingQuery);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                pendingCount = rs.getInt(1);
             }
-        %>
+
+            String processingQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'PROCESSING'";
+            stmt = conn.prepareStatement(processingQuery);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                processingCount = rs.getInt(1);
+            }
+
+            String availableQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'AVAILABLE'";
+            stmt = conn.prepareStatement(availableQuery);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                availableCount = rs.getInt(1);
+            }
+
+            String claimedQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE IS_CLAIMED = 'Y'";
+            stmt = conn.prepareStatement(claimedQuery);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                claimedCount = rs.getInt(1);
+            }
+
+            // New query to get most claimed documents
+            String mostClaimedQuery = "SELECT REQUEST_DESCRIPTION, COUNT(*) AS total FROM TS_REQUEST WHERE FILE_STATUS = 'CLAIMED' GROUP BY REQUEST_DESCRIPTION ORDER BY total DESC";
+            stmt = conn.prepareStatement(mostClaimedQuery);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                documentTypes.add(rs.getString("REQUEST_DESCRIPTION"));
+                documentCounts.add(rs.getInt("total"));
+            }
         
-        <%@ include file="/WEB-INF/components/header.jsp" %>
-        <%@ include file="/WEB-INF/components/sidebar.jsp" %>
-        
-        <div class="main-content">
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the SQL exception
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+    %>
+    
+    <%@ include file="/WEB-INF/components/header.jsp" %>
+    <%@ include file="/WEB-INF/components/sidebar.jsp" %>
+    
+    <div class="main-content">
         <div class="highlight-bar"><span><%= formattedDate %></span></div>
         <div class="margin-content">
             <h2 class="title-page">REPORTS AND ANALYTICS</h2>
@@ -108,21 +114,21 @@
             <div class="highlight-bar2"></div>
             <div class="card-view">
                 <div class="card" id="pending-card-reports">
-                <h3 class="card-heading">Pending Requests</h3>
-                <div class="card-number"><%= pendingCount %></div>
-            </div>
-            <div class="card" id="processing-card-reports">
-                <h3 class="card-heading">Processing Request</h3>
-                <div class="card-number"><%= processingCount %></div>
-            </div>
-            <div class="card" id="available-card-reports">
-                <h3 class="card-heading">Available Request</h3>
-                <div class="card-number"><%= availableCount %></div>
-            </div>
-            <div class="card" id="claimed-card-reports">
-                <h3 class="card-heading">Claimed Request</h3>
-                <div class="card-number"><%= claimedCount %></div>
-            </div>
+                    <h3 class="card-heading">Pending Requests</h3>
+                    <div class="card-number"><%= pendingCount %></div>
+                </div>
+                <div class="card" id="processing-card-reports">
+                    <h3 class="card-heading">Processing Request</h3>
+                    <div class="card-number"><%= processingCount %></div>
+                </div>
+                <div class="card" id="available-card-reports">
+                    <h3 class="card-heading">Available Request</h3>
+                    <div class="card-number"><%= availableCount %></div>
+                </div>
+                <div class="card" id="claimed-card-reports">
+                    <h3 class="card-heading">Claimed Request</h3>
+                    <div class="card-number"><%= claimedCount %></div>
+                </div>
             </div>
             <div class="reports">
                 <div class="highlight-bar2"></div>
@@ -141,35 +147,27 @@
                                 <table class="transaction-table" id="reports-dashboard">
                                     <thead>
                                         <tr>               
-                                           <th>
-                                                Document Type
-                                            </th>
-                                            <th>
-                                                Total Release
-                                                <span class="sort-icons">
-                                                    <i class="fa-solid fa-caret-up"></i>
-                                                    <i class="fa-solid fa-caret-down"></i>
-                                                </span>
-                                            </th>
+                                           <th>Document Type</th>
+                                           <th>Total Release
+                                               <span class="sort-icons">
+                                                   <i class="fa-solid fa-caret-up"></i>
+                                                   <i class="fa-solid fa-caret-down"></i>
+                                               </span>
+                                           </th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <% 
+                                            // Loop through the document types and their counts to display in the table
+                                            for (int i = 0; i < documentTypes.size(); i++) {
+                                        %>
                                         <tr>
-                                            <td>Reprinted Diploma</td>                       
-                                            <td>20</td>
+                                            <td><%= documentTypes.get(i) %></td>
+                                            <td><%= documentCounts.get(i) %></td>
                                         </tr>
-                                        <tr>
-                                            <td>Certified True Copy of Form 137</td>                       
-                                            <td>16</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Certificate of Batch Ranking</td>                       
-                                            <td>13</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Certificate of Good Moral Character</td>                       
-                                            <td>8</td>
-                                        </tr>
+                                        <% 
+                                            }
+                                        %>
                                     </tbody>
                                 </table>
                             </div>
@@ -184,9 +182,9 @@
             </div>
         </div>
     </div>
-        
-        <div class="overlay"></div>
     
-        <%@ include file="/WEB-INF/components/script.jsp" %>
-    </body>
+    <div class="overlay"></div>
+
+    <%@ include file="/WEB-INF/components/script.jsp" %>
+</body>
 </html>

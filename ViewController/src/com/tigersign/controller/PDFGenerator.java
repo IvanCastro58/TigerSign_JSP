@@ -110,10 +110,10 @@ public class PDFGenerator {
         // Create a table for Transaction ID with 4 cells
         PdfPTable transactionIdTable = new PdfPTable(4);
         transactionIdTable.setWidthPercentage(100);
-        transactionIdTable.addCell(createNormalCell("Transaction ID"));
-        PdfPCell transactionIdCell = createCell(" #" + details.getTransactionId(), null);
+        transactionIdTable.addCell(createNormalCell("O.R. Number"));
+        PdfPCell transactionIdCell = createCell(" #" + details.getOrNumber(), null);
         transactionIdCell.setColspan(3); 
-        transactionIdCell.setPhrase(new Phrase(" #" + details.getTransactionId(), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8)));
+        transactionIdCell.setPhrase(new Phrase(" #" + details.getOrNumber(), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8)));
         transactionIdTable.addCell(transactionIdCell);
         document.add(transactionIdTable);
         document.add(new Paragraph("\n"));

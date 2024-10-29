@@ -16,9 +16,10 @@
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
-    background: url('../images/background.jpg') no-repeat center center fixed;
+   font-family: 'Montserrat', sans-serif;
     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-color: #f0f0f0;
     margin: 0;
     padding: 0;
@@ -97,7 +98,7 @@ header .logo img {
 
 .box {
     background-color: var(--white);
-    height: 300px;
+    height: auto;
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -108,7 +109,7 @@ header .logo img {
 
 .search-container {
     display: flex;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     width: 100%;
 }
 
@@ -130,27 +131,65 @@ header .logo img {
     font-size: 18px;
     margin-left: 10px;
 }
-
-.results{
-    background-color: var(--green);
-    padding: 10px;
-    border-radius: 8px;
+.results {
+    background-color: #e0edff; /* Light blue background */
+    border-radius: 10px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: auto; /* Centers the container */
+}
+
+
+.file-status-row {
+    display: grid;
+    grid-template-columns: 1fr auto; /* File name and status */
     align-items: center;
 }
 
-.heading-results {
+.file-name {
+    font-weight: bold;
+    color: #333;
     font-size: 18px;
-    font-weight: 600;
-    color: var(--white);
+}
+
+.status-badge {
+    padding: 8px 15px;
+    font-weight: bold;
+    color: white;
+    border-radius: 20px;
+    font-size: 14px;
     text-align: center;
 }
 
-.check-icon {
-    font-size: 70px;
-    color: var(--white);
-    margin-top: 10px;
+.processing {
+    background-color: #FFA500; /* Yellow for "Processing" */
+}
+
+.hold {
+    background-color: #3B83FB; /* Blue for "On Hold" */
+}
+
+.pending {
+    background-color: #d9534f; /* Blue for "On Hold" */
+}
+
+.available {
+    background-color: #1C8454; /* Blue for "On Hold" */
+}
+
+.claimed {
+    background-color: var(--light-gray);
+}
+
+.note {
+    font-style: italic;
+    color: #999;
+    font-size: 14px;
+    margin-top: 0; /* Remove margin on top */
 }
 
 .info-text {
@@ -293,6 +332,14 @@ header .logo img {
     .search-button {
         font-size: 16px;
     }
+    
+    .file-name{
+        font-size: 16px;
+    }
+    
+    .status-badge{
+        font-size: 12px;
+    }
 
     .info-text {
         font-size: 16px;
@@ -335,13 +382,17 @@ header .logo img {
     .search-button {
         font-size: 14px;
     }
-
-    .heading-results {
-        font-size: 15px;
+    .file-name{
+        font-size: 12px;
     }
     
-    .check-icon {
-        font-size: 60px;
+    .status-badge{
+        font-size: 10px;
+        padding: 6px 12px;
+    }
+    
+    .note{
+        font-size: 8px
     }
 
     .info-text {
@@ -368,7 +419,7 @@ header .logo img {
 
 }
 
-@media only screen and (min-width: 769px) and (max-width: 871px) {
+@media only screen and (min-width: 769px) and (max-width: 870px) {
     body {
         overflow: auto;
     }
@@ -405,19 +456,19 @@ header .logo img {
         font-size: 14px;
     }
 
-    .heading-results {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--white);
-        text-align: center;
+    .file-name{
+            font-size: 14px;
+        }
+    
+    .status-badge{
+        font-size: 10px;
+        padding: 6px 12px;
     }
     
-    .check-icon {
-        font-size: 50px;
-        color: var(--white);
-        margin-top: 10px;
+    .note{
+        font-size: 8px
     }
-
+    
     .info-text {
         font-size: 12px;
     }
@@ -463,17 +514,17 @@ header .logo img {
         font-size: 14px;
     }
 
-    .heading-results {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--white);
-        text-align: center;
+   .file-name{
+            font-size: 14px;
+        }
+    
+    .status-badge{
+        font-size: 10px;
+        padding: 6px 12px;
     }
     
-    .check-icon {
-        font-size: 60px;
-        color: var(--white);
-        margin-top: 10px;
+    .note{
+        font-size: 8px
     }
 
     .info-text {
@@ -544,18 +595,23 @@ header .logo img {
     .search-button {
         font-size: 12px;
     }
+    
+    .results {
+        padding: 10px;
+    }
 
-    .heading-results {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--white);
-        text-align: center;
+
+   .file-name{
+            font-size: 12px;
+        }
+    
+    .status-badge{
+        font-size: 8px;
+        padding: 4px 10px;
     }
     
-    .check-icon {
-        font-size: 60px;
-        color: var(--white);
-        margin-top: 10px;
+    .note{
+        font-size: 8px
     }
 
     .info-text {
@@ -647,17 +703,22 @@ header .logo img {
         font-size: 12px;
     }
 
-    .heading-results {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--white);
-        text-align: center;
+     .results {
+        padding: 10px;
+    }
+
+
+   .file-name{
+            font-size: 12px;
+        }
+    
+    .status-badge{
+        font-size: 8px;
+        padding: 4px 10px;
     }
     
-    .check-icon {
-        font-size: 50px;
-        color: var(--white);
-        margin-top: 10px;
+    .note{
+        font-size: 8px
     }
 
     .info-text {
