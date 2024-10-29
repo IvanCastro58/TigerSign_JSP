@@ -218,15 +218,17 @@ body {
     flex-direction: column;
 }
 
-#confirm-hold-form input{
+#deactivation-reason {
+    height: 100px;
+    padding: 10px;
+    border: 1px solid var(--light-gray);
     font-size: 14px;
     font-family: 'Montserrat', sans-serif;
-    padding: 15px;
+    resize: none;
     margin-bottom: 20px;
-    border: 1px solid var(--light-gray);
 }
 
-#confirm-hold-form input:focus{
+#deactivation-reason:focus {
     border: 1px solid #80bdff;
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);

@@ -184,7 +184,7 @@
 
             // Apply restrictions based on the current status
             if (currentStatus === 'PENDING') {
-                dropdown.find('option[value="HOLD"]').prop('disabled', true);
+                dropdown.find('option[value="HOLD"]').prop('disabled', false);
             } else if (currentStatus === 'PROCESSING') {
                 dropdown.find('option[value="PENDING"]').prop('disabled', true);
                 dropdown.find('option[value="HOLD"]').prop('disabled', false);

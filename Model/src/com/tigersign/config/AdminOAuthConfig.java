@@ -69,7 +69,8 @@ public class AdminOAuthConfig extends HttpServlet {
             String picture = userInfoJson.optString("picture", "");
 
             try (Connection conn = DatabaseConnection.getConnection()) {
-                if (isAllowedAdmin(conn, email)) {
+                String adminStatus = checkAdminStatus(conn, email);
+                if ("ACTIVE".equals(adminStatus)) {
                     // Update the admin's information in the database
                     updateAdminInfo(conn, email, firstName, lastName, picture);
 
@@ -82,7 +83,6 @@ public class AdminOAuthConfig extends HttpServlet {
                     // Get TOTP secret
                     String secret = getTOTPSecret(conn, email);
 
-                    // If TOTP secret is null, redirect to setup page
                     if (secret == null) {
                         String setupUrl = getTOTPSetupUrl(request, email);
                         request.setAttribute("setupUrl", setupUrl);
@@ -108,8 +108,10 @@ public class AdminOAuthConfig extends HttpServlet {
                     } else {
                         response.sendRedirect("Admin/verify_admin.jsp");
                     }
+                } else if ("DEACTIVATED".equals(adminStatus)) {
+                    response.sendRedirect("error/error_deactivated_admin.jsp");
                 } else {
-                    response.sendRedirect("error/error_unauthorized.jsp");
+                    response.sendRedirect("error/error_unauthorized_admin.jsp");
                 }
             } catch (SQLException e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
@@ -163,16 +165,16 @@ public class AdminOAuthConfig extends HttpServlet {
         }
     }
 
-    private boolean isAllowedAdmin(Connection conn, String email) throws SQLException {
-        String query = "SELECT COUNT(*) FROM TS_ADMIN WHERE email = ? AND status='ACTIVE'";
+    private String checkAdminStatus(Connection conn, String email) throws SQLException {
+        String query = "SELECT status FROM TS_ADMIN WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1) > 0;
+                return rs.getString("status");
             }
         }
-        return false;
+        return null;
     }
 
     private String getTOTPSecret(Connection conn, String email) throws SQLException {
