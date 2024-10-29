@@ -17,10 +17,10 @@
             <img src="${pageContext.request.contextPath}/resources/images/logo.png" alt="TigerSign Logo">
         </div>
     </header>
-    <div class="form-box">
+    <div class="form-box-success">
         <div class="highlight-bar"></div>
         <div class="totp-text">
-            <img class="logo" src="${pageContext.request.contextPath}/resources/images/check.png" alt="Check Icon">
+            <img class="check" src="${pageContext.request.contextPath}/resources/images/check.jpg" alt="Check Icon">
             <h2>Reset Email Sent</h2>
             <p class="reset-text">An email with the reset link has been sent to your registered email address. Please check your inbox.</p>
         </div>

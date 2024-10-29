@@ -70,7 +70,9 @@
                             </div>
                         </div>
                     </div>
-                    <button class="edit-btn">Edit<i class="bi bi-pencil-square"></i></button>
+                    <div style="text-align: center;">
+                        <button class="edit-btn">Edit<i class="bi bi-pencil-square"></i></button>
+                    </div>
                 </div>
             </div>           
         </div>

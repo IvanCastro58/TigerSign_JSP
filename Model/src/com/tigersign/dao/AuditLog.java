@@ -62,12 +62,31 @@ public class AuditLog {
     }
 
     public String getPosition() {
-        return position;
+        if (position == null) {
+            return null;
+        }
+
+        switch (position) {
+            case "academic-clerk":
+                return "Academic Clerk";
+            case "records-officer":
+                return "Records Officer";
+            case "ict-support-representative":
+                return "ICT Support Representative";
+            case "supervisor":
+                return "Supervisor";
+            case "secretary":
+                return "Secretary";
+            case "liaison-officer":
+                return "Liaison Officer";
+            default:
+                return position;
+        }
     }
 
     public void setPosition(String position) {
         this.position = position;
-    }
+    } 
 
     public String getPicture() {
         return picture;

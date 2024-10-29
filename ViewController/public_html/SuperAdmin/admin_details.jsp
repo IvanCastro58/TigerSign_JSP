@@ -33,7 +33,6 @@
             }
         }
     %>
-
     
     <%
         if (request.getParameter("confirm-input-activation") != null && request.getParameter("confirm-input-activation").equalsIgnoreCase("CONFIRM")) {
@@ -44,6 +43,22 @@
                 out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Account Successfully Activated !', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000}).showToast();</script>");
             } else {
                 out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to activate account!', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000}).showToast();</script>");
+            }
+        }
+    %>
+    
+    <%
+        if (request.getParameter("admin-position") != null) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            String newPosition = request.getParameter("admin-position");
+    
+            UserService userService = new UserService();
+            boolean success = userService.updateUserPosition(userId, newPosition);
+    
+            if (success) {
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-check-circle-fill toast-icon-success\"></i> Position Successfully Updated!', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-success', escapeMarkup: false, duration: 3000 }).showToast();</script>");
+            } else {
+                out.println("<script>Toastify({ text: '<i class=\"bi bi-exclamation-circle-fill toast-icon-error\"></i> Failed to update position!', backgroundColor: '#ffffff', gravity: 'bottom', position: 'right', className: 'toast-error', escapeMarkup: false, duration: 3000 }).showToast();</script>");
             }
         }
     %>
@@ -89,14 +104,40 @@
                     <div class="name-line">
                         <h3><%= (user != null) ? (user.getFirstname() + " " + user.getLastname()) : "Unknown User" %></h3>
                     </div>
-                    <p>Admin - <%= (user != null) ? user.getPosition() : "N/A" %></p>
+                    <div class="position-section">
+                        <p id="admin-position-display">
+                            Admin - <strong><%= (user != null) ? user.getPosition() : "N/A" %></strong>
+                            <i class="fas fa-edit" id="edit-position-icon" style="cursor: pointer;"></i>
+                        </p>
+                       <form id="edit-position-form" method="post" class="horizontal-form" style="display: none;">
+                            <input type="hidden" name="userId" value="<%= user != null ? user.getId() : "" %>">
+                            <select id="admin-position" name="admin-position" required>
+                                <option value="" disabled selected>Select Position</option>
+                                <option value="academic-clerk" <%= "academic-clerk".equals(user.getPosition()) ? "selected" : "" %>>Academic Clerk</option>
+                                <option value="records-officer" <%= "records-officer".equals(user.getPosition()) ? "selected" : "" %>>Records Officer</option>
+                                <option value="ict-support-representative" <%= "ict-support-representative".equals(user.getPosition()) ? "selected" : "" %>>ICT Support Representative</option>
+                                <option value="supervisor" <%= "supervisor".equals(user.getPosition()) ? "selected" : "" %>>Supervisor</option>
+                                <option value="secretary" <%= "secretary".equals(user.getPosition()) ? "selected" : "" %>>Secretary</option>
+                                <option value="liaison-officer" <%= "liaison-officer".equals(user.getPosition()) ? "selected" : "" %>>Liaison Officer</option>
+                            </select>
+                        
+                            <button type="submit" class="save-btn">
+                                <i class="fas fa-save"></i>
+                                Save
+                            </button>
+                            <button type="button" class="cancel-btn">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                        </form>
+
+                    </div>
                     <p>Office of the Registrar</p>
                 </div>
             </div>
             <div class="profile-details">
                 <h3 class="title">Personal Information</h3>
                 <div class="details-container">
-                    <div>
                         <div class="name">
                             <div class="firstname">
                                 <label>First Name</label>
@@ -119,7 +160,6 @@
                                 </p>
                             </div>
                         </div>
-                    </div>
                 </div>
                 <% if ("DEACTIVATED".equalsIgnoreCase(accountStatus)){ %>
                     <div class="custom-alert" role="alert">
@@ -180,7 +220,25 @@
         </div>
     </div>
     <div class="overlay"></div>
-    
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+            const editIcon = document.getElementById('edit-position-icon');
+            const positionDisplay = document.getElementById('admin-position-display');
+            const editForm = document.getElementById('edit-position-form');
+            const cancelBtn = document.querySelector('.cancel-btn');
+        
+            editIcon.addEventListener('click', function() {
+                positionDisplay.style.display = 'none';
+                editForm.style.display = 'block';
+            });
+        
+            cancelBtn.addEventListener('click', function() {
+                editForm.style.display = 'none';
+                positionDisplay.style.display = 'block';
+            });
+        });
+    </script>
+
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>
 </html>

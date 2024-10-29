@@ -27,6 +27,7 @@ body {
 .profile-box{
     display: flex;
     align-content: center;
+    justify-content: center;
     border: 1px solid var(--blackish);
     padding: 20px 30px;
     margin: 20px 0;
@@ -98,6 +99,10 @@ body {
     cursor: pointer;
 }
 
+.profile-name{
+    width: 100%;    
+}
+
 .profile-name h3{
     font-size: 18px
 }
@@ -122,7 +127,7 @@ body {
     margin-left: 10px;
 }
 
-.profile-details .email .account-status p{
+.profile-details .email .account-status .status-active{
     background-color: var(--green);
     text-align: center;
     width: fit-content;
@@ -130,6 +135,18 @@ body {
     font-size: 10px;
     font-weight: 600;
     color: var(--white);
+    border-radius: 20px;
+    padding: 4px 35px;
+}
+
+.profile-details .email .account-status .status-deactivate{
+    background-color: var(--light-gray);
+    text-align: center;
+    width: fit-content;
+    margin-top: 15px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--dark-gray);
     border-radius: 20px;
     padding: 4px 35px;
 }
@@ -146,30 +163,17 @@ body {
     font-size: 18px;
 }
 
-.profile-details .details-container {
+.name,
+.email {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 30px;
 }
 
-.profile-details .name{
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.profile-details .email{
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.profile-details .email .account-status{
-    margin-left: 158px;
-}
-
-.profile-details .name .firstname{
-    margin-right: 300px;
+.name > div,
+.email > div {
+    flex: 1;
 }
 
 .profile-details .name p,
@@ -196,9 +200,13 @@ body {
     cursor: pointer;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
-    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
+.profile-details .edit-btn:hover {
+     box-shadow: none;
+}
 .btn-activate .deactivate-btn{
     font-family: 'Montserrat', sans-serif;
     width: fit-content;
@@ -241,7 +249,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 50px;
+    margin-top: 20px;
 }
 
 .title-section {
@@ -356,6 +364,46 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
+#deactivation-reason {
+    height: 100px;
+    padding: 10px;
+    border: 1px solid var(--light-gray);
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    resize: none;
+    margin-bottom: 20px;
+}
+
+#deactivation-reason:focus {
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.custom-alert {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border: 1px solid #d6d8db;
+    padding: 20px;
+    border-radius: 4px;
+    margin: 20px 0px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+.alert-icon {
+    font-size: 18px;
+    margin-right: 15px;
+    color: #383d41;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+
 .submit-btn {
     background-color: var(--blackish);
     color: var(--white);
@@ -379,6 +427,86 @@ body {
     cursor: not-allowed;
 }
 
+.horizontal-form {
+    display: flex;
+    align-items: center;
+}
+
+.horizontal-form select {
+    font-family: 'Montserrat', sans-serif;
+    width: 300px;
+    padding: 10px 5px;
+    margin-right: 10px;
+    font-size: 12px;
+    border: 1px solid #a1a1a1;
+    box-sizing: border-box;
+}
+
+.horizontal-form select:focus {
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.save-btn,
+.cancel-btn {
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 5px;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+}
+
+.save-btn {
+    background-color: #F4BB00;
+    margin-right: 5px;
+}
+
+.cancel-btn {
+    background-color: #101010;
+}
+
+.save-btn i,
+.cancel-btn i {
+    margin-right: 5px;
+}
+
+#edit-position-icon {
+    position: relative;
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+#edit-position-icon:hover {
+    transform: translateY(-1px);
+    color: #F4BB00;
+}
+
+#edit-position-icon::after {
+    content: "Edit Position";
+    font-family: 'Montserrat', sans-serif;
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 3px;
+    font-size: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease 0.3s, visibility 0.3s ease;
+    white-space: nowrap;
+}
+
+#edit-position-icon:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
 
 @media (max-width: 992px) {
     .main-content .margin-content .title-page{
@@ -452,14 +580,6 @@ body {
         margin: 50px auto 0; 
     }
 
-    .profile-details .name .firstname{
-        margin-right: 250px;
-    }
-
-    .profile-details .email .account-status{
-        margin-left: 135px;
-    }
-
     .btn-activate .activate-btn{
         font-size: 14px;
         padding: 10px 25px;
@@ -505,9 +625,9 @@ body {
     }
 
     .profile-details .email .account-status{
-        margin-top: 20px;
+        margin-top: 30px;
         margin-left: 0;
-    }
+    }   
 
     .profile-pic img,
     .admin-profile img{

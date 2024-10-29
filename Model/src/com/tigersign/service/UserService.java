@@ -100,5 +100,25 @@ public class UserService {
 
         return deactivationReason;
     }
+    
+    public boolean updateUserPosition(int userId, String newPosition) {
+        String query = "UPDATE TS_ADMIN SET position = ? WHERE id = ?";
+        boolean isUpdated = false;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, newPosition);
+            statement.setInt(2, userId);
+            int rowsUpdated = statement.executeUpdate();
+            isUpdated = (rowsUpdated > 0);
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error updating user position", e);
+        }
+
+        return isUpdated;
+    }
+
 
 }

@@ -210,36 +210,4 @@ public class SurveyDAO {
             return false;
         }
     }
-    
-    // Fetch a paginated list of surveys
-    public List<Survey> getPaginatedSurveys(int page, int pageSize) {
-        List<Survey> surveys = new ArrayList<>();
-        String query = "SELECT * FROM TS_SURVEY ORDER BY survey_date DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setInt(1, (page - 1) * pageSize); // Calculate the offset
-            statement.setInt(2, pageSize); // Number of rows to fetch
-
-            try (ResultSet rs = statement.executeQuery()) {
-                while (rs.next()) {
-                    Survey survey = new Survey();
-                    survey.setName(rs.getString("name"));
-                    survey.setDate(rs.getString("survey_date"));
-                    survey.setEmail(rs.getString("email"));
-                    survey.setService(rs.getString("service"));
-                    survey.setRating(rs.getInt("rating"));
-                    survey.setStandout(rs.getString("standout"));
-                    survey.setFeedback(rs.getString("feedback"));
-
-                    surveys.add(survey);
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return surveys;
-    }
 }

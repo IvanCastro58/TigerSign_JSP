@@ -1,5 +1,13 @@
+import com.tigersign.dao.AuditLogger;
+import com.tigersign.dao.DatabaseConnection;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -51,13 +59,13 @@ public class SurveyEmailSender extends HttpServlet {
                 boolean emailSent = sendSurveyEmail(email, request);
                 try {
                     if (!emailSent) {
-                        redirectToSessionBasedPage(request, response, adminEmail, userEmail, false);
+                        redirectToSessionBasedPage(request, response, adminEmail, userEmail, email, false);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
-            redirectToSessionBasedPage(request, response, adminEmail, userEmail, true);
+            redirectToSessionBasedPage(request, response, adminEmail, userEmail, email, true);
         } else {
             response.sendRedirect("error.jsp");
         }
@@ -117,14 +125,33 @@ public class SurveyEmailSender extends HttpServlet {
             return false;
         }
     }
+    
+    private int getAdminId(String adminEmail) {
+            int adminId = -1;
+            String query = "SELECT ID FROM TS_ADMIN WHERE EMAIL = ?";
+            try (Connection connection = DatabaseConnection.getConnection();
+                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, adminEmail);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    adminId = resultSet.getInt("ID");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return adminId;
+    }
 
-    private void redirectToSessionBasedPage(HttpServletRequest request, HttpServletResponse response, String adminEmail, String userEmail, boolean success)
+    private void redirectToSessionBasedPage(HttpServletRequest request, HttpServletResponse response, String adminEmail, String userEmail, String email, boolean success)
             throws IOException {
         String contextPath = request.getContextPath();
         String redirectPage = success ? "evaluation.jsp?success=true" : "evaluation.jsp?failed=true";
 
         if (adminEmail != null) {
             response.sendRedirect(contextPath + "/Admin/" + redirectPage);
+            if (adminEmail != null) {
+                AuditLogger.logActivity(adminEmail, "Sent a survey/evaluation form to the email address " + email);
+            }
         } else if (userEmail != null) {
             response.sendRedirect(contextPath + "/SuperAdmin/" + redirectPage);
         } else {

@@ -108,6 +108,7 @@
                             <canvas id="standoutPieChart" class="responsive-canvas"></canvas>
                         </div>
                     </div>
+                    <div class="highlight-bar2"></div>
                     <div class="report-column right">
                         <div class="heading-container">
                             <h3>Service Window Performance Score</h3>
@@ -152,6 +153,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="highlight-bar2"></div>
                     <div class="comments-section">
                         <div class="heading-container">
                             <h3>Customer Feedback</h3>
@@ -159,30 +161,30 @@
                         <div class="feedback-container">
                             <% 
                                 List<Survey> feedbacks = surveyDAO.getAllSurveys(); 
-                                DateTimeFormatter feedbackFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy"); // Renamed to avoid conflict
+                                DateTimeFormatter feedbackFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
+                                int feedbackCount = 0; 
                                 for (Survey survey : feedbacks) { 
-                                    String feedback = survey.getFeedback(); 
-                                    String dateString = survey.getDate(); // Assuming it's a String
-                                    int rating = survey.getRating(); 
+                                    if (feedbackCount < 5) { 
+                                        String feedback = survey.getFeedback(); 
+                                        String dateString = survey.getDate(); 
+                                        int rating = survey.getRating(); 
+                                        
+                                        LocalDateTime feedbackDate = LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); 
+                                        String formattedFeedbackDate = feedbackDate.format(feedbackFormatter);
                                     
-                                    // Convert date string to LocalDateTime if it's in a valid format
-                                    LocalDateTime feedbackDate = LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); 
-                                    String formattedFeedbackDate = feedbackDate.format(feedbackFormatter); // Renamed variable to avoid conflict
-                                
-                                    // Create star rating
-                                    StringBuilder starRating = new StringBuilder();
-                                    for (int i = 1; i <= 4; i++) {
-                                        if (i <= rating) {
-                                            starRating.append("<i class='fa-solid fa-star'></i>"); 
-                                        } else {
-                                            starRating.append("<i class='fa-regular fa-star'></i>"); 
+                                        StringBuilder starRating = new StringBuilder();
+                                        for (int i = 1; i <= 4; i++) {
+                                            if (i <= rating) {
+                                                starRating.append("<i class='fa-solid fa-star'></i>"); 
+                                            } else {
+                                                starRating.append("<i class='fa-regular fa-star'></i>"); 
+                                            }
                                         }
-                                    }
                             %>
                                 <div class="feedback-item">
                                     <div class="feedback-header">
-                                        <strong class="feedback-name"><%= survey.getMaskedName() %></strong> <!-- Use the masked name here -->
-                                        <em class="feedback-date"><%= formattedFeedbackDate %></em> <!-- Display formatted date here -->
+                                        <strong class="feedback-name"><%= survey.getMaskedName() %></strong> 
+                                        <em class="feedback-date"><%= formattedFeedbackDate %></em> 
                                     </div>
                                     <div class="star-rating">
                                         <%= starRating.toString() %> <span>(<%= rating %>)</span>
@@ -190,8 +192,15 @@
                                     <div class="feedback-text"><%= feedback %></div>
                                 </div>
                             <% 
+                                    }
+                                    feedbackCount++; 
                                 } 
                             %>
+                        </div>
+                        <div class="show-more-btn">
+                            <button class="show-btn" onclick="window.location.href='reports_feedback.jsp';">
+                                SHOW MORE <i class="bi bi-chevron-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

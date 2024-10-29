@@ -148,6 +148,11 @@ hr {
     border-radius: 50%;
 }
 
+.form-box-success .check {
+    height: 200px;
+    width: 200px;
+}
+
 .form-box label, 
 .form-box-totp label{
     font-size: 14px;
@@ -253,6 +258,7 @@ hr {
 
 .reset-text{
     font-size: 12px;
+    font-weight: 500;
 }
 
 .reset-btn{

@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <%@ include file="/WEB-INF/components/session_admin.jsp" %>
+    
     <header>
         <div class="logo">
             <img src="${pageContext.request.contextPath}/resources/images/logo.png" alt="TigerSign Logo">
