@@ -41,7 +41,7 @@
         int claimedCount = 0;
         List<String> documentTypes = new ArrayList<>();
         List<Integer> documentCounts = new ArrayList<>();
-
+        List<Double> documentAvgProcessingHours = new ArrayList<>();
         try {
             // Get connection from the DatabaseConnection class
             conn = DatabaseConnection.getConnection();
@@ -76,12 +76,19 @@
             }
 
             // New query to get most claimed documents
-            String mostClaimedQuery = "SELECT REQUEST_DESCRIPTION, COUNT(*) AS total FROM TS_REQUEST WHERE FILE_STATUS = 'CLAIMED' GROUP BY REQUEST_DESCRIPTION ORDER BY total DESC";
+            String mostClaimedQuery = "SELECT REQUEST_DESCRIPTION, COUNT(*) AS total, " +
+                          "AVG((CAST(DATE_AVAILABLE AS DATE) - CAST(DATE_PROCESSING AS DATE)) * 86400) AS avg_processing_hours " +
+                          "FROM TS_REQUEST " +
+                          "WHERE FILE_STATUS = 'CLAIMED' " +
+                          "GROUP BY REQUEST_DESCRIPTION " +
+                          "ORDER BY total DESC";
+
             stmt = conn.prepareStatement(mostClaimedQuery);
             rs = stmt.executeQuery();
             while (rs.next()) {
                 documentTypes.add(rs.getString("REQUEST_DESCRIPTION"));
                 documentCounts.add(rs.getInt("total"));
+                documentAvgProcessingHours.add(rs.getDouble("avg_processing_hours") / 3600); // Convert seconds to hours
             }
         
         } catch (SQLException e) {
@@ -148,12 +155,22 @@
                                     <thead>
                                         <tr>               
                                            <th>Document Type</th>
-                                           <th>Total Release
-                                               <span class="sort-icons">
-                                                   <i class="fa-solid fa-caret-up"></i>
-                                                   <i class="fa-solid fa-caret-down"></i>
-                                               </span>
-                                           </th>
+                                           <th style="cursor: pointer;">
+                                                Total Release
+                                                <span class="sort-icons">
+                                                    <i class="fa fa-sort"></i>
+                                                    <i class="fa fa-caret-up" style="display:none;"></i>
+                                                    <i class="fa fa-caret-down" style="display:none;"></i>
+                                                </span>
+                                            </th>
+                                            <th style="cursor: pointer;">
+                                                Average Processing Time
+                                                <span class="sort-icons">
+                                                    <i class="fa fa-sort"></i>
+                                                    <i class="fa fa-caret-up" style="display:none;"></i>
+                                                    <i class="fa fa-caret-down" style="display:none;"></i>
+                                                </span>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -164,6 +181,7 @@
                                         <tr>
                                             <td><%= documentTypes.get(i) %></td>
                                             <td><%= documentCounts.get(i) %></td>
+                                            <td><%= String.format("%.2f", documentAvgProcessingHours.get(i)) %> hours</td>
                                         </tr>
                                         <% 
                                             }

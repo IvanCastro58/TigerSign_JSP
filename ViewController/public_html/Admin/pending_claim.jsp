@@ -32,9 +32,10 @@
     <% 
         String firstName = (String) session.getAttribute("adminFirstName");
         String lastName = (String) session.getAttribute("adminLastName");
+        String email = (String) session.getAttribute("adminEmail");
         String fullName = firstName + " " + lastName;
 
-        request.setAttribute("activePage", "pending_claim");  
+        request.setAttribute("activePage", "pending_claim"); 
     %>
     
     <%@ include file="/WEB-INF/components/header_admin.jsp" %>
@@ -172,6 +173,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">
     const adminFullName = "<%= fullName %>";
+    const adminEmail = "<%= email %>";
     $(document).ready(function() {
     var contextPath = '<%= request.getContextPath() %>';
         // Function to update the available options based on the current status
@@ -190,6 +192,10 @@
             } else if (currentStatus === 'HOLD') {
                 dropdown.find('option[value="PENDING"]').prop('disabled', true);
                 dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
+            } else if (currentStatus === 'AVAILABLE') {
+                dropdown.find('option[value="PENDING"]').prop('disabled', true);
+                dropdown.find('option[value="PROCESSING"]').prop('disabled', true);
+                dropdown.find('option[value="HOLD"]').prop('disabled', true);
             }
         }
     

@@ -11,9 +11,10 @@
     <title>Super Admin Dashboard - TigerSign</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../resources/css/sidebar.css">s
-    <link rel="stylesheet" href="../resources/css/dashboard.css">
-    <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/sidebar.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/dashboard.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/resources/images/tigersign.png" type="image/x-icon">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/table.css">
 </head>
 <body
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
@@ -92,8 +93,8 @@
                 <div class="search-box">
                     <h2>Search for Pending Claims</h2>
                     <div class="search-container">
-                        <input type="text" class="search-input" placeholder="Enter Name or O.R Number">
-                        <button class="search-button">Search <i class="fa-solid fa-magnifying-glass"></i></button>
+                        <input type="text" id="dashboard-search-input" class="search-input" placeholder="Search...">
+                        <button id="search-button" class="search-button">Search <i class="fa-solid fa-magnifying-glass"></i></button>
                     </div>
                 </div>
             </div>
@@ -120,7 +121,19 @@
         </div>
     </div>
     <div class="overlay"></div>
+    <script>
+    document.getElementById("search-button").addEventListener("click", function() {
+        const searchTerm = document.getElementById("dashboard-search-input").value.trim();
     
+        // Set search term in localStorage and redirect to the pending claims page
+        if (searchTerm) {
+            localStorage.setItem("pendingClaimsSearchTerm", searchTerm);
+        } else {
+            localStorage.removeItem("pendingClaimsSearchTerm"); // Clear if empty
+        }
+        window.location.href = '<%= request.getContextPath() %>/SuperAdmin/pending_claim.jsp'; // Redirect to pending claims
+    });
+    </script>
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>
 </html>
