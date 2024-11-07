@@ -94,14 +94,14 @@ public class GoogleOAuthConfig extends HttpServlet {
                         }
 
                         if (rememberMe) {
-                            // Skip TOTP verification if rememberMe is true
+                           
                             response.sendRedirect("SuperAdmin/dashboard.jsp");
                         } else {
-                            // If no rememberMe cookie, proceed with TOTP verification
+                            
                             response.sendRedirect("SuperAdmin/verify_superadmin.jsp");
                         }
                     } else {
-                        // If no TOTP secret exists, proceed with TOTP setup
+                        
                         String setupUrl = getTOTPSetupUrl(request, email);
                         request.getRequestDispatcher("SuperAdmin/totp_setup.jsp").forward(request, response);
                     }
@@ -128,28 +128,33 @@ public class GoogleOAuthConfig extends HttpServlet {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String secret = getTOTPSecret(conn, email);
             if (secret != null) {
-                GoogleAuthenticator gAuth = new GoogleAuthenticator();
-                boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
+                try {
+                    int otpCode = Integer.parseInt(otp);
+                    boolean isCodeValid = gAuth.authorize(secret, otpCode);
 
-                if (isCodeValid) {
-                    if (rememberMe) {
-                        Cookie rememberMeCookie = new Cookie("rememberMe", email);
-                        rememberMeCookie.setMaxAge(60 * 60 * 24 * 7); 
-                        response.addCookie(rememberMeCookie);
+                    if (isCodeValid) {
+                        if (rememberMe) {
+                            Cookie rememberMeCookie = new Cookie("rememberMe", email);
+                            rememberMeCookie.setMaxAge(60 * 60 * 24 * 30); 
+                            response.addCookie(rememberMeCookie);
+                        }
+                        response.sendRedirect("SuperAdmin/dashboard.jsp");
+                    } else {
+                        request.setAttribute("errorMessage", "Invalid TOTP");
+                        request.getRequestDispatcher("/SuperAdmin/verify_superadmin.jsp").forward(request, response);
                     }
-                    response.sendRedirect("SuperAdmin/dashboard.jsp");
-                } else {
+                } catch (NumberFormatException e) {
                     request.setAttribute("errorMessage", "Invalid TOTP");
                     request.getRequestDispatcher("/SuperAdmin/verify_superadmin.jsp").forward(request, response);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "TOTP secret not found for user.");
+                request.setAttribute("errorMessage", "Invalid TOTP");
+                request.getRequestDispatcher("/SuperAdmin/verify_superadmin.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
         }
     }
-
 
     private boolean isAllowedSuperAdmin(Connection conn, String email) throws SQLException {
         String query = "SELECT COUNT(*) FROM TS_SUPERADMIN WHERE email = ?";

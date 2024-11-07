@@ -4,6 +4,7 @@
 <%@ page import="com.tigersign.dao.ProofDAO" %>
 <%@ page import="com.tigersign.dao.RequestDAO" %>
 <%@ page import="com.tigersign.dao.EmailService" %>
+<%@ page import="com.tigersign.dao.AuditLogger" %>
 <%@ page import="java.sql.SQLException" %>
 <html>
 <head>
@@ -67,6 +68,7 @@
                                 String idData = request.getParameter("id-data");
                                 String letterData = request.getParameter("letter-data");
                                 String fullName = request.getParameter("fullname");
+                                String adminEmail = request.getParameter("email");
                                 String submit = request.getParameter("submit"); 
                                 
                                    if (submit != null && name != null && email != null) {
@@ -74,17 +76,22 @@
                                         int claimerId = claimerDAO.insertClaimer(name, email, role); 
     
                                        if (claimerId > 0) {
-                                            ProofDAO proofsDAO = new ProofDAO();
-                                            proofsDAO.insertProofs(photoData, signatureData, proofDate, idData, letterData, claimerId, requestId, fullName);
+                                        ProofDAO proofsDAO = new ProofDAO();
+                                        proofsDAO.insertProofs(photoData, signatureData, proofDate, idData, letterData, claimerId, requestId, fullName);
                                 
-                                            // Update the is_claimed status
-                                            RequestDAO requestDAO = new RequestDAO();
-                                            requestDAO.updateClaimedStatus(requestId);
+                                        // Update the is_claimed status
+                                        RequestDAO requestDAO = new RequestDAO();
+                                        requestDAO.updateClaimedStatus(requestId);
                                             
-                                           // Sending Email
+                                        // Sending Email
                                         EmailService emailService = new EmailService();
                                         boolean emailSent = emailService.sendSurveyEmail(email, request);
-
+                                        
+                                        if (adminEmail != null && !adminEmail.isEmpty()) {
+                                            String activity = "Released the document titled '" + feeName + "' associated with O.R. Number " + orNumber + " to an authorized representative.";
+                                            AuditLogger.logActivity(adminEmail, activity);
+                                        }
+                                        
                                         if (emailSent) {
                                             response.sendRedirect("success_page.jsp");
                                         } else {

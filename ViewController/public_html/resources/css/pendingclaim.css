@@ -63,10 +63,16 @@ body {
 
 .nav-item2 {
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
+    align-items: center;
     text-align: center;
     justify-content: center;
-    gap: 20px;
+    gap: 10px;
+}
+
+.nav-item2 i {
+    cursor: pointer;
+    font-size: 18px;
 }
 
 .item2-label {
@@ -86,24 +92,24 @@ body {
     border: 1px solid var(--blackish);
 }
 
-.date {
-    color: var(--blackish);
+.date-input {
+    width: 200px;
+    background-color: #ffffff;
+    padding: 7px 10px;
+    font-family: 'Montserrat', sans-serif;
+    color: #1a1a1a;
     font-size: 12px;
-    font-weight: 600;
-    padding: 5px;
-    margin-left: 10px;
+    border-radius: 5px;
+    border: 1px solid #a1a1a1;
+    transition: border-color 0.3s ease;
 }
 
-.calendar-icon i {
-    color: var(--blackish);
-    background-color: var(--primary-color);
-    font-size: 12px;
-    padding: 5px;
-    margin-right: 2px;
-    border-radius: 3px;
-    cursor: pointer;
+.date-input:focus {
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
-
+    
 .nav-item3 {
     display: flex;
     align-items: center;
@@ -211,6 +217,11 @@ body {
     font-size: 30px;
     font-weight: bold;
     cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.popup-close:active{
+    transform: scale(0.6);
 }
 
 #confirm-hold-form{
@@ -289,6 +300,20 @@ body {
     margin-left: 5px;
 }
 
+.flatpickr {
+    font-family: "Nunito", sans-serif;
+}
+        
+.flatpickr-calendar {
+    font-family: "Nunito", sans-serif;
+}
+        
+.flatpickr-calendar .flatpickr-day,
+.flatpickr-calendar .flatpickr-month {
+    font-size: 12px;
+    font-weight: 600;
+}
+
 @media (max-width: 1230px) {
     .search-input {
         width: 150px; 
@@ -355,7 +380,10 @@ body {
         border-bottom: 4px solid var(--primary-color);
         width: 100%;
     }
-
+    
+    .item2-label {
+        display: none;
+    }
 }
 
 @media (max-width: 800px) {
@@ -364,9 +392,6 @@ body {
         padding-bottom: 10px;
         border-bottom: 4px solid var(--primary-color);
         width: 100%;
-    }
-    .search-input{
-        display: none;
     }
 }
 
@@ -402,12 +427,16 @@ body {
 }
 
 @media (max-width: 650px) {
-    .search-input{
-        display: none;
-    }
-
     .item2-label {
         display: none;
+    }
+    
+    .nav-item2 i {
+        display: none;
+    }
+    
+    .date-input {
+        width: 150px;
     }
 
     .item1-label {     
@@ -420,7 +449,6 @@ body {
     
     .nav-item1 .drop-icon i {
         font-size: 15px;
-
     }
 }
 
@@ -453,6 +481,14 @@ body {
 
     .claimer-button a i{
         font-size: 10px;
+    }
+    
+    .date-input {
+        width: 100px;
+    }
+    
+    .search-input {
+        width: 100px; 
     }
 }
 

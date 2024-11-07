@@ -57,6 +57,11 @@ body {
     color: var(--white);
     border: none;
     cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.back-btn:active{
+    transform: scale(0.8);
 }
 
 .details-container{
@@ -178,7 +183,11 @@ body {
     border: none;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
-    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+}
+
+.proof-btn:active{
+    transform: scale(0.95);
 }
 
 .proof-btn:hover {
@@ -210,7 +219,11 @@ body {
     cursor: pointer;
     color: var(--white);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.proof-btn2:active{
+    transform: scale(0.85);
 }
 
 .proof-btn2:hover {
@@ -276,6 +289,11 @@ body {
     font-size: 30px;
     font-weight: bold;
     cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.popup-close:active{
+    transform: scale(0.6);
 }
 
 .bi.bi-info-circle{

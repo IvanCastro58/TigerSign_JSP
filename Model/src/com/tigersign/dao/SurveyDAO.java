@@ -13,7 +13,7 @@ public class SurveyDAO {
     // Fetch all surveys
     public List<Survey> getAllSurveys() {
         List<Survey> surveys = new ArrayList<>();
-        String query = "SELECT * FROM TS_SURVEY";
+        String query = "SELECT * FROM TS_SURVEY ORDER BY survey_date DESC";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query);

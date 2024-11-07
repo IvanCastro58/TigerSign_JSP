@@ -133,21 +133,27 @@ public class AdminOAuthConfig extends HttpServlet {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String secret = getTOTPSecret(conn, email);
             if (secret != null) {
-                boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
+                try {
+                    boolean isCodeValid = gAuth.authorize(secret, Integer.parseInt(otp));
 
-                if (isCodeValid) {
-                    if (rememberMe) {
-                        Cookie rememberMeCookie = new Cookie("rememberMe", email);
-                        rememberMeCookie.setMaxAge(60 * 60 * 24 * 7); // 7 days
-                        response.addCookie(rememberMeCookie);
+                    if (isCodeValid) {
+                        if (rememberMe) {
+                            Cookie rememberMeCookie = new Cookie("rememberMe", email);
+                            rememberMeCookie.setMaxAge(60 * 60 * 24 * 30); // 1 month
+                            response.addCookie(rememberMeCookie);
+                        }
+                        response.sendRedirect("Admin/dashboard.jsp");
+                    } else {
+                        request.setAttribute("errorMessage", "Invalid TOTP");
+                        request.getRequestDispatcher("/Admin/verify_admin.jsp").forward(request, response);
                     }
-                    response.sendRedirect("Admin/dashboard.jsp");
-                } else {
+                } catch (NumberFormatException e) {
                     request.setAttribute("errorMessage", "Invalid TOTP");
                     request.getRequestDispatcher("/Admin/verify_admin.jsp").forward(request, response);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "TOTP secret not found for user.");
+                request.setAttribute("errorMessage", "Invalid TOTP");
+                request.getRequestDispatcher("/Admin/verify_admin.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());

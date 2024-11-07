@@ -15,6 +15,13 @@
     --lighter-gray: #f4f4f4;
 }
 
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
 .highlight-bar1{
     background-color: var(--primary-color);
     height: 3px;
@@ -113,27 +120,35 @@ h2{
 }
 
 .search-input {
+    font-family: 'Montserrat', sans-serif;
     flex: 1;
-    padding: 10px;
+    padding: 15px;
     border: 2px solid var(--light-gray);
     border-radius: 4px;
-    font-size: 18px;
+    font-size: 12px;
 }
 
 .search-button {
+    font-family: 'Montserrat', sans-serif;
     background-color: var(--blackish);
     border: none;
     color: var(--white);
-    padding: 10px;
+    padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 14px;
     margin-left: 10px;
     justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.search-button:active{
+    transform: scale(0.85);
 }
 
 .search-button i{
-    font-size: 14px;
+    font-size: 12px;
+    margin-left: 5px;
 }
 
 

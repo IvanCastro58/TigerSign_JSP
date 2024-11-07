@@ -57,3 +57,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const viewAccountBtn = document.getElementById("view-account-btn");
+
+        viewAccountBtn.addEventListener("click", function(event) {
+            if (viewAccountBtn.getAttribute("aria-disabled") === "true") {
+                event.preventDefault();
+            } else {
+                event.preventDefault();
+                viewAccountBtn.innerHTML = "<div class='spinner'></div> Viewing Account";
+                viewAccountBtn.disabled = true;
+                viewAccountBtn.classList.add('sending');
+
+                setTimeout(() => {
+                    window.location.href = viewAccountBtn.getAttribute("href");
+                }, 2000);
+            }
+        });
+    });
+</script>
+

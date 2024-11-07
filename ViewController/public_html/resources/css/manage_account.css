@@ -74,7 +74,11 @@ body {
     cursor: pointer;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.add-user-btn:active{
+    transform: scale(0.8);
 }
 
 .add-user-btn i{
@@ -192,6 +196,11 @@ body {
     font-size: 30px;
     font-weight: bold;
     cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.popup-close:active{
+    transform: scale(0.6);
 }
 
 .bi.bi-info-circle{
@@ -269,6 +278,26 @@ body {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.1s ease-in-out, transform 0.3s ease;
+}
+
+.submit-btn.sending{
+    background-color: var(--light-gray);
+}
+
+.submit-btn i {
+    transition: transform 0.3s ease;
+}
+
+.submit-btn:hover i {
+    transform: translateX(5px);
+}
+
+.submit-btn:active {
+    transform: scale(0.8);
 }
 
 .view-btn {
@@ -282,6 +311,18 @@ body {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-btn:active{
+    transform: scale(0.8);
+}
+
+.view-btn.sending{
+    background-color: var(--light-gray);
 }
 
 .view-btn i {

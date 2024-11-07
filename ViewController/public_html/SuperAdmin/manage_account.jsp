@@ -150,20 +150,23 @@
                             <% 
                                 List<User> userList = (List<User>) request.getAttribute("users");
                                 int userCount = userList != null ? userList.size() : 0;
-                        
-                                // Set skeleton rows to a fixed number of 5
                                 int skeletonRows = 5;
-                                for (int i = 0; i < skeletonRows; i++) { 
-                            %>
-                                <tr class="skeleton-row">
-                                    <td><span class="skeleton"></span></td>
-                                    <td class="profile-column"><span class="skeleton-picture"></span></td>
-                                    <td class="expandable-text"><span class="skeleton"></span></td>
-                                    <td class="expandable-text"><span class="skeleton"></span></td>
-                                    <td><span class="skeleton"></span></td>
-                                </tr>
-                            <% 
-                                } 
+                                
+                                boolean noActiveAccounts = (userList == null || userList.isEmpty());
+                                
+                                    if (!noActiveAccounts) {
+                                        for (int i = 0; i < skeletonRows; i++) {
+                                %>
+                                            <tr class="skeleton-row">
+                                                <td><span class="skeleton"></span></td>
+                                                <td class="profile-column"><span class="skeleton-picture"></span></td>
+                                                <td class="expandable-text"><span class="skeleton"></span></td>
+                                                <td class="expandable-text"><span class="skeleton"></span></td>
+                                                <td><span class="skeleton"></span></td>
+                                            </tr>
+                                <% 
+                                        }
+                                    }
                         
                                 if (userList != null && !userList.isEmpty()) { 
                                     for (User user : userList) {

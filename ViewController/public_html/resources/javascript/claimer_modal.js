@@ -80,9 +80,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 const primaryLink = claimerPopup.querySelector('.claimer-button .primary');
                 const representativeLink = claimerPopup.querySelector('.claimer-button .representative');
 
-                primaryLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&requestId=${encodeURIComponent(requestId)}`;
+                primaryLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&email=${encodeURIComponent(adminEmail)}&requestId=${encodeURIComponent(requestId)}`;
 
-                representativeLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&requestId=${encodeURIComponent(requestId)}`;
+                representativeLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&email=${encodeURIComponent(adminEmail)}&requestId=${encodeURIComponent(requestId)}`;
 
                 showPopup(claimerPopup);
             }

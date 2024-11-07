@@ -190,7 +190,7 @@
                             <form id="confirm-activation-form" method="post">
                                 <input type="hidden" name="userId" value="<%= userIdParam %>">
                                 <input type="text" id="confirm-input-activation" name="confirm-input-activation" placeholder="Type 'CONFIRM' to proceed" required>
-                                <button type="submit" class="submit-btn" disabled>Activate Account</button>
+                                <button type="submit" class="submit-btn" id="activateButton" disabled>Activate Account</button>
                             </form>
                         </div>
                     </div> 
@@ -211,7 +211,7 @@
                             <form id="confirm-deactivation-form" method="post">
                                 <input type="hidden" name="userId" value="<%= userIdParam %>">
                                 <textarea id="deactivation-reason" name="deactivation-reason" placeholder="Enter the reason for deactivation" required></textarea>
-                                <button type="submit" class="submit-btn" disabled>Deactivate Account</button>
+                                <button type="submit" class="submit-btn" id="deactivateButton" disabled>Deactivate Account</button>
                             </form>
                         </div>
                     </div> 
@@ -235,6 +235,38 @@
             cancelBtn.addEventListener('click', function() {
                 editForm.style.display = 'none';
                 positionDisplay.style.display = 'block';
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const activateForm = document.getElementById('confirm-activation-form');
+    
+            activateForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const activateButton = document.getElementById('activateButton');
+                activateButton.innerHTML = "Activating Account<div class='spinner'></div>";
+                activateButton.disabled = true;
+                activateButton.classList.add('sending');
+    
+                setTimeout(() => {
+                    this.submit();
+                }, 1000);
+            });
+        });
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const deactivateForm = document.getElementById('confirm-deactivation-form');
+    
+            deactivateForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const deactivateButton = document.getElementById('deactivateButton');
+                deactivateButton.innerHTML = "Deactivating Account <div class='spinner'></div>";
+                deactivateButton.disabled = true;
+                deactivateButton.classList.add('sending');
+    
+                setTimeout(() => {
+                    this.submit();
+                }, 1000); 
             });
         });
     </script>

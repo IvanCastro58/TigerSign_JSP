@@ -219,7 +219,7 @@ body {
     margin-right: 20px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); 
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;;
 }
 
 .btn-activate .deactivate-btn:hover{
@@ -238,11 +238,15 @@ body {
     margin-right: 20px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .btn-activate .activate-btn:hover{
     box-shadow: none;
+}
+
+.btn-activate .deactivate-btn:active, .btn-activate .activate-btn:active{
+    transform: scale(0.8);
 }
 
 .btn-activate{
@@ -275,14 +279,20 @@ body {
 }
 
 .back-button {
+    font-family: 'Montserrat', sans-serif;
     margin-left: auto;
     padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
     background-color: var(--blackish);
     color: var(--white);
     border: none;
     cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.back-button:active{
+    transform: scale(0.8);
 }
 
 .popup-overlay {
@@ -340,6 +350,11 @@ body {
     font-size: 30px;
     font-weight: bold;
     cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.popup-close:active{
+    transform: scale(0.6);
 }
 
 #confirm-deactivation-form,
@@ -403,7 +418,6 @@ body {
     flex: 1;
 }
 
-
 .submit-btn {
     background-color: var(--blackish);
     color: var(--white);
@@ -415,6 +429,14 @@ body {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.submit-btn:active {
+    transform: scale(0.8);
 }
 
 .submit-btn i {
@@ -457,6 +479,12 @@ body {
     color: #FFFFFF;
     border: none;
     cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.save-btn:active,
+.cancel-btn:active{
+    transform: scale(0.8);    
 }
 
 .save-btn {

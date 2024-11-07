@@ -4,6 +4,7 @@
 <%@ page import="com.tigersign.dao.ProofDAO" %>
 <%@ page import="com.tigersign.dao.RequestDAO" %>
 <%@ page import="com.tigersign.dao.EmailService" %>
+<%@ page import="com.tigersign.dao.AuditLogger" %>
 <%@ page import="java.sql.SQLException" %>
 <html>
     <head>
@@ -65,6 +66,7 @@
                                 String idData = null;
                                 String letterData = null;
                                 String fullName = request.getParameter("fullname");
+                                String adminEmail = request.getParameter("email");
                                 String submit = request.getParameter("submit"); 
                                 
                             
@@ -75,14 +77,18 @@
                                     if (claimerId > 0) {
                                         ProofDAO proofsDAO = new ProofDAO();
                                         proofsDAO.insertProofs(photoData, signatureData, proofDate, "", "", claimerId, requestId, fullName);
-                            
-                                        // Update the is_claimed status
+                        
                                         RequestDAO requestDAO = new RequestDAO();
                                         requestDAO.updateClaimedStatus(requestId);
                                         
                                         EmailService emailService = new EmailService();
                                         boolean emailSent = emailService.sendSurveyEmail(email, request);
-                            
+                                        
+                                        if (adminEmail != null && !adminEmail.isEmpty()) {
+                                            String activity = "Released the document titled '" + feeName + "' associated with O.R. Number " + orNumber + " to the owner.";
+                                            AuditLogger.logActivity(adminEmail, activity);
+                                        }
+                                    
                                         if (emailSent) {
                                             response.sendRedirect("success_page.jsp");
                                         } else {

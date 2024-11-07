@@ -28,7 +28,7 @@
             </div>
             <form action="${pageContext.request.contextPath}/adminOauth2callback" method="post">
                 <label for="otp">Enter the six-digit TOTP from Google Authenticator.</label>
-                <input type="text" id="otp" name="otp" required />
+                <input type="number" id="otp" name="otp" required />
                 <div class="totp-button">
                     <div class="remember">
                         <input type="checkbox" id="rememberMe" name="rememberMe" class="custom-checkbox">

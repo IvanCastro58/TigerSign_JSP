@@ -147,19 +147,23 @@
                                 <% 
                                     List<User> userList = (List<User>) request.getAttribute("users");
                                     int skeletonRowCount = 5;
-                            
-                                    for (int i = 0; i < skeletonRowCount; i++) {
+                                
+                                    boolean noActiveAccounts = (userList == null || userList.isEmpty() || !userList.stream().anyMatch(user -> "ACTIVE".equals(user.getStatus())));
+                                
+                                    if (!noActiveAccounts) {
+                                        for (int i = 0; i < skeletonRowCount; i++) {
                                 %>
-                                    <tr class="skeleton-row">
-                                        <td><span class="skeleton"></span></td>
-                                        <td class="profile-column"><span class="skeleton-picture"></span></td>
-                                        <td class="expandable-text"><span class="skeleton"></span></td>
-                                        <td class="expandable-text"><span class="skeleton"></span></td>
-                                        <td><span class="skeleton"></span></td>
-                                    </tr>
+                                            <tr class="skeleton-row">
+                                                <td><span class="skeleton"></span></td>
+                                                <td class="profile-column"><span class="skeleton-picture"></span></td>
+                                                <td class="expandable-text"><span class="skeleton"></span></td>
+                                                <td class="expandable-text"><span class="skeleton"></span></td>
+                                                <td><span class="skeleton"></span></td>
+                                            </tr>
                                 <% 
+                                        }
                                     }
-                            
+                                    
                                     if (userList != null && !userList.isEmpty()) {
                                         for (User user : userList) {
                                             if ("ACTIVE".equals(user.getStatus())) {
@@ -205,6 +209,7 @@
         </div>
     </div>
     <div class="overlay"></div>
+    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const searchInput = document.getElementById('search-input');

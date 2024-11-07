@@ -15,11 +15,22 @@
         animation: spin 1s linear infinite;
     }
     
+    .spinner {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin: 0px 7px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #a1a1a1;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-    
+
     .toast-icon-success, .toast-icon-error {
         margin-right: 8px; 
         vertical-align: middle; 

@@ -33,7 +33,7 @@
     <div class="form-box">
         <div class="highlight-bar"></div>
         <div class="totp-text">
-            <img class="logo" src="${pageContext.request.contextPath}/resources/images/tigersign.png" alt="Profile Picture">
+            <img class="logo" src="${pageContext.request.contextPath}/resources/images/reset.jpg" alt="Profile Picture">
             <h2>Reset Google Authenticator TOTP</h2>
             <p class="reset-text">If you can't access your TOTP(Time-Based One-Time Password) Authenticator device, please click the button below. This action will initiate a reset activation process, which will be sent to your email address.</p>
             <div class="reset-btn-div">

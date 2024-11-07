@@ -159,8 +159,8 @@ hr {
     font-weight: 500;
 }
 
-.form-box input[type="text"], 
-.form-box-totp input[type="text"]{
+.form-box input[type="number"], 
+.form-box-totp input[type="number"]{
     margin: 10px auto;
     width: 100%;
     padding: 12px;
@@ -174,18 +174,29 @@ hr {
     box-sizing: border-box;
 }
 
-.form-box input[type="text"]:focus, 
-.form-box-totp input[type="text"]:focus {
+.form-box input[type="number"]:focus, 
+.form-box-totp input[type="number"]:focus {
     border: 1px solid #80bdff;
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.form-box input[type="text"].is-invalid, 
-.form-box-totp input[type="text"].is-invalid {
+.form-box input[type="number"].is-invalid, 
+.form-box-totp input[type="number"].is-invalid {
     border: 1px solid var(--red); 
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+#otp::-webkit-outer-spin-button,
+#otp::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+ 
+#otp[type="number"] {
+    -moz-appearance: textfield;
 }
 
 .form-box .submit, 

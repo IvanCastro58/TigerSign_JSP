@@ -38,7 +38,7 @@
             <h2>Account Verification</h2>
             <form action="${pageContext.request.contextPath}/oauth2callback" method="post">
                 <label for="otp">Enter the six-digit TOTP from Google Authenticator.</label>
-                <input type="text" id="otp" name="otp" 
+                <input type="number" id="otp" name="otp" 
                        class="<%= request.getAttribute("errorMessage") != null ? "is-invalid" : "" %>"
                        required />
                 

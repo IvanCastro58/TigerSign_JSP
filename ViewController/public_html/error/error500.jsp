@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Error 404 - TigerSign</title>
+    <title>Error 500 - TigerSign</title>
     <link rel="stylesheet" type="text/css" href="#"> 
     <link rel="icon" href="<%= request.getContextPath() %>/resources/images/tigersign.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -15,9 +15,10 @@
         <div class="error-box">
             <div class="text-field">
                 <div>
-                    <h1>Page Not Found</h1>
+                    <h1>Internal Server Error</h1>
                 </div>
-                <div class="message">Oops! The page you are looking for does not exist. It might have been moved or deleted.</div>
+                <div class="message">We apologize for the inconvenience. An unexpected error occurred on our server. Please try refreshing the page or visit again later.</div>
+
                 <div class="button-div">    
                     <a href="${pageContext.request.contextPath}/SuperAdmin/main_login.jsp"><i class="bi bi-house-fill" style="margin-right: 5px;"></i>Return Home</a>
                 </div>

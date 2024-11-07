@@ -15,7 +15,8 @@ public class AuditLogDAO {
         String query = "SELECT a.ID, a.ACTIVITY, a.ACTIVITY_DATETIME, a.ADMIN_ID, "
                      + "admin.FIRSTNAME, admin.LASTNAME, admin.POSITION, admin.PICTURE "
                      + "FROM TS_AUDIT a "
-                     + "JOIN TS_ADMIN admin ON a.ADMIN_ID = admin.ID";
+                     + "JOIN TS_ADMIN admin ON a.ADMIN_ID = admin.ID "
+                     + "ORDER BY a.ACTIVITY_DATETIME DESC";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query);

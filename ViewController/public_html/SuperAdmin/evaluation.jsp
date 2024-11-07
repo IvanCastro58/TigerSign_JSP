@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/sidebar.css">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/send_eval.css">
@@ -30,9 +31,8 @@
             <div class="box">
                 <h2 class="title-email">Enter Email Address<span style="color: #DB3444;">*</span></h2>
                 <form action="${pageContext.request.contextPath}/SendSurveyServlet" method="POST" id="surveyForm" class="send-container">
-                    <div class="loading-icon" id="loadingIcon"></div>
                     <input type="email" name="email" class="send-input" placeholder="Ex. juandelacruz@gmail.com" required>
-                    <button type="submit" class="send-button">
+                    <button type="submit" class="send-button" id="sendButton">Send
                         <i class='bx bxs-send'></i>
                     </button>
                 </form>
@@ -80,12 +80,14 @@
     </script>
     
     <script>
-        document.getElementById("surveyForm").addEventListener("submit", function(event) {
+         document.getElementById("surveyForm").addEventListener("submit", function(event) {
             event.preventDefault();
             
-            const loadingIcon = document.getElementById('loadingIcon');
-            loadingIcon.style.display = 'inline-block';
-    
+            const sendButton = document.getElementById('sendButton');
+            sendButton.innerHTML = "Sending <div class='spinner'></div>";
+            sendButton.disabled = true; 
+            sendButton.classList.add('sending');
+            
             setTimeout(() => {
                 this.submit();
             }, 2000);

@@ -37,10 +37,7 @@
                 </select>
 
                 <div style="display: inline-flex; align-items: center; width: fit-content; margin-left: auto;">
-                    <div id="loading-spinner" class="loading-spinner" style="display: none;">
-                        <div class="spinner"></div>
-                    </div>
-                    <button type="submit" class="submit-btn">Send Invitation <i class="bi bi-chevron-right"></i></button>
+                    <button type="submit" class="submit-btn" id="sendButton">Send Invitation <i class="bi bi-chevron-right"></i></button>
                 </div>
             </form>
         </div>
@@ -86,22 +83,15 @@
         pointer-events: none;
     }
 
-    .loading-spinner {
-        display: inline-flex; 
-        align-items: center; 
-        margin-right: 10px; 
-        font-size: 2em; 
-    }
-
     .spinner {
-        width: 25px; 
-        height: 25px;
-        border: 3px solid transparent;
-        border-top-color: #F4BB00; 
-        border-radius: 50%; 
-        animation: spin 0.8s linear infinite; 
-        margin-top: 10px;
-        margin-right: 5px; 
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-left: 5px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #a1a1a1;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
     }
 
     @keyframes spin {
@@ -120,8 +110,10 @@
             emailInput.value = emailInput.value + domain;
         }
     
-        const spinner = document.getElementById('loading-spinner');
-        spinner.style.display = 'inline-flex';
+        const sendButton = document.getElementById('sendButton');
+        sendButton.innerHTML = "Sending Invitation<div class='spinner'></div>";
+        sendButton.disabled = true; 
+        sendButton.classList.add('sending');
     
         setTimeout(() => {
             document.getElementById('add-admin-form').submit();

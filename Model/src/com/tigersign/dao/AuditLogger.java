@@ -13,7 +13,7 @@ public class AuditLogger {
     
     public static void logActivity(String adminEmail, String activity) {
         int adminId = getAdminId(adminEmail);
-        if (adminId != -1) { // Check if adminId is valid
+        if (adminId != -1) { 
             String insertQuery = "INSERT INTO TS_AUDIT (ACTIVITY, ACTIVITY_DATETIME, ADMIN_ID) VALUES (?, ?, ?)";
             try (Connection connection = DatabaseConnection.getConnection();
                  PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
@@ -33,7 +33,6 @@ public class AuditLogger {
         }
     }
 
-    // Method to get admin ID by email
     private static int getAdminId(String adminEmail) {
         int adminId = -1;
         String query = "SELECT ID FROM TS_ADMIN WHERE EMAIL = ?";

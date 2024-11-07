@@ -32,7 +32,7 @@ public class GenerateProofServlet extends HttpServlet {
                 byte[] pdfBytes = PDFGenerator.generateProofOfClaimPDF(details, context);
 
                 response.setContentType("application/pdf");
-                String filename = requestId + "_" + "ProofOfClaim" + ".pdf";
+                String filename = details.getOrNumber() + "_" + "ProofOfClaim" + ".pdf";
                 response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
                 response.getOutputStream().write(pdfBytes);
                 
@@ -51,9 +51,11 @@ public class GenerateProofServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String requestId = request.getParameter("requestId");
         String adminEmail = (String) request.getSession().getAttribute("adminEmail");
+        ClaimedRequestDetailsService service = new ClaimedRequestDetailsService();
+        ClaimedRequestDetails details = service.getClaimedRequestDetails(requestId);
         
         // Log the activity
-        String activity = "Generated proof of claim file for O.R. Number: " + requestId;
+        String activity = "Generated proof of claim file for O.R. Number: " + details.getOrNumber()  + " (Request: " + details.getRequestedDocuments() + ")";
         AuditLogger.logActivity(adminEmail, activity);
 
         // Return a success message

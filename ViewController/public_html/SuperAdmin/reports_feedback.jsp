@@ -30,7 +30,9 @@
                 <h2 class="title-page">All Customer Feedback</h2>
                 <button class="back-btn" onclick="window.location.href='reports_survey.jsp';">Back</button>
             </div>
-
+            <div class="pagination">
+                <ul class="pagination-list"></ul>
+            </div>
             <div class="feedback-container">
                 <% 
                     SurveyDAO surveyDAO = new SurveyDAO();
@@ -72,5 +74,51 @@
             </div>
         </div>
     </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const feedbackItems = document.querySelectorAll(".feedback-item");
+        const itemsPerPage = 5; // Set how many feedback items you want per page
+        const totalPages = Math.ceil(feedbackItems.length / itemsPerPage);
+        let currentPage = 1;
+
+        function showPage(page) {
+            currentPage = page;
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            feedbackItems.forEach((item, index) => {
+                item.style.display = (index >= start && index < end) ? "block" : "none";
+            });
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const paginationContainer = document.querySelector(".pagination-list");
+            paginationContainer.innerHTML = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageLink = document.createElement("li");
+                pageLink.className = "pagination-item";
+                
+                const link = document.createElement("a");
+                link.href = "#";
+                link.textContent = i;
+                link.className = "pagination-link" + (i === currentPage ? " active" : "");
+                
+                link.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    showPage(i);
+                });
+                
+                pageLink.appendChild(link);
+                paginationContainer.appendChild(pageLink);
+            }
+        }
+        showPage(currentPage);
+    });
+</script>
+
+
 </body>
 </html>
