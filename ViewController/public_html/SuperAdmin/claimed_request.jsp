@@ -273,7 +273,6 @@
                     </div>
                 </div>
             </div>
-            <%@ include file="/WEB-INF/components/pagination.jsp" %>
         </div>
     </div>
     <div class="overlay"></div>

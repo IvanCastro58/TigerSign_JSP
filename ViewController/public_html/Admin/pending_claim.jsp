@@ -44,7 +44,6 @@
     <div class="main-content">
         <div class="margin-content">
             <h2 class="title-page">PENDING CLAIMS</h2>
-            <%@ include file="/WEB-INF/components/top_nav.jsp" %>
             <div class="table-container">
                 <div class="table-wrapper">
                     <table class="transaction-table" id="pending_table">
@@ -127,7 +126,6 @@
                     </div>
                 </div>
             </div>
-            <%@ include file="/WEB-INF/components/pagination.jsp" %>
             <div id="claimer-type-modal" class="popup-overlay">
                 <div class="popup">
                     <div class="popup-header">

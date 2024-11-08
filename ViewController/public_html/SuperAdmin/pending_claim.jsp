@@ -254,7 +254,6 @@
                     </div>
                 </div>
             </div>
-            <%@ include file="/WEB-INF/components/pagination.jsp" %>
             <div id="claimer-type-modal" class="popup-overlay">
                 <div class="popup">
                     <div class="popup-header">

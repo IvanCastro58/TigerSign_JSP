@@ -13,7 +13,7 @@
 <script src="<%= request.getContextPath() %>/resources/javascript/claims_table.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/pagination.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/nav_item1.js"></script>
-<script src="<%= request.getContextPath() %>/resources/javascript/skeleton.js"></script>
+
 <script src="<%= request.getContextPath() %>/resources/javascript/claimer_view.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/photo_proof.js"></script>
 <script src="<%= request.getContextPath() %>/resources/javascript/id_proof.js"></script>
