@@ -238,6 +238,16 @@
                             %>
                     </tbody>
                     </table>
+                    <% 
+                            if (pendingClaims == null || pendingClaims.isEmpty()) { 
+                        %>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 200px; height: 200px;" />
+                                <p style="font-size: 14px; font-weight: 500;">No pending claims available at the moment.</p>
+                            </div>
+                        <% 
+                            } 
+                        %>
                     <div style="text-align: center; margin-top: 20px; display: none;" id="no-results">
                         <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 200px; height: 200px;" />
                         <p style="font-size: 14px; font-weight: 500;">No results match your search.</p>
@@ -413,14 +423,8 @@
     const searchTerm = localStorage.getItem("pendingClaimsSearchTerm");
 
     if (searchTerm) {
-        // Set the search term in the input field and filter the table
-        searchInput.value = searchTerm;
-
-        // Trigger input event to filter the table with the programmatically set value
-        searchInput.dispatchEvent(new Event('input'));
-
-        // Remove the search term from localStorage to reset on page refresh
-        localStorage.removeItem("pendingClaimsSearchTerm");
+        searchInput.value = searchTerm; // Set search term in input field
+        localStorage.removeItem("pendingClaimsSearchTerm"); // Clear after use
     }
     
     flatpickr(dateRangeInput, {
@@ -461,23 +465,37 @@
         }, 10);
     }
 
-searchInput.addEventListener('input', function () {
-    const searchTerm = this.value.toLowerCase();
-    filteredRows = rows.filter(row => {
-        const orNumberCell = row.cells[0].textContent.toLowerCase(); // Index 0 for O.R. Number
-        const nameCell = row.cells[1].textContent.toLowerCase(); // Index 1 for Name
-        const collegeCell = row.cells[4].textContent.toLowerCase(); // Index 4 for College
+    searchInput.addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase().trim();  // Make sure to trim extra spaces
 
-        return orNumberCell.includes(searchTerm) || 
-               nameCell.includes(searchTerm) || 
-               collegeCell.includes(searchTerm);
+        // If search term is empty, reset the filtered rows to show all rows
+        if (searchTerm === '') {
+            filteredRows = [...rows];  // Reset to all rows when search input is cleared
+        } else {
+            // Filter rows based on the search term
+            filteredRows = rows.filter(row => {
+                const orNumberCell = row.cells[0].textContent.toLowerCase(); // Index 0 for O.R. Number
+                const nameCell = row.cells[1].textContent.toLowerCase(); // Index 1 for Name
+                const collegeCell = row.cells[4].textContent.toLowerCase(); // Index 4 for College
+
+                // Only include the row if it matches any of the relevant columns
+                return orNumberCell.includes(searchTerm) || 
+                       nameCell.includes(searchTerm) || 
+                       collegeCell.includes(searchTerm);
+            });
+        }
+
+        renderTable(1, filteredRows);  // Render filtered rows
+
+        // Show or hide 'No Results' message
+        const noResultsDiv = document.getElementById('no-results');
+        noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
     });
 
-    renderTable(1, filteredRows);
-
-    const noResultsDiv = document.getElementById('no-results');
-    noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
-});
+    // Trigger the 'input' event manually after the page loads to apply the filter
+    if (searchTerm) {
+        searchInput.dispatchEvent(new Event('input'));  // This triggers the filtering logic
+    }
 
     rowsPerPageSelect.addEventListener('change', function () {
         rowsPerPage = parseInt(this.value);
@@ -499,20 +517,31 @@ searchInput.addEventListener('input', function () {
         }
     });
 
-    function renderTable(page, rowsToRender = rows) {
-        const startIndex = (page - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
+    function renderTable(page, rowsToRender = filteredRows) {
+    const rowsPerPage = 10; // or dynamically set rows per page if needed
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
-        tbody.innerHTML = '';
-        const visibleRows = rowsToRender.slice(startIndex, endIndex);
-        visibleRows.forEach(row => tbody.appendChild(row));
+    tbody.innerHTML = '';  // Clear the table body before re-rendering
 
-        renderPagination(rowsToRender);
-    }
+    // Get visible rows based on pagination
+    const visibleRows = rowsToRender.slice(startIndex, endIndex);
+    visibleRows.forEach(row => tbody.appendChild(row));  // Add rows to the table body
 
+    // Reapply status styles for all status dropdowns after rendering rows
+    $('.status-dropdown').each(function() {
+        updateStatusStyle($(this)); // Reapply the style for each dropdown
+    });
+
+    renderPagination(rowsToRender);  // Update pagination
+}
+
+    // Pagination function (adjust if necessary)
     function renderPagination(filteredRows) {
-        paginationContainer.innerHTML = '';
-        const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
+        const paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = '';  // Clear pagination container
+
+        const pageCount = Math.ceil(filteredRows.length / 10); // Calculate number of pages
         const paginationList = document.createElement('ul');
         paginationList.className = 'pagination-list';
 
@@ -521,13 +550,12 @@ searchInput.addEventListener('input', function () {
             paginationItem.className = 'pagination-item';
 
             const paginationLink = document.createElement('a');
-            paginationLink.className = 'pagination-link' + (i === currentPage ? ' active' : '');
+            paginationLink.className = 'pagination-link';
             paginationLink.href = '#';
             paginationLink.textContent = i;
             paginationLink.addEventListener('click', function (e) {
                 e.preventDefault();
-                currentPage = i;
-                renderTable(currentPage, filteredRows);
+                renderTable(i, filteredRows);  // Render the selected page
             });
 
             paginationItem.appendChild(paginationLink);
