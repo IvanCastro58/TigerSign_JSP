@@ -218,6 +218,8 @@
             const rowsPerPage = 5;
             let currentPage = 1;
             let filteredRows = [...tableRows];
+            
+            const hasActivatedAccounts = filteredRows.some(row => row.querySelector(".status-active span").textContent.trim() === "ACTIVE");
     
             function updateTableRows() {
                 const start = (currentPage - 1) * rowsPerPage;
@@ -273,7 +275,6 @@
     
             searchInput.addEventListener('input', () => {
                 const searchValue = searchInput.value.toLowerCase();
-                let hasMatches = false;
     
                 filteredRows = tableRows.filter(row => {
                     const rowData = row.textContent.toLowerCase();
@@ -282,13 +283,9 @@
                     return isMatch;
                 });
     
-                hasMatches = filteredRows.length > 0;
+                const hasMatches = filteredRows.length > 0;
     
-                if (!hasMatches && searchValue) {
-                    noResultsDiv.style.display = 'block';
-                } else {
-                    noResultsDiv.style.display = 'none';
-                }
+                noResultsDiv.style.display = !hasMatches && searchValue && hasActivatedAccounts ? 'block' : 'none';
     
                 currentPage = 1;
                 initializePagination();

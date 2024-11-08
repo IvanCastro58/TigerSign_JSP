@@ -169,8 +169,8 @@ public class SendInvitationServlet extends HttpServlet {
 
     private boolean sendInvitationEmail(String recipientEmail, String displayPosition) {
         final String host = "smtp.gmail.com";
-        final String user = "cipcastro123@gmail.com";
-        final String password = "wkymehsbbmwwjfso";
+        final String user = "specialprojects.registrar@ust.edu.ph";
+        final String password = "specialprojects.registrar";
 
         Properties props = new Properties();
         props.put("mail.smtp.host", host);

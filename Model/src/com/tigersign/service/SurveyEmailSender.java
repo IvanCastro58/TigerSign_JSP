@@ -107,15 +107,14 @@ public class SurveyEmailSender extends HttpServlet {
 
         Session mailSession = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("cipcastro123@gmail.com", "wkymehsbbmwwjfso");
+                return new PasswordAuthentication("specialprojects.registrar@ust.edu.ph", "specialprojects.registrar");
             }
         });
 
         try {
             MimeMessage message = new MimeMessage(mailSession);
-            message.setFrom(new InternetAddress("cipcastro123@gmail.com"));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
-            message.setSubject(subject);
+            message.setFrom(new InternetAddress("specialprojects.registrar@ust.edu.ph"));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(email)); 
             message.setContent(content, "text/html");
 
             Transport.send(message);
@@ -125,21 +124,21 @@ public class SurveyEmailSender extends HttpServlet {
             return false;
         }
     }
-    
+
     private int getAdminId(String adminEmail) {
-            int adminId = -1;
-            String query = "SELECT ID FROM TS_ADMIN WHERE EMAIL = ?";
-            try (Connection connection = DatabaseConnection.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, adminEmail);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if (resultSet.next()) {
-                    adminId = resultSet.getInt("ID");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+        int adminId = -1;
+        String query = "SELECT ID FROM TS_ADMIN WHERE EMAIL = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, adminEmail);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                adminId = resultSet.getInt("ID");
             }
-            return adminId;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return adminId;
     }
 
     private void redirectToSessionBasedPage(HttpServletRequest request, HttpServletResponse response, String adminEmail, String userEmail, String email, boolean success)

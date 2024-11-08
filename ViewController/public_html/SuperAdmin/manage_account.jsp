@@ -324,6 +324,8 @@
             const rowsPerPage = 5;
             let currentPage = 1;
             let filteredRows = [...tableRows];
+            
+            const hasAccounts = tableRows.length > 0;
     
             function updateTableRows() {
                 const start = (currentPage - 1) * rowsPerPage;
@@ -377,7 +379,7 @@
                 updateActiveLink();
             }
     
-            searchInput.addEventListener('input', () => {
+           searchInput.addEventListener('input', () => {
                 const searchValue = searchInput.value.toLowerCase();
                 let hasMatches = false;
     
@@ -389,8 +391,8 @@
                 });
     
                 hasMatches = filteredRows.length > 0;
-    
-                if (!hasMatches && searchValue) {
+    x
+                if (!hasMatches && searchValue && hasAccounts) {
                     noResultsDiv.style.display = 'block';
                 } else {
                     noResultsDiv.style.display = 'none';

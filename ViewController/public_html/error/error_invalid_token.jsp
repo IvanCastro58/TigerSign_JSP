@@ -16,9 +16,9 @@
                 <img class="check" src="${pageContext.request.contextPath}/resources/images/check.jpg" alt="Check Icon">
             </div>
             <div>
-                <h1>TOTP Secret Already Reset</h1>
+                <h1>Invalid Token</h1>
             </div>
-            <div class="message">Your TOTP secret has already been reset some time ago. Please log in to your account and set up Google Authenticator to ensure continued access.</div> 
+            <div class="message">The token you used to reset your TOTP is invalid or has already been used. Please make sure you have the correct link, and try again.</div> 
             <div class="button-div">
                 <a href="${pageContext.request.contextPath}/SuperAdmin/main_login.jsp"><i class="bi bi-box-arrow-in-right" style="margin-right: 5px;"></i>Go to Login Page</a>
             </div>

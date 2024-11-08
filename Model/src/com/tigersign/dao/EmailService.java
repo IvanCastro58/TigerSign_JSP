@@ -23,9 +23,9 @@ public class EmailService {
 
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final String SMTP_PORT = "587";
-    private static final String EMAIL_USERNAME = "cipcastro123@gmail.com";
-    private static final String EMAIL_PASSWORD = "wkymehsbbmwwjfso";  
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(5); // Create a thread pool
+    private static final String EMAIL_USERNAME = "specialprojects.registrar@ust.edu.ph";
+    private static final String EMAIL_PASSWORD = "specialprojects.registrar";  
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     public boolean sendSurveyEmail(String email, HttpServletRequest request) {
         try {
