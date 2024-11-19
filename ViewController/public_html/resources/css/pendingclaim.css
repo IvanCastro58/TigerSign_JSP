@@ -26,8 +26,17 @@ body {
 
 .top-nav {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.row1,
+.row2 {
+    display: flex;
+    gap: 100px;
 }
 
 .nav-item1 {
@@ -92,6 +101,12 @@ body {
     border: 1px solid var(--blackish);
 }
 
+.input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
 .date-input {
     width: 200px;
     background-color: #ffffff;
@@ -101,7 +116,26 @@ body {
     font-size: 12px;
     border-radius: 5px;
     border: 1px solid #a1a1a1;
+    box-sizing: border-box;
     transition: border-color 0.3s ease;
+}
+
+#clear-date {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 12px;
+    display: none;
+    border-radius: 50%;
+    padding: 3px 4px;
+    color: var(--medium-gray);
+    transition: background-color 0.3s ease;
+}
+
+#clear-date:hover{
+    background-color: #DBDBDB;
 }
 
 .date-input:focus {
@@ -150,6 +184,23 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.nav-item4 select{
+    font-family: 'Montserrat', sans-serif;
+    width: 200px;
+    padding: 8px;
+    font-size: 10px;
+    border: 1px solid #a1a1a1;
+    border-radius: 10px;
+    background-coler: #ffffff;
+    box-sizing: border-box;
+}
+    
+.nav-item4 select:focus{
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .popup-overlay {
@@ -318,6 +369,14 @@ body {
     .search-input {
         width: 150px; 
     }
+    
+    .nav-item4 select{
+        width: 150px; 
+    }
+    
+    .date-input {
+        width: 150px;
+    }
 
     .nav-item2 {
         gap: 10px;
@@ -325,10 +384,6 @@ body {
 }
 
 @media (max-width: 1150px) {
-    .search-input {
-        width: 100px; 
-    }
-
     .nav-item2 {
         gap: 5px;
     }
@@ -371,6 +426,29 @@ body {
 
     .popup{
         width: 550px;
+    }
+    
+    .top-nav {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .row1, .row2 {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .search-input {
+        width: 200px; 
+    }
+    
+    .nav-item4 select{
+        width: 200px; 
+    }
+    
+    .date-input {
+        width: 200px;
     }
 }
 
@@ -483,12 +561,16 @@ body {
         font-size: 10px;
     }
     
-    .date-input {
-        width: 100px;
+    .search-input {
+        width: 150px; 
     }
     
-    .search-input {
-        width: 100px; 
+    .nav-item4 select{
+        width: 150px; 
+    }
+    
+    .date-input {
+        width: 150px;
     }
 }
 

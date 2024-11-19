@@ -13,7 +13,7 @@
         <div class="highlight-bar"></div>
         <div class="message-box">
             <div class="image">
-                <img class="check" src="${pageContext.request.contextPath}/resources/images/check.jpg" alt="Check Icon">
+                <img class="check" src="${pageContext.request.contextPath}/resources/images/invalid_token.jpg" alt="Check Icon">
             </div>
             <div>
                 <h1>Invalid Token</h1>

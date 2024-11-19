@@ -185,7 +185,7 @@ public class SendInvitationServlet extends HttpServlet {
         });
 
         String redirectPage = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/redirecting.jsp";
-        String invitationLink = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/accept-invitation?email=" + recipientEmail;
+        String invitationLink = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/Admin/login.jsp";
 
         String encodedInvitationLink;
         try {
@@ -199,14 +199,14 @@ public class SendInvitationServlet extends HttpServlet {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(user));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
-            message.setSubject("Admin Invitation - TigerSign");
+            message.setSubject("Admin Activation - TigerSign");
 
             String content = "<div style='width: 100%; max-width: 1250px; margin: 0 auto; text-align: center; background-color: #f9f9f9; padding: 20px; font-family: Montserrat, sans-serif;'>"
                     + "<div style='display: inline-block; width: 100%; max-width: 700px; background-color: white; border: 1px solid #ddd; padding: 30px 20px; box-sizing: border-box;'>"
                     + "<img src='https://drive.google.com/uc?id=1BU7bQH5ZnZGwokJlNhyhHGGPn_nk_R7h' alt='TigerSign Logo' style='width: 100px; height: 100px; margin-bottom: 20px; border-radius: 20px; pointer-events: none;'>"
                     + "<hr style='border: none; height: 2px; background-color: #F4BB00; margin-bottom: 20px;'>"
                     + "<center>"
-                    + "<h2 style='color: #333; width: fit-content; border-bottom: 3px solid #F4BB00;'>Admin Invitation</h2>"
+                    + "<h2 style='color: #333; width: fit-content; border-bottom: 3px solid #F4BB00;'>Admin Activation</h2>"
                     + "</center>"
                     + "<p style='font-size: 14px; color: #555;'>You have been invited to become an Admin for TigerSign as a <strong>" + displayPosition + "</strong>.</p>" 
                     + "<p style='font-size: 14px; color: #555;'>As an Admin, you will have access to a limited selection of features and responsibilities within the system.</p>"

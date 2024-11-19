@@ -36,7 +36,10 @@
             <div class="feedback-container">
                 <% 
                     SurveyDAO surveyDAO = new SurveyDAO();
-                    List<Survey> feedbacks = surveyDAO.getAllSurveys(); // Fetch all surveys without pagination
+                    
+                    String filterType = request.getParameter("filterType");
+                    String filterValue = request.getParameter("filterValue");
+                    List<Survey> feedbacks = surveyDAO.getAllSurveys(filterType, filterValue); 
                     DateTimeFormatter feedbackFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
                     
                     for (Survey survey : feedbacks) { 

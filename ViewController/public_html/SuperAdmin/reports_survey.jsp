@@ -7,6 +7,8 @@
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.ZoneId" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.text.ParseException" %>
 
 <html lang="en">
 <head>
@@ -20,12 +22,56 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/table.css ">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/resources/css/reports.css ">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/confetti.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    
 </head>
 <style>
     .transaction-table th, .transaction-table td{
         padding: 15px;
+    }
+    
+    .sort-icons {
+        font-size: 12px;
+        display: inline-block;
+        transform: scale(0.8);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    .sort-icons.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    .spin-up {
+        animation: spin-up 0.3s linear forwards;
+    }
+    
+    @keyframes spin-up {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(180deg); 
+        }
+    }
+    
+    .spin-down {
+        animation: spin-down 0.3s linear forwards;
+    }
+    
+    @keyframes spin-down {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(-180deg);
+        }
     }
 </style>
 <body>
@@ -34,12 +80,13 @@
     <% 
         request.setAttribute("activePage", "reports");  
         SurveyDAO surveyDAO = new SurveyDAO();
-
-        // Fetching data
-        double averageScore = surveyDAO.getAverageScore();
-        int evaluationsSent = surveyDAO.getEvaluationSentCount();
-        int evaluationsReceived = surveyDAO.getEvaluationReceivedCount();
-        List<Survey> serviceScores = surveyDAO.getServiceWindowScores();
+    
+        String filterType = request.getParameter("filterType");
+        String filterValue = request.getParameter("filterValue");
+        
+        double averageScore = surveyDAO.getAverageScore(filterType, filterValue);
+        int evaluationsReceived = surveyDAO.getEvaluationReceivedCount(filterType, filterValue);
+        List<Survey> serviceScores = surveyDAO.getServiceWindowScores(filterType, filterValue);
     %>
     
     <% 
@@ -83,14 +130,147 @@
                     <button class="reports-btn current-page-btn">Evaluation Analytics</button>
                 </div>
                 <div class="filter-btn">
-                    <button class="filters-btn">Filter <i class="fa-solid fa-filter"></i></button>
+                    <button class="filters-btn"  onclick="openModal()">Filter <i class="fa-solid fa-filter"></i></button>
+                </div>
+                
+                <div id="dateFilterModal" class="modal">
+                    <div class="modal-content">
+                        <div class="filter-box">
+                            <!-- Date Inputs -->
+                            <div id="todayInput" class="calendar-container" style="display: none;">
+                                <div id="todayCalendar"></div>
+                            </div>
+                            <div id="monthInput" class="calendar-container" style="display: none;">
+                                <div id="monthCalendar"></div>
+                            </div>
+                            <div id="yearInput" class="year-container" style="display: none;">
+                                <select id="byYear">
+                                    <!-- Year options will be dynamically populated -->
+                                </select>
+                            </div>
+                            <div id="rangeInput" class="calendar-container" style="display: none;">
+                                <div id="rangeCalendar"></div>
+                            </div>
+                            
+                            <div class="filter">
+                                <div class="select-container">
+                                    <select id="dateFilterOption" onchange="displayDateInput()">
+                                        <option value="" disabled>Select Filter Type</option>
+                                        <option value="day">By Day</option>
+                                        <option value="range">Date Range</option>
+                                        <option value="month">By Month</option>
+                                        <option value="year">By Year</option>
+                                    </select>
+                                </div>
+                                
+                                <div id="todaySelect" class="today-container" style="display: none;">
+                                    <label for="dayCalendarInput">Select Date</label>
+                                    <input type="date" id="dayCalendarInput" name="dayCalendarInput" readonly/>
+                                </div>
+                                
+                                <div id="startInput" class="start-container" style="display: none;">
+                                    <label for="rangeCalendarStart">Start Date</label>
+                                    <input type="date" id="rangeCalendarStart" name="rangeCalendarStart" readonly>
+                                </div>
+                                
+                                <div id="endInput" class="end-container" style="display: none;">
+                                    <label for="rangeCalendarEnd">End Date</label>
+                                    <input type="date" id="rangeCalendarEnd" name="rangeCalendarEnd" readonly>
+                                </div>
+                                
+                                <div id="monthCalendarInputContainer" class="today-container" style="display: none;">
+                                    <label for="monthCalendarInput">Select Month</label>
+                                    <input type="text" id="monthCalendarInput" name="monthCalendarInput" readonly/>
+                                </div>
+
+                                
+                                <div class="button-container">
+                                    <button onclick="applyFilter()" class="apply-btn">Apply</button>
+                                    <button onclick="resetModal()" class="cancel-btn">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="highlight-bar2"></div>
+            <div class="filter-summary" style="margin-bottom: 20px; text-align: left;">
+                <% if (filterType != null && filterValue != null) { %>
+                    <div class="filter-display">
+                        <span>
+                            <% 
+                                String readableType = "";
+                                String displayValue = "";
+                                SimpleDateFormat inputFormat;
+                                SimpleDateFormat outputFormat;
+            
+                                switch (filterType) {
+                                    case "day":
+                                        readableType = "By Day";
+                                        inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                        outputFormat = new SimpleDateFormat("dd MMM yyyy");
+                                        try {
+                                            displayValue = outputFormat.format(inputFormat.parse(filterValue));
+                                        } catch (ParseException e) {
+                                            displayValue = "Invalid Date";
+                                        }
+                                        break;
+                                    case "month":
+                                        readableType = "By Month";
+                                        inputFormat = new SimpleDateFormat("yyyy-MM");
+                                        outputFormat = new SimpleDateFormat("MMMM yyyy");
+                                        try {
+                                            displayValue = outputFormat.format(inputFormat.parse(filterValue));
+                                        } catch (ParseException e) {
+                                            displayValue = "Invalid Month Format";
+                                        }
+                                        break;
+                                    case "range":
+                                        readableType = "Date Range";
+                                        inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                        outputFormat = new SimpleDateFormat("dd MMM yyyy");
+                                        try {
+                                            String[] range = filterValue.split(",");
+                                            String start = outputFormat.format(inputFormat.parse(range[0]));
+                                            String end = outputFormat.format(inputFormat.parse(range[1]));
+                                            displayValue = start + " to " + end;
+                                        } catch (ParseException e) {
+                                            displayValue = "Invalid Date Range";
+                                        }
+                                        break;
+                                    case "year":
+                                        readableType = "By Year";
+                                        displayValue = filterValue;
+                                        break;
+                                    default:
+                                        readableType = "Unknown Filter";
+                                        displayValue = filterValue;
+                                        break;
+                                }
+                            %>
+                            <%= readableType %>: <%= displayValue %>
+                        </span>
+                    </div>
+                <% } %>
+            </div>
+            <% if (evaluationsReceived == 0) { %>
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 300px; height: 300px;" />
+                    <p style="font-size: 14px; font-weight: 500;">
+                        No evaluation data are available at the moment. Please check back later. 
+                    </p>
+                </div>
+            <% } else { %>
             <div class="card-view">
                 <div class="card" id="overall-score">
                     <h3 class="card-heading">Average Overall Score</h3>
-                    <div class="card-number"><%= String.format("%.1f", averageScore) %></div>
+                    <div class="card-number" 
+                         style="color: <%= averageScore >= 3.5 ? "#1C8454" : 
+                                          (averageScore >= 2 ? "#F4BB00" : "#d9534f") %>;
+                                border: 5px solid <%= averageScore >= 3.5 ? "#1C8454" : 
+                                                     (averageScore >= 2 ? "#F4BB00" : "#d9534f") %>;">
+                        <%= String.format("%.1f", averageScore) %>
+                    </div>
                 </div>
                 <div class="card" id="eval-received">
                     <h3 class="card-heading">Evaluation Received</h3>
@@ -121,18 +301,20 @@
                                             <th>
                                                 Service Window
                                             </th>
-                                            <th>
+                                            <th style="cursor: pointer;">
                                                 Evaluations
                                                 <span class="sort-icons">
-                                                    <i class="fa-solid fa-caret-up"></i>
-                                                    <i class="fa-solid fa-caret-down"></i>
+                                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                                    <i class="fa-solid fa-caret-up sort-icon" style="display: none;"></i>
+                                                    <i class="fa-solid fa-caret-down sort-icon" style="display: none;"></i>
                                                 </span>
                                             </th>
-                                            <th>
+                                            <th style="cursor: pointer;">
                                                 Score
                                                 <span class="sort-icons">
-                                                    <i class="fa-solid fa-caret-up"></i>
-                                                    <i class="fa-solid fa-caret-down"></i>
+                                                    <i class="fa-solid fa-sort sort-icon"></i>
+                                                    <i class="fa-solid fa-caret-up sort-icon" style="display: none;"></i>
+                                                    <i class="fa-solid fa-caret-down sort-icon" style="display: none;"></i>
                                                 </span>
                                             </th>
                                         </tr>
@@ -159,8 +341,9 @@
                             <h3>Customer Feedback</h3>
                         </div>
                         <div class="feedback-container">
-                            <% 
-                                List<Survey> feedbacks = surveyDAO.getAllSurveys(); 
+                            <%    
+                                List<Survey> feedbacks = surveyDAO.getAllSurveys(filterType, filterValue); 
+                    
                                 DateTimeFormatter feedbackFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
                                 int feedbackCount = 0; 
                                 for (Survey survey : feedbacks) { 
@@ -168,18 +351,18 @@
                                         String feedback = survey.getFeedback(); 
                                         String dateString = survey.getDate(); 
                                         int rating = survey.getRating(); 
+                                        if (feedback != null && dateString != null) {
+                                            LocalDateTime feedbackDate = LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); 
+                                            String formattedFeedbackDate = feedbackDate.format(feedbackFormatter);
                                         
-                                        LocalDateTime feedbackDate = LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); 
-                                        String formattedFeedbackDate = feedbackDate.format(feedbackFormatter);
-                                    
-                                        StringBuilder starRating = new StringBuilder();
-                                        for (int i = 1; i <= 4; i++) {
-                                            if (i <= rating) {
-                                                starRating.append("<i class='fa-solid fa-star'></i>"); 
-                                            } else {
-                                                starRating.append("<i class='fa-regular fa-star'></i>"); 
+                                            StringBuilder starRating = new StringBuilder();
+                                            for (int i = 1; i <= 4; i++) {
+                                                if (i <= rating) {
+                                                    starRating.append("<i class='fa-solid fa-star'></i>"); 
+                                                } else {
+                                                    starRating.append("<i class='fa-regular fa-star'></i>"); 
+                                                }
                                             }
-                                        }
                             %>
                                 <div class="feedback-item">
                                     <div class="feedback-header">
@@ -192,23 +375,55 @@
                                     <div class="feedback-text"><%= feedback %></div>
                                 </div>
                             <% 
+                                        }
                                     }
                                     feedbackCount++; 
                                 } 
                             %>
                         </div>
-                        <div class="show-more-btn">
-                            <button class="show-btn" onclick="window.location.href='reports_feedback.jsp';">
-                                SHOW MORE <i class="bi bi-chevron-right"></i>
-                            </button>
-                        </div>
+                    
+                        <% if (feedbacks.size() >= 5) { %>
+                            <div class="show-more-btn">
+                                <button class="show-btn" onclick="showMoreWithFilter()">
+                                    SHOW MORE <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
+            <% } %>
             <div class="generate-buttons">
-                <div class="generate-btn">
-                    <button class="gen-btn">Generate & Export Report <i class="fa-solid fa-file-export"></i></button>
-                </div>
+                <button class="<%= (evaluationsReceived == 0) ? "  disabled-button" : "gen-btn" %>"
+                        <%= (evaluationsReceived == 0) ? "disabled" : "" %>
+                >Generate & Export Report <i class="fa-solid fa-file-export"></i></button>
+            </div>
+
+            <div id="report-popup" class="popup-overlay">
+                <div class="popup">
+                    <div class="popup-header">
+                        <strong>REPORT DOCUMENT FILE TYPE</strong>
+                        <span class="popup-close" id="popup-close">&times;</span>
+                    </div>
+                    <div class="popup-content">
+                        <div style="text-align: center; margin: 10px 0;"
+                            <p class="bigger-text">Choose your preferred file type</p>
+                        </div>
+                        <div class="button-container" style="margin-top: 20px;">
+                            <form class="report-container" id="reportForm" method="GET" action="<%= request.getContextPath() %>/AnalyticsGeneratorServlet" target="_blank">
+                                <input type="hidden" name="filterType" id="reportFilterType" value="<%= filterType != null ? filterType : "" %>">
+                                <input type="hidden" name="filterValue" id="reportFilterValue" value="<%= filterValue != null ? filterValue : "" %>">
+                                <button type="submit" name="format" value="pdf" class="pdf-btn">
+                                    <img src="${pageContext.request.contextPath}/resources/images/pdf.png" alt="PDF Icon">
+                                </button>
+                                
+                                <button type="submit" name="format" value="csv" class="csv-btn">
+                                    <img src="${pageContext.request.contextPath}/resources/images/excel.png" alt="CSV Icon">
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div> 
             </div>
         </div>
     </div>
@@ -216,13 +431,13 @@
     
     <% 
         Map<String, Integer> standoutCounts = new HashMap<>();
-        standoutCounts.put("Response Time", surveyDAO.getStandoutCount("response"));
-        standoutCounts.put("Accuracy of Information", surveyDAO.getStandoutCount("accuracy"));
-        standoutCounts.put("Helpful", surveyDAO.getStandoutCount("helpful"));
-        standoutCounts.put("Respectful", surveyDAO.getStandoutCount("respect"));
+        standoutCounts.put("Response Time", surveyDAO.getStandoutCount("response", filterType, filterValue));
+        standoutCounts.put("Accuracy of Information", surveyDAO.getStandoutCount("accuracy", filterType, filterValue));
+        standoutCounts.put("Helpful", surveyDAO.getStandoutCount("helpful", filterType, filterValue));
+        standoutCounts.put("Respectful", surveyDAO.getStandoutCount("respect", filterType, filterValue));
         
-        // Initialize total responses
-        int totalResponses = surveyDAO.getTotalCount();
+        // Initialize total responses with filters
+        int totalResponses = surveyDAO.getTotalCount(filterType, filterValue);
         
         // Count the "Other" category
         standoutCounts.put("Other", totalResponses 
@@ -247,90 +462,362 @@
         standoutData.append("]");
     %>
     <script>
-    const ctx = document.getElementById('standoutPieChart').getContext('2d');
-    const standoutDoughnutChart = new Chart(ctx, {
-        type: 'doughnut', 
-        data: {
-            labels: <%= standoutLabels.toString() %>,
-            datasets: [{
-                label: 'Total Respondents',
-                data: <%= standoutData.toString() %>,
-                backgroundColor: [
-                    '#d9534f',   
-                    '#1C8454',   
-                    '#3B83FB',   
-                    '#F4BB00',   
-                    '#1a1a1a'    
-                ],
-                borderColor: [
-                    '#d9534f',
-                    '#1C8454',
-                    '#3B83FB',
-                    '#F4BB00',
-                    '#1a1a1a'
-                ],
-                hoverBackgroundColor: [
-                    'rgba(217, 83, 79, 0.8)',
-                    'rgba(28, 132, 84, 0.8)',
-                    'rgba(59, 131, 251, 0.8)',
-                    'rgba(244, 187, 0, 0.8)',
-                    'rgba(26, 26, 26, 0.8)'
-                ],
-                hoverBorderColor: [
-                    '#b03a32',
-                    '#146b3a',
-                    '#2b6bbf',
-                    '#d89e00',
-                    '#111111'
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            cutout: '50%',
-            plugins: {
-                legend: {
-                    position: 'right',
-                    labels: {
-                        boxWidth: 20,
-                        padding: 20,
-                        font: {
-                            size: 12,
-                            weight: '600',
-                            family: 'Montserrat'
+        const reportButton = document.querySelector('.gen-btn');
+        const reportPopup = document.getElementById('report-popup');
+        const reportPopupElement = reportPopup.querySelector('.popup');
+        const reportCloseButton = reportPopup.querySelector('.popup-close');
+        
+        reportButton.addEventListener('click', () => {
+            reportPopup.style.display = 'flex';
+            setTimeout(() => {
+                reportPopupElement.classList.add('show');
+            }, 10);
+        });
+        
+        reportCloseButton.addEventListener('click', () => {
+            reportPopupElement.classList.remove('show');
+            setTimeout(() => {
+                reportPopup.style.display = 'none';
+            }, 600);
+        });
+        
+        window.addEventListener('click', (event) => {
+            if (event.target === reportPopup) {
+                reportPopupElement.classList.remove('show');
+                setTimeout(() => {
+                    reportPopup.style.display = 'none';
+                }, 600);
+            }
+        });
+    </script>
+    <script>
+        const ctx = document.getElementById('standoutPieChart').getContext('2d');
+        const standoutDoughnutChart = new Chart(ctx, {
+            type: 'doughnut', 
+            data: {
+                labels: <%= standoutLabels.toString() %>,
+                datasets: [{
+                    label: 'Total Respondents',
+                    data: <%= standoutData.toString() %>,
+                    backgroundColor: [
+                        '#d9534f',   
+                        '#1C8454',   
+                        '#3B83FB',   
+                        '#F4BB00',   
+                        '#1a1a1a'    
+                    ],
+                    borderColor: [
+                        '#d9534f',
+                        '#1C8454',
+                        '#3B83FB',
+                        '#F4BB00',
+                        '#1a1a1a'
+                    ],
+                    hoverBackgroundColor: [
+                        'rgba(217, 83, 79, 0.8)',
+                        'rgba(28, 132, 84, 0.8)',
+                        'rgba(59, 131, 251, 0.8)',
+                        'rgba(244, 187, 0, 0.8)',
+                        'rgba(26, 26, 26, 0.8)'
+                    ],
+                    hoverBorderColor: [
+                        '#b03a32',
+                        '#146b3a',
+                        '#2b6bbf',
+                        '#d89e00',
+                        '#111111'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '50%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: '600',
+                                family: 'Montserrat'
+                            },
+                            color: '#333333'
+                        }
+                    },
+                    datalabels: {
+                        formatter: (value, context) => {
+                            if (value === 0) {
+                                return null;
+                            }
+                            const total = context.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                            const percentage = (value / total * 100).toFixed(1) + '%';
+                            return percentage;
                         },
-                        color: '#333333'
+                        color: '#FFFFFF',
+                        font: {
+                            weight: 'bold',
+                            size: 12
+                        }
                     }
                 },
-                datalabels: {
-                    formatter: (value, context) => {
-                        if (value === 0) {
-                            return null;
-                        }
-                        const total = context.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
-                        const percentage = (value / total * 100).toFixed(1) + '%';
-                        return percentage;
-                    },
-                    color: '#FFFFFF',
-                    font: {
-                        weight: 'bold',
-                        size: 12
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 20
                     }
                 }
             },
-            layout: {
-                padding: {
-                    left: 10,
-                    right: 20
+            plugins: [ChartDataLabels]
+        });
+    </script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function addSortingFunctionality() {
+                const tableHeaders = document.querySelectorAll("#reports-dashboard th");
+                const tableBody = document.querySelector("#reports-dashboard tbody");
+                const rows = Array.from(tableBody.querySelectorAll("tr"));
+    
+                tableHeaders.forEach((header, index) => {
+                    header.addEventListener("click", function () {
+                        const isAscending = header.classList.toggle("ascending");
+                        resetSortIcons();
+    
+                        const sortIcons = header.querySelector(".sort-icons");
+                        sortIcons.classList.add("visible");
+                        sortIcons.classList.remove("spin-up", "spin-down");
+    
+                        if (isAscending) {
+                            sortIcons.classList.add("spin-up");
+                        } else {
+                            sortIcons.classList.add("spin-down");
+                        }
+    
+                        const icons = sortIcons.querySelectorAll("i");
+                        icons[0].style.display = "none";
+                        icons[1].style.display = isAscending ? "inline" : "none";
+                        icons[2].style.display = isAscending ? "none" : "inline";
+    
+                        rows.sort((a, b) => {
+                            const aText = a.cells[index].innerText.trim();
+                            const bText = b.cells[index].innerText.trim();
+    
+                            return isAscending
+                                ? aText.localeCompare(bText, undefined, { numeric: true })
+                                : bText.localeCompare(aText, undefined, { numeric: true });
+                        });
+    
+                        rows.forEach(row => tableBody.appendChild(row));
+                    });
+                });
+            }
+    
+            function resetSortIcons() {
+                document.querySelectorAll(".sort-icons").forEach(sortIcon => {
+                    sortIcon.classList.remove("visible", "spin-up", "spin-down");
+                    sortIcon.querySelectorAll("i").forEach(icon => {
+                        icon.style.display = "none";
+                    });
+                    sortIcon.querySelector(".fa-sort").style.display = "inline";
+                });
+            }
+    
+            addSortingFunctionality();
+        });
+    </script>
+    
+    <script>
+        function openModal() {
+            const modal = document.getElementById("dateFilterModal");
+            const dateFilterOption = document.getElementById("dateFilterOption");
+            const savedFilterType = localStorage.getItem("filterType");
+            const savedFilterValue = localStorage.getItem("filterValue");
+    
+            if (modal.style.display === "block") {
+                closeModal();
+                return;
+            }
+    
+            if (savedFilterType) {
+                dateFilterOption.value = savedFilterType;
+                displayDateInput();
+    
+                if (savedFilterType === "day") {
+                    document.getElementById("dayCalendarInput").value = savedFilterValue;
+                    todayPicker.setDate(savedFilterValue);
+                } else if (savedFilterType === "range") {
+                    const [start, end] = savedFilterValue.split(",");
+                    document.getElementById("rangeCalendarStart").value = start;
+                    document.getElementById("rangeCalendarEnd").value = end;
+                    rangePicker.setDate([start, end]);
+                } else if (savedFilterType === "month") {
+                    document.getElementById("monthCalendarInput").value = savedFilterValue;
+                    monthPicker.setDate(savedFilterValue);
+                } else if (savedFilterType === "year") {
+                    document.getElementById("byYear").value = savedFilterValue;
+                }
+            } else {
+                dateFilterOption.value = "day";
+                displayDateInput();
+            }
+    
+            modal.style.display = "block";
+            requestAnimationFrame(() => {
+                modal.style.opacity = 1;
+                modal.style.transform = "translateY(0)";
+            });
+        }
+    
+        function closeModal() {
+            const modal = document.getElementById("dateFilterModal");
+            modal.style.opacity = 0;
+            modal.style.transform = "translateY(-10px)";
+            setTimeout(() => modal.style.display = "none", 300);
+        }
+
+        function resetModal() {
+            localStorage.removeItem("filterType");
+            localStorage.removeItem("filterValue");
+            const modal = document.getElementById("dateFilterModal");
+            modal.style.opacity = 0;
+            modal.style.transform = "translateY(-10px)";
+            setTimeout(() => {
+                modal.style.display = "none";
+                window.location.href = "reports_survey.jsp"; 
+            }, 300);
+        }
+
+        const todayPicker = flatpickr("#todayCalendar", { 
+            inline: true,
+            dateFormat: "Y-m-d",
+            onChange: function(selectedDates, dateStr) {
+                document.getElementById("dayCalendarInput").value = dateStr;
+            }
+        });
+
+        
+       const monthPicker = flatpickr("#monthCalendar", {
+            inline: true,
+            plugins: [
+                new monthSelectPlugin({
+                    shorthand: true,
+                    dateFormat: "Y-m",
+                    altFormat: "F Y"
+                })
+            ],
+            onChange: function(selectedDates, dateStr) {
+                document.getElementById("monthCalendarInput").value = dateStr;
+                
+            }
+        });
+
+        const rangePicker = flatpickr("#rangeCalendar", {
+            mode: "range",
+            inline: true,
+            dateFormat: "Y-m-d",
+            onChange: function(selectedDates) {
+                if (selectedDates.length === 2) {
+                    const startDate = new Date(selectedDates[0].getTime() - selectedDates[0].getTimezoneOffset() * 60000)
+                                        .toISOString().split("T")[0];
+                    const endDate = new Date(selectedDates[1].getTime() - selectedDates[1].getTimezoneOffset() * 60000)
+                                        .toISOString().split("T")[0];
+        
+                    document.getElementById("rangeCalendarStart").value = startDate;
+                    document.getElementById("rangeCalendarEnd").value = endDate;
                 }
             }
-        },
-        plugins: [ChartDataLabels]
-    });
-</script>
+        });
 
+        function displayDateInput() {
+            const selectedOption = document.getElementById("dateFilterOption").value;
+    
+            document.querySelectorAll(".calendar-container").forEach(div => div.style.display = "none");
+            document.getElementById("yearInput").style.display = "none";
+    
+            if (selectedOption === "day") {
+                document.getElementById("todaySelect").style.display = "block";
+                document.getElementById("todayInput").style.display = "block";
+                document.getElementById("monthCalendarInputContainer").style.display = "none";
+                document.getElementById("startInput").style.display = "none";
+                document.getElementById("endInput").style.display = "none";
+            } else if (selectedOption === "month") {
+                document.getElementById("monthInput").style.display = "block";
+                document.getElementById("monthCalendarInputContainer").style.display = "block";
+                document.getElementById("todaySelect").style.display = "none";
+                document.getElementById("startInput").style.display = "none";
+                document.getElementById("endInput").style.display = "none";
+            } else if (selectedOption === "year") {
+                document.getElementById("yearInput").style.display = "block";
+                document.getElementById("todaySelect").style.display = "none";
+                document.getElementById("monthCalendarInputContainer").style.display = "none";
+                document.getElementById("startInput").style.display = "none";
+                document.getElementById("endInput").style.display = "none";
+                populateYearDropdown();
+            } else if (selectedOption === "range") {
+                document.getElementById("rangeInput").style.display = "block";
+                document.getElementById("todaySelect").style.display = "none";
+                document.getElementById("monthCalendarInputContainer").style.display = "none";
+                document.getElementById("startInput").style.display = "block";
+                document.getElementById("endInput").style.display = "block";
+            }
+        }
+    
+        function populateYearDropdown() {
+            const yearSelect = document.getElementById("byYear");
+            yearSelect.innerHTML = "";
+        
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear - 50; year <= currentYear + 10; year++) {
+                const option = document.createElement("option");
+                option.value = year;
+                option.text = year;
+                yearSelect.add(option);
+            }
+        }
 
+        
+        function showMoreWithFilter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterType = urlParams.get('filterType');
+            const filterValue = urlParams.get('filterValue');
+        
+            if (filterType === null && filterValue === null) {
+                window.location.href = 'reports_feedback.jsp';
+            } else {
+                window.location.href = 'reports_feedback.jsp?filterType=' + filterType + '&filterValue=' + filterValue;
+            }
+        }
+
+        function applyFilter() {
+            const filterType = document.getElementById("dateFilterOption").value;
+            let filterValue = "";
+        
+            if (filterType === "day") {
+                filterValue = document.getElementById("dayCalendarInput").value;
+            } else if (filterType === "range") {
+                var startDate = document.getElementById("rangeCalendarStart").value; 
+                var endDate = document.getElementById("rangeCalendarEnd").value; 
+                filterValue = startDate + "," + endDate;
+            } else if (filterType === "month") {
+                filterValue = document.getElementById("monthCalendarInput").value;
+            } else if (filterType === "year") {
+                filterValue = document.getElementById("byYear").value;
+            }
+        
+            if (filterValue) {
+                localStorage.setItem("filterType", filterType);
+                localStorage.setItem("filterValue", filterValue);
+                window.location.href = 'reports_survey.jsp?filterType=' + filterType + '&filterValue=' + filterValue; 
+            } else {
+                alert("Please select a valid date.");
+            }
+            closeModal();
+        }
+    </script>
+    
     <%@ include file="/WEB-INF/components/script.jsp" %>  
 </body>
 </html>

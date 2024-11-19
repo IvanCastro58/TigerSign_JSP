@@ -18,13 +18,9 @@
                     <h1>Internal Server Error</h1>
                 </div>
                 <div class="message">We apologize for the inconvenience. An unexpected error occurred on our server. Please try refreshing the page or visit again later.</div>
-
-                <div class="button-div">    
-                    <a href="${pageContext.request.contextPath}/SuperAdmin/main_login.jsp"><i class="bi bi-house-fill" style="margin-right: 5px;"></i>Return Home</a>
-                </div>
             </div>
             <div class="image">
-              <img src="${pageContext.request.contextPath}/resources/images/error404.jpg" alt="Logo" class="empty">
+              <img src="${pageContext.request.contextPath}/resources/images/error500.jpg" alt="Logo" class="empty">
             </div>
         </div>
     </div>

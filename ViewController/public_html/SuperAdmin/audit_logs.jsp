@@ -154,23 +154,30 @@
             <div class="margin-content">
                 <h2 class="title-page">AUDIT LOGS</h2>
                 <div class="top-nav">
-                    <div class="nav-item1">
-                        <div class="item1-label">Show</div>
-                        <select id="rows-per-page" class="number">
-                            <option value="10" selected>10</option>
-                            <option value="5">5</option>
-                            <option value="2">2</option>
-                        </select>
-                    </div>
-                
-                    <div class="nav-item2">
-                        <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly>
-                        <i class="fa-regular fa-calendar" id="calendar-icon"></i>
+                    <div class="row1">
+                        <div class="nav-item1">
+                            <div class="item1-label">Show</div>
+                            <select id="rows-per-page" class="number">
+                                <option value="10" selected>10</option>
+                                <option value="5">5</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>
+                        
+                        <div class="nav-item2">
+                            <i class="fa-regular fa-calendar" id="calendar-icon"></i>
+                            <div class="input-container">
+                                <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly>
+                                <i class="bi bi-x-circle-fill" id="clear-date" style="display:none;"></i>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="nav-item3">
-                        <div class="search-container">
-                            <input type="text" id="search-input" class="search-input" placeholder="Search...">
+                    <div class="row2">
+                        <div class="nav-item3">
+                            <div class="search-container">
+                                <input type="text" id="search-input" class="search-input" placeholder="Search...">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -304,8 +311,8 @@
                 const searchInput = document.getElementById('search-input');
                 const rowsPerPageSelect = document.getElementById('rows-per-page');
                 const dateRangeInput = document.getElementById('date-range');
-                const clearDateRangeButton = document.getElementById('clear-date-range');
                 const calendarIcon = document.getElementById('calendar-icon');
+                const clearDateIcon = document.getElementById('clear-date');
                 
                 let currentPage = 1;
                 let rows = Array.from(dataRows);
@@ -321,6 +328,9 @@
                             const startDate = selectedDates[0];
                             const endDate = selectedDates[1];
                             filterByDateRange(startDate, endDate);
+                            clearDateIcon.style.display = 'block';
+                        } else {
+                            clearDateIcon.style.display = 'none';
                         }
                     }
                 });
@@ -328,18 +338,28 @@
                 calendarIcon.addEventListener('click', function() {
                     dateRangeInput._flatpickr.open();
                 });
-            
+                
+                clearDateIcon.addEventListener('click', function() {
+                    dateRangeInput._flatpickr.clear();
+                    filterByDateRange(null, null);
+                    clearDateIcon.style.display = 'none';
+                });
+                
                 function filterByDateRange(startDate, endDate) {
-                    filteredRows = rows.filter(row => {
-                        const dateText = row.cells[3].querySelector("div").textContent.trim();
-                        const rowDate = new Date(dateText);
-                        return rowDate >= startDate && rowDate <= endDate;
-                    });
-            
+                    if (startDate && endDate) {
+                        filteredRows = rows.filter(row => {
+                            const dateText = row.cells[3].querySelector("div").textContent.trim();
+                            const rowDate = new Date(dateText);
+                            return rowDate >= startDate && rowDate <= endDate;
+                        });
+                    } else {
+                        filteredRows = rows;
+                    }
+                
                     renderTable(1);
-            
+                
                     const noResultsDiv = document.getElementById('no-results');
-                    noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
+                    noResultsDiv.style.display = filteredRows.length === 0 && rows !== null ? 'block' : 'none';
                 }
             
                 function showDataRows() {
@@ -362,7 +382,7 @@
                     renderTable(1); 
                     
                     const noResultsDiv = document.getElementById('no-results');
-                    noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
+                    noResultsDiv.style.display = filteredRows.length === 0 && rows !== null ? 'block' : 'none';
                 });
             
                 rowsPerPageSelect.addEventListener('change', function() {

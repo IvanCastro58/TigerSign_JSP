@@ -30,14 +30,7 @@
                     <label for="profile-pic-toggle">
                         <!-- Display the user's profile picture dynamically -->
                         <img src="<%= (userPicture != null ? userPicture : "../resources/images/tigersign.png") %>" alt="Profile Picture" id="profile-pic-img">
-                        <div class="camera-icon">
-                            <i class="bi bi-camera-fill"></i>
-                        </div>
                     </label>
-                    <div class="profile-pic-popup" id="profile-pic-popup">
-                        <a href="#"><i class="bi bi-person-square"></i>See Profile Picture</a>
-                        <a href="#"><i class="bi bi-images"></i>Choose Profile Picture</a>
-                    </div>
                 </div>
                 <div class="profile-name">
                     <div class="name-line">
@@ -69,9 +62,6 @@
                                 <p><%= userEmail %></p>
                             </div>
                         </div>
-                    </div>
-                    <div style="text-align: center;">
-                        <button class="edit-btn">Edit<i class="bi bi-pencil-square"></i></button>
                     </div>
                 </div>
             </div>           

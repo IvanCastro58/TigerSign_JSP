@@ -28,7 +28,7 @@ public class SurveyServlet extends HttpServlet {
         
         String name = request.getParameter("field-name");
         if (name == null || name.trim().isEmpty()) {
-            survey.setName("Anonymous"); // Default value when name is missing
+            survey.setName("Anonymous"); 
         } else {
             survey.setName(name);
         }
@@ -59,7 +59,7 @@ public class SurveyServlet extends HttpServlet {
         if (isSuccess) {
             response.sendRedirect(request.getContextPath() + "/pages/success_claimer.jsp");
         } else {
-            response.sendRedirect(request.getContextPath() + "/error.jsp");
+            response.sendRedirect(request.getContextPath() + "/error/error500.jsp");
         }
     }
 }

@@ -152,6 +152,7 @@
         <div class="margin-content">
             <h2 class="title-page">CLAIMED REQUEST</h2>
             <div class="top-nav">
+                <div class="row1">
                     <div class="nav-item1">
                         <div class="item1-label">Show</div>
                         <select id="rows-per-page" class="number">
@@ -160,17 +161,19 @@
                             <option value="2">2</option>
                         </select>
                     </div>
-                
+                    
                     <div class="nav-item2">
-                        <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly>
                         <i class="fa-regular fa-calendar" id="calendar-icon"></i>
+                        <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly> 
                     </div>
-
+                </div>
+                <div class="row2">
                     <div class="nav-item3">
                         <div class="search-container">
                             <input type="text" id="search-input" class="search-input" placeholder="Search...">
                         </div>
                     </div>
+                </div>
             </div>
             <div class="table-container">
                 <div class="table-wrapper">
