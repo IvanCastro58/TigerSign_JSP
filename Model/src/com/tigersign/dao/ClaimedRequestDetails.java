@@ -17,6 +17,7 @@ public class ClaimedRequestDetails {
     private String idPhotoBase64;//ts_proofs
     private String letterPhotoBase64;//ts_proofs
     private String releasedBy;//ts_proofs
+    private double imageSimilarity;
 
     // Getters and Setters
     
@@ -146,5 +147,13 @@ public class ClaimedRequestDetails {
 
     public void setReleasedBy(String releasedBy) {
         this.releasedBy = releasedBy;
+    }
+    
+    public double getImageSimilarity() {
+        return imageSimilarity;
+    }
+
+    public void setImageSimilarity(double imageSimilarity) {
+        this.imageSimilarity = imageSimilarity;
     }
 }

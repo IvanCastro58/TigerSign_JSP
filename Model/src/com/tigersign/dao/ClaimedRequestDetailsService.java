@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.text.SimpleDateFormat;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
+import com.tigersign.service.TestOpenCV;
 
 public class ClaimedRequestDetailsService {
 
@@ -44,8 +45,19 @@ public class ClaimedRequestDetailsService {
                     // Convert BLOB to Base64 string
                     details.setPhotoBase64(convertBlobToBase64(resultSet.getBinaryStream("photo")));
                     details.setSignatureBase64(convertBlobToBase64(resultSet.getBinaryStream("signature")));
-                    details.setIdPhotoBase64(convertBlobToBase64(resultSet.getBinaryStream("id_photo")));
-                    details.setLetterPhotoBase64(convertBlobToBase64(resultSet.getBinaryStream("letter_photo")));
+                    String idPhotoBase64 = convertBlobToBase64(resultSet.getBinaryStream("id_photo"));
+                    String letterPhotoBase64 = convertBlobToBase64(resultSet.getBinaryStream("letter_photo"));
+
+                    details.setIdPhotoBase64(idPhotoBase64);
+                    details.setLetterPhotoBase64(letterPhotoBase64);
+                    
+                    // Compare images using OpenCV
+                    if (idPhotoBase64 != null && letterPhotoBase64 != null) {
+                        double similarity = TestOpenCV.compareImages(idPhotoBase64, letterPhotoBase64);
+                        details.setImageSimilarity(similarity); // Add a field for similarity
+                    } else {
+                        details.setImageSimilarity(0.0); // Default value if one of the images is null
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -72,5 +84,3 @@ public class ClaimedRequestDetailsService {
         }
     }
 }
-
-
