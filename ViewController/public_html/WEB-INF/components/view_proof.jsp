@@ -62,14 +62,8 @@
 
             </div>
             <div class="signature-result">
-                <%
-                    double similarity = details.getImageSimilarity();
-                    if (similarity > 0) {
-                %>
-                    <i class="bi bi-check-circle"></i> Similarity Score: <strong><%= String.format("%.2f", similarity) %>%</strong>
-                <% } else { %>
-                    <i class="bi bi-x-circle"></i> Unable to Compare Images
-                <% } %>
+                <i class="bi bi-check-circle"></i> Signature Similarity Score: 
+                <%= details.getSignatureSimilarityScore() %>%
             </div>
         </div>
     </div>

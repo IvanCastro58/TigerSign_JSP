@@ -1,5 +1,6 @@
 package com.tigersign.dao;
 
+
 public class ClaimedRequestDetails {
     private String requestId;
     private String orNumber; //ts_request or_number
@@ -17,7 +18,11 @@ public class ClaimedRequestDetails {
     private String idPhotoBase64;//ts_proofs
     private String letterPhotoBase64;//ts_proofs
     private String releasedBy;//ts_proofs
-    private double imageSimilarity;
+    private String idPhotoSignatureResult;
+    private String letterPhotoSignatureResult;
+    private String idSignatureBase64;
+    private String letterSignatureBase64;
+    private double signatureSimilarityScore;
 
     // Getters and Setters
     
@@ -149,11 +154,45 @@ public class ClaimedRequestDetails {
         this.releasedBy = releasedBy;
     }
     
-    public double getImageSimilarity() {
-        return imageSimilarity;
+    public String getIdPhotoSignatureResult() {
+        return idPhotoSignatureResult;
     }
 
-    public void setImageSimilarity(double imageSimilarity) {
-        this.imageSimilarity = imageSimilarity;
+    public void setIdPhotoSignatureResult(String idPhotoSignatureResult) {
+        this.idPhotoSignatureResult = idPhotoSignatureResult;
     }
+
+    public String getLetterPhotoSignatureResult() {
+        return letterPhotoSignatureResult;
+    }
+
+    public void setLetterPhotoSignatureResult(String letterPhotoSignatureResult) {
+        this.letterPhotoSignatureResult = letterPhotoSignatureResult;
+    }
+    
+    public String getIdSignatureBase64() {
+        return idSignatureBase64;
+    }
+
+    public void setIdSignatureBase64(String idSignatureBase64) {
+        this.idSignatureBase64 = idSignatureBase64;
+    }
+
+    public String getLetterSignatureBase64() {
+        return letterSignatureBase64;
+    }
+
+    public void setLetterSignatureBase64(String letterSignatureBase64) {
+        this.letterSignatureBase64 = letterSignatureBase64;
+    }
+    
+    public double getSignatureSimilarityScore() {
+        return signatureSimilarityScore;
+    }
+
+    public void setSignatureSimilarityScore(double signatureSimilarityScore) {
+        this.signatureSimilarityScore = signatureSimilarityScore;
+    }
+
+
 }
