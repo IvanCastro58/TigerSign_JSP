@@ -131,8 +131,10 @@
                     
                         <div class="nav-item2">
                             <i class="fa-regular fa-calendar" id="calendar-icon"></i>
-                            <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly> 
-                            <button id="clear-date-range" type="button">Clear</button>
+                            <div class="input-container">
+                                <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly>
+                                <i class="bi bi-x-circle-fill" id="clear-date" style="display:none;"></i>
+                            </div>
                         </div>
                     </div>
                     <div class="row2">
@@ -427,7 +429,7 @@
     const searchInput = document.getElementById('search-input');
     const rowsPerPageSelect = document.getElementById('rows-per-page');
     const dateRangeInput = document.getElementById('date-range');
-    const clearDateRangeButton = document.getElementById('clear-date-range');
+    const clearDateRangeButton = document.getElementById('clear-date');
     const calendarIcon = document.getElementById('calendar-icon');
     const statusSelect = document.querySelector('.nav-item4 .status');
 
@@ -452,6 +454,9 @@
                 const startDate = selectedDates[0];
                 const endDate = selectedDates[1];
                 filterByDateRange(startDate, endDate);
+                clearDateRangeButton.style.display = 'block';
+            } else {
+                clearDateRangeButton.style.display = 'none';
             }
         }
     });
@@ -461,7 +466,6 @@
     });
 
     function filterByDateRange(startDate, endDate) {
-    // Set endDate to the end of the day (23:59:59) to ensure it's inclusive
     endDate.setHours(23, 59, 59, 999);
 
     filteredRows = rows.filter(row => {
@@ -486,6 +490,8 @@ clearDateRangeButton.addEventListener('click', function() {
     
     // Render the table with all rows
     renderTable(1, filteredRows);
+    
+    clearDateRangeButton.style.display = 'none';
 
     // Hide the 'No Results' message if it is displayed
     const noResultsDiv = document.getElementById('no-results');
@@ -737,9 +743,6 @@ function updateActiveLink() {
 
     showDataRows();
 });
-
-
-
 </script>
 </body>
 </html>

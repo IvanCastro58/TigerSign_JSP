@@ -64,7 +64,6 @@ public class PDFGenerator {
         logoCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
         logoCell2.setPadding(5);
 
-        // Combine UST and Registrar titles in a single cell with different font sizes
         String titleText = "UNIVERSITY OF SANTO TOMAS\n";
         String officeText = "OFFICE OF THE REGISTRAR\n";
         String proofText = "Proof of Claim Document";
@@ -102,7 +101,7 @@ public class PDFGenerator {
         headerTable.getDefaultCell().setBackgroundColor(new BaseColor(240, 240, 240));
         headerTable.setSpacingAfter(15f);
 
-        // Add the header table to the document
+      
         document.add(headerTable);
 
         document.add(new Paragraph("\n"));
@@ -145,6 +144,7 @@ public class PDFGenerator {
         requestInfoTable.addCell(requestedDocumentsCell);
 
         document.add(requestInfoTable);
+        
         document.add(new Paragraph("\n"));
 
         // Claimer Information Section

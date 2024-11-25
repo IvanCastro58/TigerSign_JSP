@@ -36,7 +36,6 @@ public class GenerateProofServlet extends HttpServlet {
                 response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
                 response.getOutputStream().write(pdfBytes);
                 
-                // Move the logging to another endpoint or separate request
             } catch (DocumentException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating PDF");
@@ -46,7 +45,6 @@ public class GenerateProofServlet extends HttpServlet {
         }
     }
 
-    // New endpoint for logging activity
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String requestId = request.getParameter("requestId");
@@ -54,11 +52,9 @@ public class GenerateProofServlet extends HttpServlet {
         ClaimedRequestDetailsService service = new ClaimedRequestDetailsService();
         ClaimedRequestDetails details = service.getClaimedRequestDetails(requestId);
         
-        // Log the activity
         String activity = "Generated proof of claim file for O.R. Number: " + details.getOrNumber()  + " (Request: " + details.getRequestedDocuments() + ")";
         AuditLogger.logActivity(adminEmail, activity);
 
-        // Return a success message
         response.getWriter().write("Activity logged successfully");
     }
 }

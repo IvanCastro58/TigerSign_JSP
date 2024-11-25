@@ -3,6 +3,8 @@ package com.tigersign.config;
 import com.tigersign.dao.DatabaseConnection;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
+import com.warrenstrange.googleauth.GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
 
@@ -44,7 +46,12 @@ public class AdminOAuthConfig extends HttpServlet {
     private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USER_INFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
-    private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
+    private static final GoogleAuthenticatorConfig config = new GoogleAuthenticatorConfigBuilder()
+            .setTimeStepSizeInMillis(30000) 
+            .setWindowSize(1)              
+            .build();
+
+    private final GoogleAuthenticator gAuth = new GoogleAuthenticator(config);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -164,7 +164,10 @@
                     
                     <div class="nav-item2">
                         <i class="fa-regular fa-calendar" id="calendar-icon"></i>
-                        <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly> 
+                        <div class="input-container">
+                            <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly>
+                            <i class="bi bi-x-circle-fill" id="clear-date" style="display:none;"></i>
+                        </div>
                     </div>
                 </div>
                 <div class="row2">
@@ -276,6 +279,10 @@
                     </div>
                 </div>
             </div>
+            <div class="pagination">
+                <ul class="pagination-list">
+                </ul>
+            </div>
         </div>
     </div>
     <div class="overlay"></div>
@@ -283,14 +290,14 @@
     <%@ include file="/WEB-INF/components/script.jsp" %>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const dataRows = document.querySelectorAll('.clickable-row.actual-data');
+    const dataRows = document.querySelectorAll('.actual-data');
     const table = document.getElementById('pending_table');
     const tbody = table.querySelector('tbody');
     const paginationContainer = document.querySelector('.pagination');
     const searchInput = document.getElementById('search-input');
     const rowsPerPageSelect = document.getElementById('rows-per-page');
     const dateRangeInput = document.getElementById('date-range');
-    const clearDateRangeButton = document.getElementById('clear-date-range');
+    const clearDateRangeButton = document.getElementById('clear-date');
     const calendarIcon = document.getElementById('calendar-icon');
 
     let currentPage = 1;
@@ -303,10 +310,13 @@
         mode: 'range',
         dateFormat: 'Y-m-d',
         onClose: function(selectedDates) {
-            if (selectedDates.length === 2) {
+             if (selectedDates.length === 2) {
                 const startDate = selectedDates[0];
                 const endDate = selectedDates[1];
                 filterByDateRange(startDate, endDate);
+                clearDateRangeButton.style.display = 'block';
+            } else {
+                clearDateRangeButton.style.display = 'none';
             }
         }
     });
@@ -316,167 +326,218 @@
     });
 
     function filterByDateRange(startDate, endDate) {
-    filteredRows = rows.filter(row => {
-        const dateText = row.cells[4].textContent.trim(); // Use index 4 for Date Claimed
-        const rowDate = new Date(dateText);
-        return rowDate >= startDate && rowDate <= endDate;
-    });
-
-    // Ensure to show data rows after filtering
-    renderTable(1, filteredRows);
-
-    const noResultsDiv = document.getElementById('no-results');
-    noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
-}
-
-    function showDataRows() {
-        dataRows.forEach(row => row.style.display = 'none');
-        setTimeout(() => {
-            dataRows.forEach(row => row.style.display = 'table-row');
-            renderTable(currentPage);
-        }, 500);
-    }
-
-   searchInput.addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase();
         filteredRows = rows.filter(row => {
-            const orNumberCell = row.cells[1].textContent.toLowerCase();
-            const nameCell = row.cells[2].textContent.toLowerCase();
-            return orNumberCell.includes(searchTerm) || nameCell.includes(searchTerm);
+            const dateText = row.cells[4].textContent.trim(); 
+            const rowDate = new Date(dateText);
+            return rowDate >= startDate && rowDate <= endDate;
         });
-
+    
         renderTable(1, filteredRows);
-
+    
         const noResultsDiv = document.getElementById('no-results');
         noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
+    }
+    
+    clearDateRangeButton.addEventListener('click', function() {
+        dateRangeInput._flatpickr.clear();
+    
+        filteredRows = [...rows];
+        
+        renderTable(1, filteredRows);
+        
+        clearDateRangeButton.style.display = 'none';
+    
+        const noResultsDiv = document.getElementById('no-results');
+        noResultsDiv.style.display = 'none';
     });
-
-    rowsPerPageSelect.addEventListener('change', function () {
-        rowsPerPage = parseInt(this.value);
-        currentPage = 1;
-        renderTable(currentPage);
-    });
-
-    const headers = table.querySelectorAll('th');
-    headers.forEach((header, index) => {
-        const sortIcons = header.querySelector('.sort-icons');
-        if (sortIcons) {
-            sortIcons.addEventListener('click', () => {
-                const isAscending = currentSort.columnIndex !== index ? true : !currentSort.isAscending;
-                currentSort = { columnIndex: index, isAscending };
-                sortTableByColumn(index, isAscending, filteredRows);
-                toggleSortIcons(sortIcons, isAscending);
-                renderTable(1, filteredRows);
+    
+        function showDataRows() {
+            dataRows.forEach(row => row.style.display = 'none');
+            setTimeout(() => {
+                dataRows.forEach(row => row.style.display = 'table-row');
+                renderTable(currentPage);
+            }, 500);
+        }
+    
+       searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            filteredRows = rows.filter(row => {
+                const orNumberCell = row.cells[1].textContent.toLowerCase();
+                const nameCell = row.cells[2].textContent.toLowerCase();
+                return orNumberCell.includes(searchTerm) || nameCell.includes(searchTerm);
+            });
+    
+            renderTable(1, filteredRows);
+    
+            const noResultsDiv = document.getElementById('no-results');
+            noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
+        });
+    
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value);
+            currentPage = 1;
+            renderTable(currentPage);
+        });
+    
+        const headers = table.querySelectorAll('th');
+        headers.forEach((header, index) => {
+            const sortIcons = header.querySelector('.sort-icons');
+            if (sortIcons) {
+                sortIcons.addEventListener('click', () => {
+                    const isAscending = currentSort.columnIndex !== index ? true : !currentSort.isAscending;
+                    currentSort = { columnIndex: index, isAscending };
+                    sortTableByColumn(index, isAscending, filteredRows);
+                    toggleSortIcons(sortIcons, isAscending);
+                    renderTable(1, filteredRows);
+                });
+            }
+        });
+    
+        function renderTable(page, rowsToRender = rows) {
+            const startIndex = (page - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+    
+            tbody.innerHTML = '';
+            const visibleRows = rowsToRender.slice(startIndex, endIndex);
+            visibleRows.forEach(row => tbody.appendChild(row));
+    
+            renderPagination(rowsToRender);
+        }
+    
+        function renderPagination(rowsToRender) {
+            const paginationContainer = document.querySelector('.pagination');
+            paginationContainer.innerHTML = '';  // Clear pagination container
+        
+            const pageCount = Math.ceil(rowsToRender.length / rowsPerPage);
+            const paginationList = document.createElement('ul');
+            paginationList.className = 'pagination-list';
+        
+            const addPaginationLink = (page, text = page, isActive = false) => {
+                const paginationItem = document.createElement('li');
+                paginationItem.className = 'pagination-item';
+        
+                const paginationLink = document.createElement('a');
+                paginationLink.className = 'pagination-link';
+                paginationLink.href = '#';
+                paginationLink.textContent = text;
+                
+                if (page !== null) {
+                    paginationLink.dataset.page = page;
+                    paginationLink.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        currentPage = page;
+                        renderTable(currentPage, rowsToRender);
+                        updateActiveLink();
+                    });
+                } else {
+                    // Make ellipsis unclickable
+                    paginationLink.classList.add('disabled');
+                }
+        
+                if (isActive) {
+                    paginationLink.classList.add('active');
+                }
+        
+                paginationItem.appendChild(paginationLink);
+                paginationList.appendChild(paginationItem);
+            };
+        
+            // Add 'Prev' button
+            if (currentPage > 1) {
+                addPaginationLink(currentPage - 1, 'Prev');
+            }
+        
+            // Start of pagination
+            if (currentPage > 3) {
+                addPaginationLink(1); // First page
+                addPaginationLink(null, '...'); // Ellipsis
+            }
+        
+            // Main pages around the current page
+            for (let i = Math.max(1, currentPage - 1); i <= Math.min(pageCount, currentPage + 1); i++) {
+                addPaginationLink(i, i, i === currentPage);
+            }
+        
+            // End of pagination
+            if (currentPage < pageCount - 2) {
+                addPaginationLink(null, '...'); // Ellipsis
+                addPaginationLink(pageCount); // Last page
+            }
+        
+            // Add 'Next' button
+            if (currentPage < pageCount) {
+                addPaginationLink(currentPage + 1, 'Next');
+            }
+        
+            paginationContainer.appendChild(paginationList);
+            updateActiveLink();
+        }
+    
+        function sortTableByColumn(columnIndex, isAscending, rowsToSort = rows) {
+            rowsToSort.sort((a, b) => {
+                const aText = a.cells[columnIndex].textContent.trim();
+                const bText = b.cells[columnIndex].textContent.trim();
+    
+                if (columnIndex === 4) { 
+                    const aDate = new Date(aText);
+                    const bDate = new Date(bText);
+                    return isAscending ? aDate - bDate : bDate - aDate;
+                }
+    
+                if (!isNaN(aText) && !isNaN(bText)) {
+                    return isAscending ? aText - bText : bText - aText;
+                }
+    
+                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
             });
         }
-    });
-
-    function renderTable(page, rowsToRender = rows) {
-        const startIndex = (page - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-
-        tbody.innerHTML = '';
-        const visibleRows = rowsToRender.slice(startIndex, endIndex);
-        visibleRows.forEach(row => tbody.appendChild(row));
-
-        renderPagination(rowsToRender);
-    }
-
-    function renderPagination(filteredRows) {
-        paginationContainer.innerHTML = '';
-        const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
-        const paginationList = document.createElement('ul');
-        paginationList.className = 'pagination-list';
-
-        for (let i = 1; i <= pageCount; i++) {
-            const paginationItem = document.createElement('li');
-            paginationItem.className = 'pagination-item';
-
-            const paginationLink = document.createElement('a');
-            paginationLink.className = 'pagination-link' + (i === currentPage ? ' active' : '');
-            paginationLink.href = '#';
-            paginationLink.textContent = i;
-            paginationLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                currentPage = i;
-                renderTable(currentPage, filteredRows);
-            });
-
-            paginationItem.appendChild(paginationLink);
-            paginationList.appendChild(paginationItem);
-        }
-
-        paginationContainer.appendChild(paginationList);
-    }
-
-    function sortTableByColumn(columnIndex, isAscending, rowsToSort = rows) {
-        rowsToSort.sort((a, b) => {
-            const aText = a.cells[columnIndex].textContent.trim();
-            const bText = b.cells[columnIndex].textContent.trim();
-
-            if (columnIndex === 4) { // Assuming Date Claimed is in column index 4
-                const aDate = new Date(aText);
-                const bDate = new Date(bText);
-                return isAscending ? aDate - bDate : bDate - aDate;
+    
+        function resetSortIcons() {
+        headers.forEach(header => {
+            const sortIcons = header.querySelector('.sort-icons');
+            console.log('sortIcons:', sortIcons); 
+    
+            if (sortIcons) {
+                const defaultIcon = sortIcons.querySelector('.fa-sort');
+                const upIcon = sortIcons.querySelector('.fa-caret-up');
+                const downIcon = sortIcons.querySelector('.fa-caret-down');
+    
+                if (defaultIcon) defaultIcon.style.display = 'inline';
+                if (upIcon) upIcon.style.display = 'none';
+                if (downIcon) downIcon.style.display = 'none';
+    
+                sortIcons.classList.remove('spin-up', 'spin-down');
+            } else {
+                console.warn('No sort icons found for header:', header); 
             }
-
-            if (!isNaN(aText) && !isNaN(bText)) {
-                return isAscending ? aText - bText : bText - aText;
-            }
-
-            return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
         });
     }
-
-    function resetSortIcons() {
-    headers.forEach(header => {
-        const sortIcons = header.querySelector('.sort-icons');
-        console.log('sortIcons:', sortIcons); // Log the sortIcons element
-
-        if (sortIcons) {
+    
+        function toggleSortIcons(sortIcons, isAscending) {
+            resetSortIcons();
+    
             const defaultIcon = sortIcons.querySelector('.fa-sort');
             const upIcon = sortIcons.querySelector('.fa-caret-up');
             const downIcon = sortIcons.querySelector('.fa-caret-down');
-
-            if (defaultIcon) defaultIcon.style.display = 'inline';
-            if (upIcon) upIcon.style.display = 'none';
-            if (downIcon) downIcon.style.display = 'none';
-
-            sortIcons.classList.remove('spin-up', 'spin-down');
-        } else {
-            console.warn('No sort icons found for header:', header); // Warn if no sortIcons found
+    
+            if (isAscending) {
+                defaultIcon.style.display = 'none';
+                upIcon.style.display = 'none';
+                downIcon.style.display = 'inline';
+                sortIcons.classList.remove('spin-up');
+                sortIcons.classList.add('spin-down');
+            } else {
+                defaultIcon.style.display = 'none';
+                upIcon.style.display = 'inline';
+                downIcon.style.display = 'none';
+                sortIcons.classList.remove('spin-down');
+                sortIcons.classList.add('spin-up');
+            }
         }
+    
+        showDataRows();
     });
-}
-
-    function toggleSortIcons(sortIcons, isAscending) {
-        resetSortIcons();
-
-        const defaultIcon = sortIcons.querySelector('.fa-sort');
-        const upIcon = sortIcons.querySelector('.fa-caret-up');
-        const downIcon = sortIcons.querySelector('.fa-caret-down');
-
-        if (isAscending) {
-            defaultIcon.style.display = 'none';
-            upIcon.style.display = 'none';
-            downIcon.style.display = 'inline';
-            sortIcons.classList.remove('spin-up');
-            sortIcons.classList.add('spin-down');
-        } else {
-            defaultIcon.style.display = 'none';
-            upIcon.style.display = 'inline';
-            downIcon.style.display = 'none';
-            sortIcons.classList.remove('spin-down');
-            sortIcons.classList.add('spin-up');
-        }
-    }
-
-    showDataRows();
-});
-
 </script>
-
-
 </body>
 </html>
 

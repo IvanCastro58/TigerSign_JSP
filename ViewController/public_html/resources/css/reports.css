@@ -298,6 +298,17 @@
     height: auto !important;
 }
 
+.bar-canvas {
+    width: 100%;
+}
+
+.chart-container{
+    display: flex;
+    justify-content: center; 
+    align-items: center;   
+    width: 100%;
+}
+
 .report-column.left .canvas-container{
     display: flex;
     justify-content: center;

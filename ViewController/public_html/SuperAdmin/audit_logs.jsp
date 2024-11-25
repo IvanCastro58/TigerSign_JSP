@@ -417,32 +417,73 @@
                     renderPagination(filteredRows);
                 }
             
-                function renderPagination(filteredRows) {
-                    paginationContainer.innerHTML = '';
-                    const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
-            
+                function renderPagination(rowsToRender) {
+                    const paginationContainer = document.querySelector('.pagination');
+                    paginationContainer.innerHTML = '';  // Clear pagination container
+                
+                    const pageCount = Math.ceil(rowsToRender.length / rowsPerPage);
                     const paginationList = document.createElement('ul');
                     paginationList.className = 'pagination-list';
-            
-                    for (let i = 1; i <= pageCount; i++) {
+                
+                    const addPaginationLink = (page, text = page, isActive = false) => {
                         const paginationItem = document.createElement('li');
                         paginationItem.className = 'pagination-item';
-            
+                
                         const paginationLink = document.createElement('a');
-                        paginationLink.className = 'pagination-link' + (i === currentPage ? ' active' : '');
+                        paginationLink.className = 'pagination-link';
                         paginationLink.href = '#';
-                        paginationLink.textContent = i;
-                        paginationLink.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            currentPage = i;
-                            renderTable(currentPage); 
-                        });
-            
+                        paginationLink.textContent = text;
+                        
+                        if (page !== null) {
+                            paginationLink.dataset.page = page;
+                            paginationLink.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                currentPage = page;
+                                renderTable(currentPage, rowsToRender);
+                                updateActiveLink();
+                            });
+                        } else {
+                            // Make ellipsis unclickable
+                            paginationLink.classList.add('disabled');
+                        }
+                
+                        if (isActive) {
+                            paginationLink.classList.add('active');
+                        }
+                
                         paginationItem.appendChild(paginationLink);
                         paginationList.appendChild(paginationItem);
+                    };
+                
+                    // Add 'Prev' button
+                    if (currentPage > 1) {
+                        addPaginationLink(currentPage - 1, 'Prev');
                     }
-            
+                
+                    // Start of pagination
+                    if (currentPage > 3) {
+                        addPaginationLink(1); // First page
+                        addPaginationLink(null, '...'); // Ellipsis
+                    }
+                
+                    // Main pages around the current page
+                    for (let i = Math.max(1, currentPage - 1); i <= Math.min(pageCount, currentPage + 1); i++) {
+                        addPaginationLink(i, i, i === currentPage);
+                    }
+                
+                    // End of pagination
+                    if (currentPage < pageCount - 2) {
+                        addPaginationLink(null, '...'); // Ellipsis
+                        addPaginationLink(pageCount); // Last page
+                    }
+                
+                    // Add 'Next' button
+                    if (currentPage < pageCount) {
+                        addPaginationLink(currentPage + 1, 'Next');
+                    }
+                
                     paginationContainer.appendChild(paginationList);
+                    updateActiveLink();
                 }
             
                 function sortTableByColumn(columnIndex, isAscending) {

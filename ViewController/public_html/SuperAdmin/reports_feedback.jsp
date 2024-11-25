@@ -7,6 +7,7 @@
 <%@ page import="javax.servlet.http.HttpServletRequest" %>
 <%@ page import="javax.servlet.http.HttpServletResponse" %>
 
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -78,50 +79,80 @@
         </div>
     </div>
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const feedbackItems = document.querySelectorAll(".feedback-item");
-        const itemsPerPage = 5; // Set how many feedback items you want per page
-        const totalPages = Math.ceil(feedbackItems.length / itemsPerPage);
-        let currentPage = 1;
-
-        function showPage(page) {
-            currentPage = page;
-            const start = (page - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-
-            feedbackItems.forEach((item, index) => {
-                item.style.display = (index >= start && index < end) ? "block" : "none";
-            });
-
-            updatePagination();
-        }
-
-        function updatePagination() {
-            const paginationContainer = document.querySelector(".pagination-list");
-            paginationContainer.innerHTML = "";
-
-            for (let i = 1; i <= totalPages; i++) {
-                const pageLink = document.createElement("li");
-                pageLink.className = "pagination-item";
-                
-                const link = document.createElement("a");
-                link.href = "#";
-                link.textContent = i;
-                link.className = "pagination-link" + (i === currentPage ? " active" : "");
-                
-                link.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    showPage(i);
+        document.addEventListener("DOMContentLoaded", function () {
+            const feedbackItems = document.querySelectorAll(".feedback-item");
+            const itemsPerPage = 10; 
+            const totalPages = Math.ceil(feedbackItems.length / itemsPerPage);
+            let currentPage = 1;
+        
+            function showPage(page) {
+                currentPage = page;
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+        
+                feedbackItems.forEach((item, index) => {
+                    item.style.display = (index >= start && index < end) ? "block" : "none";
                 });
-                
-                pageLink.appendChild(link);
-                paginationContainer.appendChild(pageLink);
+        
+                updatePagination();
             }
-        }
-        showPage(currentPage);
-    });
-</script>
-
-
+        
+            function addPaginationLink(page, text = page, isActive = false) {
+                const paginationItem = document.createElement("li");
+                paginationItem.className = "pagination-item";
+        
+                const paginationLink = document.createElement("a");
+                paginationLink.className = "pagination-link";
+                paginationLink.href = "#";
+                paginationLink.textContent = text;
+        
+                if (page !== null) {
+                    paginationLink.dataset.page = page;
+                    paginationLink.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        showPage(page);
+                    });
+                } else {
+                    paginationLink.classList.add("disabled");
+                }
+        
+                if (isActive) {
+                    paginationLink.classList.add("active");
+                }
+        
+                paginationItem.appendChild(paginationLink);
+                document.querySelector(".pagination-list").appendChild(paginationItem);
+            }
+        
+            function updatePagination() {
+                const paginationContainer = document.querySelector(".pagination-list");
+                paginationContainer.innerHTML = "";
+        
+                if (currentPage > 1) {
+                    addPaginationLink(currentPage - 1, "Prev");
+                }
+        
+                if (currentPage > 3) {
+                    addPaginationLink(1);
+                    addPaginationLink(null, "...");
+                }
+        
+                for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) {
+                    addPaginationLink(i, i, i === currentPage);
+                }
+        
+                if (currentPage < totalPages - 2) {
+                    addPaginationLink(null, "...");
+                    addPaginationLink(totalPages);
+                }
+        
+                if (currentPage < totalPages) {
+                    addPaginationLink(currentPage + 1, "Next");
+                }
+            }
+        
+            showPage(currentPage);
+        });
+    </script>
 </body>
 </html>

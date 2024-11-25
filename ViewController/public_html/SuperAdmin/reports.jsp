@@ -5,6 +5,8 @@
 <%@ page import="java.sql.*, java.util.ArrayList, java.util.List, com.tigersign.dao.DatabaseConnection" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.text.ParseException" %>
+<%@ page import="com.google.gson.Gson" %>
+
 
 <html lang="en">
     <head>
@@ -23,6 +25,7 @@
         <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/confetti.css">
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <style>
         .transaction-table th, .transaction-table td{
@@ -162,12 +165,12 @@
                 claimedCount = rs.getInt(1);
             }
     
-            String mostClaimedQuery = "SELECT REQUEST_DESCRIPTION, COUNT(*) AS total, " +
+            String mostClaimedQuery = "SELECT REQUESTS, COUNT(*) AS total, " +
                           "AVG((CAST(DATE_AVAILABLE AS DATE) - CAST(DATE_PROCESSING AS DATE)) * 86400) AS avg_processing_hours " +
                           "FROM TS_REQUEST " +
                           "JOIN TS_PROOFS ON TS_REQUEST.REQUEST_ID = TS_PROOFS.REQUEST_ID " +
                           "WHERE FILE_STATUS = 'CLAIMED' " + dateAverageTSProofs +
-                          " GROUP BY REQUEST_DESCRIPTION ORDER BY total DESC";
+                          " GROUP BY REQUESTS ORDER BY total DESC";
 
             
             stmt = conn.prepareStatement(mostClaimedQuery);
@@ -183,7 +186,7 @@
             
             rs = stmt.executeQuery();
             while (rs.next()) {
-                documentTypes.add(rs.getString("REQUEST_DESCRIPTION"));
+                documentTypes.add(rs.getString("REQUESTS"));
                 documentCounts.add(rs.getInt("total"));
                 documentAvgProcessingHours.add(rs.getDouble("avg_processing_hours") / 3600);
             }
@@ -361,45 +364,8 @@
                             <div class="heading-container">
                                 <h3>Average Processing Time of Documents</h3>
                             </div>
-                            <div class="table-container">
-                                <div class="scrollable-table">
-                                    <table class="transaction-table" id="reports-dashboard">
-                                        <thead>
-                                            <tr>               
-                                               <th>Document Type</th>
-                                               <th style="cursor: pointer;">
-                                                    Total Release
-                                                    <span class="sort-icons">
-                                                        <i class="fa fa-sort"></i>
-                                                        <i class="fa fa-caret-up" style="display:none;"></i>
-                                                        <i class="fa fa-caret-down" style="display:none;"></i>
-                                                    </span>
-                                                </th>
-                                                <th style="cursor: pointer;">
-                                                    Average Processing Time
-                                                    <span class="sort-icons">
-                                                        <i class="fa fa-sort"></i>
-                                                        <i class="fa fa-caret-up" style="display:none;"></i>
-                                                        <i class="fa fa-caret-down" style="display:none;"></i>
-                                                    </span>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% 
-                                                for (int i = 0; i < documentTypes.size(); i++) {
-                                            %>
-                                            <tr>
-                                                <td><%= documentTypes.get(i) %></td>
-                                                <td><%= documentCounts.get(i) %></td>
-                                                <td><%= String.format("%.2f", documentAvgProcessingHours.get(i)) %> hours</td>
-                                            </tr>
-                                            <% 
-                                                }
-                                            %>
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="chart-container">
+                                <canvas id="documentChart" class="bar-canvas"></canvas>
                             </div>
                         </div>
                     </div>
@@ -458,6 +424,89 @@
     </div>
     
     <div class="overlay"></div>
+    <script>
+        const documentTypes = <%= new Gson().toJson(documentTypes) %>;
+        const documentCounts = <%= new Gson().toJson(documentCounts) %>;
+        const documentAvgProcessingDays = <%= new Gson().toJson(documentAvgProcessingHours.stream().map(hours -> hours / 24).toArray()) %>; 
+        
+        const canvas = document.getElementById('documentChart');
+        const rowHeight = 100; 
+        canvas.height = documentTypes.length * rowHeight; 
+    
+        const ctx = document.getElementById('documentChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: documentTypes,
+                datasets: [
+                    {
+                        label: 'Total Releases',
+                        data: documentCounts,
+                        borderColor: '#F4BB00', 
+                        backgroundColor: 'rgba(244, 187, 0, 0.5)', 
+                        borderWidth: 1,
+                        borderDash: [5, 5],
+                        barThickness: 20,
+                    },
+                    {
+                        label: 'Average Processing Time (Days)',
+                        data: documentAvgProcessingDays,             
+                        borderColor: '#3B83FB', 
+                        backgroundColor: 'rgba(59, 131, 251, 0.5)', 
+                        borderWidth: 1,
+                        borderDash: [5, 5],
+                        barThickness: 20,
+                    }
+                ],
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                    },
+                    y: {
+                        ticks: {
+                            color: '#1a1a1a',
+                            font: {
+                                size: 12,
+                                weight: '600',
+                                family: 'Montserrat'
+                            },
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: '600',
+                                family: 'Montserrat'
+                            },
+                            color: '#333333'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) label += ': ';
+                                label += context.raw.toFixed(2);
+                                return label;
+                            }
+                        }
+                    }
+                },
+            },
+        });
+    </script>
+    
     <script>
         const reportButton = document.querySelector('.gen-btn');
         const reportPopup = document.getElementById('report-popup');
