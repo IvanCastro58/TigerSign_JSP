@@ -67,7 +67,7 @@
                 event.preventDefault();
             } else {
                 event.preventDefault();
-                viewAccountBtn.innerHTML = "<div class='spinner'></div> Viewing Account";
+                viewAccountBtn.innerHTML = "<div class='spinner' style='margin-right: 8px;'></div> Viewing Account";
                 viewAccountBtn.disabled = true;
                 viewAccountBtn.classList.add('sending');
 

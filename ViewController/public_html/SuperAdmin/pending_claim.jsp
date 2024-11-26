@@ -96,6 +96,74 @@
             transform: rotate(-180deg);
         }
     }
+    
+    .parent {
+        position: relative;
+        height: 90vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        font-size: 16px;
+        font-weight: 560;
+        gap: 20px;
+    }
+    
+    .loader {
+        position: relative;
+        width: 120px;
+        height: 150px;
+        background: #F4BB00;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    
+    .loader:before {
+      content: '';
+      position: absolute;
+      width: 54px;
+      height: 25px;
+      left: 50%;
+      top: 0;
+      background-image: radial-gradient(ellipse at center, #0000 24%, #101010 25%, #101010 64%, #0000 65%), linear-gradient(to bottom, #0000 34%, #a1a1a1 35%);
+      background-size: 12px 12px, 100% auto;
+      background-repeat: no-repeat;
+      background-position: center top;
+      transform: translate(-50%, -65%);
+      box-shadow: 0 -3px rgba(0, 0, 0, 0.25) inset;
+    }
+    
+    .loader:after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 20%;
+      transform: translateX(-50%);
+      width: 66%;
+      height: 60%;
+      background: linear-gradient(to bottom, #101010 30%, #0000 31%);
+      background-size: 100% 16px;
+      animation: writeDown 2s ease-out infinite;
+    }
+    
+    @keyframes writeDown {
+      0% {
+        height: 0%;
+        opacity: 0;
+      }
+      20% {
+        height: 0%;
+        opacity: 1;
+      }
+      80% {
+        height: 65%;
+        opacity: 1;
+      }
+      100% {
+        height: 65%;
+        opacity: 0;
+      }
+    }
 </style>
 
 <body>
@@ -114,9 +182,12 @@
     
     <%@ include file="/WEB-INF/components/header.jsp" %>
     <%@ include file="/WEB-INF/components/sidebar.jsp" %>
-    
     <div class="main-content">
-        <div class="margin-content">
+        <div class="parent">
+            <div class="loader"></div>
+            Retrieving Data...
+        </div>
+        <div id="margin-content" class="margin-content" style="display: none;">
             <h2 class="title-page">PENDING CLAIMS</h2>
             <div class="top-nav">
                     <div class="row1">
@@ -191,11 +262,11 @@
                         </tr>
                     </thead>
                         <tbody id="pending-table-body">
-                            <%
-                                PendingClaimsService service = new PendingClaimsService();
-                                List<PendingClaim> pendingClaims = null;
-                            
-                                try {
+                                <%
+                                    PendingClaimsService service = new PendingClaimsService();
+                                    List<PendingClaim> pendingClaims = null;
+    
+                                    try {
                                         pendingClaims = service.getActivePendingClaims();
                                     } catch (SQLException e) {
                                         e.printStackTrace();
@@ -317,6 +388,15 @@
     </div>
     <%@ include file="/WEB-INF/components/script.jsp" %>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const parent = document.querySelector(".parent");
+            const marginContent = document.getElementById("margin-content");
+    
+            parent.style.display = "none";
+            marginContent.style.display = "block";
+        });
+    </script>
     <script type="text/javascript">
     const adminFullName = "<%= fullName %>";
     const adminEmail = "<%= email %>";
@@ -442,9 +522,9 @@
     const searchTerm = localStorage.getItem("pendingClaimsSearchTerm");
 
     if (searchTerm) {
-        searchInput.value = searchTerm; // Set search term in input field
-        localStorage.removeItem("pendingClaimsSearchTerm"); // Clear after use
-    }
+        searchInput.value = searchTerm;
+        localStorage.removeItem("pendingClaimsSearchTerm"); 
+    } 
     
     flatpickr(dateRangeInput, {
         mode: 'range',
@@ -604,6 +684,7 @@ clearDateRangeButton.addEventListener('click', function() {
     
         renderPagination(rowsToRender);  // Update pagination
     }
+    
 function renderPagination(rowsToRender) {
     const paginationContainer = document.querySelector('.pagination');
     paginationContainer.innerHTML = '';  // Clear pagination container

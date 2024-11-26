@@ -47,7 +47,9 @@
             <center>
                 <div class="loader" style="display: none;"></div>
             </center>
+            <div class="search-message-container"></div>
             <div class="results"></div>
+
         </div>
         <div class="column right-column">
             <div class="info-text">
@@ -129,13 +131,14 @@
     </footer>
     
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
+<script>
     $(document).ready(function() {
         $(".search-button").click(function() {
             var orNumber = $(".search-input").val().trim();
             if (orNumber) {
                 $(".loader").show();
-                $(".results").hide();
+                $(".search-message-container").hide(); // Hide the message initially
+                $(".results").hide(); // Hide results initially
 
                 setTimeout(function() {
                     $.ajax({
@@ -144,13 +147,22 @@
                         dataType: "json",
                         data: { or_number: orNumber },
                         success: function(data) {
-                            $(".results")
-                                .empty()
-                                .css("display", "block")
-                                .addClass("highlight-background");
+                            $(".search-message-container").empty().show(); // Show and clear the message container
+                            $(".results").empty().css("display", "block").addClass("highlight-background");
                             $(".loader").hide();
 
+                            // Add the search-message
+                            var searchMessage = $("<div>")
+                                .addClass("search-message")
+                                .text('Search for "' + orNumber + '"');
+                            $(".search-message-container").append(searchMessage);
+
                             if (Array.isArray(data) && data.length > 0) {
+                                var resultsHeader = $("<div>")
+                                    .addClass("results-header")
+                                    .text("DOCUMENT REQUEST STATUS");
+                                $(".results").append(resultsHeader);
+
                                 $.each(data, function(index, item) {
                                     const fileStatusRow = $("<div>").addClass("file-status-row");
                                     const fileName = $("<div>").addClass("file-name").text(item.request);
@@ -169,15 +181,17 @@
                                     $(".results").append(fileStatusRow);
                                 });
                             } else {
-                                $(".results").append('<div class="no-results">Sorry. No requests were found.</div>');
+                                $(".results").append('<div class="no-results">Sorry. No requests were found.</div>')
+                                .removeClass("highlight-background").addClass("highlight-background1");
                             }
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
+                            $(".search-message-container").empty().show();
                             $(".results")
                                 .empty()
                                 .append('<div class="error">Error retrieving data.</div>')
                                 .css("display", "block")
-                                .addClass("highlight-background");
+                                .removeClass("highlight-background").addClass("highlight-background1");
                             $(".loader").hide();
                         }
                     });

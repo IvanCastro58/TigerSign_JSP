@@ -297,7 +297,6 @@
                         %>
                     </div>
                 </div>
-    
                 <div class="pagination"></div>
             </div>
         </div>
@@ -417,73 +416,74 @@
                     renderPagination(filteredRows);
                 }
             
-                function renderPagination(rowsToRender) {
-                    const paginationContainer = document.querySelector('.pagination');
-                    paginationContainer.innerHTML = '';  // Clear pagination container
+                function renderPagination(filteredRows) {
+                    paginationContainer.innerHTML = '';
+                    const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
                 
-                    const pageCount = Math.ceil(rowsToRender.length / rowsPerPage);
                     const paginationList = document.createElement('ul');
                     paginationList.className = 'pagination-list';
                 
-                    const addPaginationLink = (page, text = page, isActive = false) => {
+                    // Helper function to create pagination items
+                    function createPaginationItem(content, isDisabled = false, isActive = false, page = null) {
                         const paginationItem = document.createElement('li');
                         paginationItem.className = 'pagination-item';
                 
                         const paginationLink = document.createElement('a');
                         paginationLink.className = 'pagination-link';
+                        if (isActive) paginationLink.classList.add('active');
+                        if (isDisabled) paginationLink.classList.add('disabled');
                         paginationLink.href = '#';
-                        paginationLink.textContent = text;
-                        
-                        if (page !== null) {
-                            paginationLink.dataset.page = page;
+                        paginationLink.textContent = content;
+                
+                        if (!isDisabled && page !== null) {
                             paginationLink.addEventListener('click', function (e) {
                                 e.preventDefault();
                                 currentPage = page;
-                                renderTable(currentPage, rowsToRender);
-                                updateActiveLink();
+                                renderTable(currentPage);
+                                renderPagination(filteredRows);
                             });
                         } else {
-                            // Make ellipsis unclickable
-                            paginationLink.classList.add('disabled');
-                        }
-                
-                        if (isActive) {
-                            paginationLink.classList.add('active');
+                            paginationLink.style.pointerEvents = 'none'; // Disable interaction
                         }
                 
                         paginationItem.appendChild(paginationLink);
-                        paginationList.appendChild(paginationItem);
-                    };
+                        return paginationItem;
+                    }
                 
-                    // Add 'Prev' button
+                    // Add "Prev" button
                     if (currentPage > 1) {
-                        addPaginationLink(currentPage - 1, 'Prev');
+                        paginationList.appendChild(createPaginationItem('Prev', false, false, currentPage - 1));
                     }
                 
-                    // Start of pagination
+                    // Add first page
+                    paginationList.appendChild(createPaginationItem('1', false, currentPage === 1, 1));
+                
+                    // Add "..." if current page is far from the start
                     if (currentPage > 3) {
-                        addPaginationLink(1); // First page
-                        addPaginationLink(null, '...'); // Ellipsis
+                        paginationList.appendChild(createPaginationItem('...', true));
                     }
                 
-                    // Main pages around the current page
-                    for (let i = Math.max(1, currentPage - 1); i <= Math.min(pageCount, currentPage + 1); i++) {
-                        addPaginationLink(i, i, i === currentPage);
+                    // Add page numbers around the current page
+                    for (let i = Math.max(2, currentPage - 1); i <= Math.min(pageCount - 1, currentPage + 1); i++) {
+                        paginationList.appendChild(createPaginationItem(i, false, currentPage === i, i));
                     }
                 
-                    // End of pagination
+                    // Add "..." if current page is far from the end
                     if (currentPage < pageCount - 2) {
-                        addPaginationLink(null, '...'); // Ellipsis
-                        addPaginationLink(pageCount); // Last page
+                        paginationList.appendChild(createPaginationItem('...', true));
                     }
                 
-                    // Add 'Next' button
+                    // Add last page
+                    if (pageCount > 1) {
+                        paginationList.appendChild(createPaginationItem(pageCount, false, currentPage === pageCount, pageCount));
+                    }
+                
+                    // Add "Next" button
                     if (currentPage < pageCount) {
-                        addPaginationLink(currentPage + 1, 'Next');
+                        paginationList.appendChild(createPaginationItem('Next', false, false, currentPage + 1));
                     }
                 
                     paginationContainer.appendChild(paginationList);
-                    updateActiveLink();
                 }
             
                 function sortTableByColumn(columnIndex, isAscending) {

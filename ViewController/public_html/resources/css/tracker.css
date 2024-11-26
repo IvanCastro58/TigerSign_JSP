@@ -193,6 +193,11 @@ header .logo img {
     cursor: pointer;
     font-size: 14px;
     margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.search-button:active {
+    transform: scale(0.8);
 }
 
 .search-button i{
@@ -200,22 +205,44 @@ header .logo img {
 }
 
 .results {
-    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin: 10px 0;
 }
 
-.highlight-background {
+.search-message{
+    padding: 20px 0;
+    font-weight: 700;
+}
+
+.results-header{
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 0px;
+    margin-bottom: 10px;
+}
+
+.highlight-background1 {
     background-color: #F0F7FD;
     border-left: 5px solid #CEE4F2;
+    padding: 20px;
+}
+
+.highlight-background {
+    background-color: #F0F7FD;
+    border-top: 20px solid #006072;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .file-status-row {
     display: grid;
-    grid-template-columns: 1fr auto; 
+    grid-template-columns: 1fr auto;
     align-items: center;
+    padding: 15px 20px;
+    border-top: 1px solid #ccc; 
 }
 
 .file-name {
@@ -261,9 +288,10 @@ header .logo img {
 
 .note {
     font-style: italic;
-    color: #999;
-    font-size: 14px;
-    margin-top: 0; /* Remove margin on top */
+    color: #d9534f;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 0; 
 }
 
 .info-text {
@@ -600,7 +628,10 @@ header .logo img {
     }
     
     .results {
-        height: 200px;
+        min-height: 200px;
+        height: auto;
+        padding: 10px;
+        margin: 20px 0px;
     }
 }
 
@@ -676,7 +707,10 @@ header .logo img {
     }
     
     .results {
-        height: 200px;
+        min-height: 200px;
+        height: auto;
+        padding: 10px;
+        margin: 20px 0px;
     }
 }
 
@@ -719,11 +753,6 @@ header .logo img {
         margin-top: 5px;
         margin-left: 0;
     }
-    
-    .results {
-        padding: 10px;
-    }
-
 
    .file-name{
             font-size: 12px;
@@ -775,7 +804,10 @@ header .logo img {
     }
     
     .results {
-        height: 200px;
+        min-height: 200px;
+        height: auto;
+        padding: 10px;
+        margin: 20px 0px;
     }
     
     .search-container {
@@ -833,11 +865,6 @@ header .logo img {
         margin-left: 0;
     }
 
-     .results {
-        padding: 10px;
-    }
-
-
    .file-name{
             font-size: 12px;
         }
@@ -888,7 +915,10 @@ header .logo img {
     }
     
     .results {
-        height: 200px;
+        min-height: 200px;
+        height: auto;
+        padding: 10px;
+        margin: 20px 0px;
     }
     
      .search-container {

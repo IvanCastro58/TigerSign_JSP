@@ -81,7 +81,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const feedbackItems = document.querySelectorAll(".feedback-item");
-            const itemsPerPage = 10; 
+            const itemsPerPage = 1; 
             const totalPages = Math.ceil(feedbackItems.length / itemsPerPage);
             let currentPage = 1;
         

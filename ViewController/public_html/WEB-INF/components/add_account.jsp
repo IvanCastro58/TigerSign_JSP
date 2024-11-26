@@ -92,6 +92,7 @@
         margin-left: 5px;
         animation: rotate 1s linear infinite
       }
+      
       .spinner::before , .spinner::after {
         content: "";
         box-sizing: border-box;

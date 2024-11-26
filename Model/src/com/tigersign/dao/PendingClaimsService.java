@@ -1,8 +1,19 @@
 package com.tigersign.dao;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
 import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import oracle.jdbc.OracleTypes;
 
 public class PendingClaimsService {
@@ -38,7 +49,7 @@ public class PendingClaimsService {
     // Caching mechanism to store the last fetched claims
     private static List<PendingClaim> cachedClaims = null;
     private static long lastFetchedTime = 0;  // Track when the cache was last updated
-    private static final long CACHE_EXPIRATION_TIME = 60000; // Cache expiration time (e.g., 1 minute)
+    private static final long CACHE_EXPIRATION_TIME = 0; // Cache expiration time (e.g., 1 minute)
 
     // Fetches data from TIGERSIGNX.PKG
     public List<PendingClaim> getActivePendingClaimsFromPkg() throws SQLException {

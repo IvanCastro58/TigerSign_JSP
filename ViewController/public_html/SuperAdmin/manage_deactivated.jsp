@@ -235,42 +235,82 @@
                     link.classList.toggle("active", parseInt(link.dataset.page) === currentPage);
                 });
             }
-    
+            
             function initializePagination() {
                 const paginationContainer = document.querySelector('.pagination');
                 if (paginationContainer) paginationContainer.remove();
-    
+            
                 const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
                 const paginationContainerNew = document.createElement("div");
                 paginationContainerNew.className = "pagination";
                 const paginationList = document.createElement("ul");
                 paginationList.className = "pagination-list";
-    
-                for (let i = 1; i <= pageCount; i++) {
+            
+                // Helper function to create pagination links
+                function createPaginationItem(content, isDisabled = false, isActive = false, page = null) {
                     const pageItem = document.createElement("li");
                     pageItem.className = "pagination-item";
+            
                     const pageLink = document.createElement("a");
                     pageLink.className = "pagination-link";
+                    if (isActive) pageLink.classList.add("active");
+                    if (isDisabled) pageLink.classList.add("disabled");
                     pageLink.href = "#";
-                    pageLink.textContent = i;
-                    pageLink.dataset.page = i;
-    
-                    pageLink.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        currentPage = parseInt(e.target.dataset.page);
-                        updateTableRows();
-                        updateActiveLink();
-                    });
-    
+                    pageLink.textContent = content;
+            
+                    if (!isDisabled && page !== null) {
+                        pageLink.dataset.page = page;
+                        pageLink.addEventListener("click", function (e) {
+                            e.preventDefault();
+                            currentPage = parseInt(page);
+                            updateTableRows();
+                            initializePagination();
+                        });
+                    } else {
+                        pageLink.style.pointerEvents = "none"; // Disable interaction for ellipses
+                    }
+            
                     pageItem.appendChild(pageLink);
-                    paginationList.appendChild(pageItem);
+                    return pageItem;
                 }
-    
+            
+                // Add "Prev" button
+                if (currentPage > 1) {
+                    paginationList.appendChild(createPaginationItem("Prev", false, false, currentPage - 1));
+                }
+            
+                // Add first page
+                paginationList.appendChild(createPaginationItem("1", false, currentPage === 1, 1));
+            
+                // Add "..." if there is a gap after the first page
+                if (currentPage > 3) {
+                    paginationList.appendChild(createPaginationItem("...", true));
+                }
+            
+                // Add surrounding page numbers
+                for (let i = Math.max(2, currentPage - 1); i <= Math.min(pageCount - 1, currentPage + 1); i++) {
+                    paginationList.appendChild(createPaginationItem(i, false, currentPage === i, i));
+                }
+            
+                // Add "..." if there is a gap before the last page
+                if (currentPage < pageCount - 2) {
+                    paginationList.appendChild(createPaginationItem("...", true));
+                }
+            
+                // Add last page
+                if (pageCount > 1) {
+                    paginationList.appendChild(createPaginationItem(pageCount, false, currentPage === pageCount, pageCount));
+                }
+            
+                // Add "Next" button
+                if (currentPage < pageCount) {
+                    paginationList.appendChild(createPaginationItem("Next", false, false, currentPage + 1));
+                }
+            
                 paginationContainerNew.appendChild(paginationList);
                 document.querySelector(".table-container").parentElement.appendChild(paginationContainerNew);
-    
+            
                 updateTableRows();
-                updateActiveLink();
             }
     
             searchInput.addEventListener('input', () => {

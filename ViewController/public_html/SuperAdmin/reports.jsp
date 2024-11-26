@@ -394,7 +394,7 @@
                     </div>
                     <div class="popup-content">
                         <div style="text-align: center; margin: 10px 0;"
-                            <p class="bigger-text">Choose your preferred file type</p>
+                            <p class="bigger-text"><b>Choose your preferred file type<b></p>
                         </div>
                         <div class="button-container" style="margin-top: 20px;">
                             <form class="report-container" id="reportForm" method="GET" action="<%= request.getContextPath() %>/ReportGeneratorServlet" target="_blank">
