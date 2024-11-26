@@ -143,8 +143,8 @@
     <div class="overlay"></div>
     
     <%@ include file="/WEB-INF/components/script.jsp" %>
-    <script>
-         function toggleDescription(element) {
+   <script>
+        function toggleDescription(element) {
             const nameElement = element.querySelector('.document-name');
             const descriptionElement = element.querySelector('.document-description');
         
@@ -158,12 +158,11 @@
         }
         function openPdfInNewTab() {
             const requestId = '<%= details.getRequestId() %>';
-            const url = '<%= request.getContextPath() %>/GenerateProofServlet?requestId=' + requestId;
-
-            // Open in a new tab for the PDF
-            window.open(url, '_blank');
-
-            // Now log the activity via a POST request
+            const pdfUrl = '<%= request.getContextPath() %>/GenerateProofServlet?requestId=' + requestId;
+            const redirectPageUrl = '<%= request.getContextPath() %>/pages/generating.jsp?generate=' + encodeURIComponent(pdfUrl);
+        
+            window.open(redirectPageUrl, '_blank');
+            
             logActivity(requestId);
         }
 

@@ -25,7 +25,7 @@ import org.apache.commons.imaging.Imaging;
 public class ClaimedRequestDetailsService {
 
     private static final String API_URL = "https://ping.arya.ai/api/v2/signature-detection";
-    private static final String API_TOKEN = "9820a999a7646693f479edb21ed4a01e";
+    private static final String API_TOKEN = "9d27aa98a13769c3a528e4b04fd4fd1b";
 
     public ClaimedRequestDetails getClaimedRequestDetails(String requestId) {
         ClaimedRequestDetails details = null;
@@ -207,77 +207,134 @@ public class ClaimedRequestDetailsService {
         byte[] image1Bytes = Base64.getDecoder().decode(base64Image1);
         byte[] image2Bytes = Base64.getDecoder().decode(base64Image2);
 
-        // Check if the BLOB is "No signature detected"
-        String image1Text = new String(image1Bytes);
-        String image2Text = new String(image2Bytes);
-
-        if ("No signature detected".equals(image1Text) || "No signature detected".equals(image2Text)) {
-            // If either is "No signature detected", return 0.0 similarity
-            return 0.0;
-        }
-
         // Convert byte arrays to BufferedImage objects
         BufferedImage image1 = Imaging.getBufferedImage(new ByteArrayInputStream(image1Bytes));
         BufferedImage image2 = Imaging.getBufferedImage(new ByteArrayInputStream(image2Bytes));
 
-        // Convert images to grayscale
-        BufferedImage grayscale1 = toGrayscale(image1);
-        BufferedImage grayscale2 = toGrayscale(image2);
-
-        // Resize images to the same dimensions if needed
-        int width = Math.min(grayscale1.getWidth(), grayscale2.getWidth());
-        int height = Math.min(grayscale1.getHeight(), grayscale2.getHeight());
-        grayscale1 = resizeImage(grayscale1, width, height);
-        grayscale2 = resizeImage(grayscale2, width, height);
+        // Preprocess images: Grayscale, Resize, Normalize
+        BufferedImage preprocessed1 = preprocessImage(image1);
+        BufferedImage preprocessed2 = preprocessImage(image2);
 
         // Compute SSIM
-        return computeSSIM(grayscale1, grayscale2);
+        return computeEnhancedSSIM(preprocessed1, preprocessed2);
+    }
+    
+    private BufferedImage preprocessImage(BufferedImage img) {
+        // Convert to grayscale
+        BufferedImage grayscale = toGrayscale(img);
+
+        // Remove unnecessary edges or noise (trimming)
+        BufferedImage trimmed = trimEdges(grayscale);
+
+        // Resize to common dimensions (e.g., 256x256)
+        BufferedImage resized = resizeImage(trimmed, 256, 256);
+
+        // Normalize pixel intensities
+        return normalizeIntensity(resized);
     }
 
-        private BufferedImage toGrayscale(BufferedImage img) {
-            BufferedImage grayscale = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-            grayscale.getGraphics().drawImage(img, 0, 0, null);
-            return grayscale;
-        }
+    private BufferedImage trimEdges(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
 
-        private BufferedImage resizeImage(BufferedImage img, int width, int height) {
-            BufferedImage resized = new BufferedImage(width, height, img.getType());
-            resized.getGraphics().drawImage(img, 0, 0, width, height, null);
-            return resized;
-        }
+        // Assume a basic threshold to find non-background pixels
+        int threshold = 200;
+        int minX = width, minY = height, maxX = 0, maxY = 0;
 
-        private double computeSSIM(BufferedImage img1, BufferedImage img2) {
-            double C1 = 6.5025, C2 = 58.5225;
-
-            double meanX = 0, meanY = 0, varX = 0, varY = 0, covXY = 0;
-            int width = img1.getWidth();
-            int height = img1.getHeight();
-            int n = width * height;
-
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    int pixelX = img1.getRaster().getSample(x, y, 0);
-                    int pixelY = img2.getRaster().getSample(x, y, 0);
-
-                    meanX += pixelX;
-                    meanY += pixelY;
-                    varX += pixelX * pixelX;
-                    varY += pixelY * pixelY;
-                    covXY += pixelX * pixelY;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = img.getRaster().getSample(x, y, 0);
+                if (pixel < threshold) {
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
                 }
             }
-
-            meanX /= n;
-            meanY /= n;
-            varX = varX / n - meanX * meanX;
-            varY = varY / n - meanY * meanY;
-            covXY = covXY / n - meanX * meanY;
-
-            double numerator = (2 * meanX * meanY + C1) * (2 * covXY + C2);
-            double denominator = (meanX * meanX + meanY * meanY + C1) * (varX + varY + C2);
-
-            return numerator / denominator;
         }
+
+        // Crop the image based on detected edges
+        if (minX < maxX && minY < maxY) {
+            return img.getSubimage(minX, minY, maxX - minX + 1, maxY - minY + 1);
+        }
+        return img; // Return original if no significant edges detected
+    }
+
+    private BufferedImage normalizeIntensity(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        BufferedImage normalized = new BufferedImage(width, height, img.getType());
+
+        int min = 255, max = 0;
+
+        // Find min and max pixel intensities
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = img.getRaster().getSample(x, y, 0);
+                min = Math.min(min, pixel);
+                max = Math.max(max, pixel);
+            }
+        }
+
+        // Normalize pixel intensities
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = img.getRaster().getSample(x, y, 0);
+                int normalizedPixel = (int) (255.0 * (pixel - min) / (max - min));
+                normalized.getRaster().setSample(x, y, 0, normalizedPixel);
+            }
+        }
+
+        return normalized;
+    }
+
+    private BufferedImage toGrayscale(BufferedImage img) {
+        BufferedImage grayscale = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        grayscale.getGraphics().drawImage(img, 0, 0, null);
+        return grayscale;
+    }
+
+    private BufferedImage resizeImage(BufferedImage img, int width, int height) {
+        BufferedImage resized = new BufferedImage(width, height, img.getType());
+        resized.getGraphics().drawImage(img, 0, 0, width, height, null);
+        return resized;
+    }
+
+    private double computeEnhancedSSIM(BufferedImage img1, BufferedImage img2) {
+        double C1 = 6.5025, C2 = 58.5225;
+
+        double meanX = 0, meanY = 0, varX = 0, varY = 0, covXY = 0;
+        int width = img1.getWidth();
+        int height = img1.getHeight();
+        int n = width * height;
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixelX = img1.getRaster().getSample(x, y, 0);
+                int pixelY = img2.getRaster().getSample(x, y, 0);
+
+                // Apply central weighting (higher importance to central pixels)
+                double weight = 1.0 - Math.sqrt(Math.pow(x - width / 2, 2) + Math.pow(y - height / 2, 2)) / (Math.sqrt(2) * width / 2);
+
+                meanX += weight * pixelX;
+                meanY += weight * pixelY;
+                varX += weight * pixelX * pixelX;
+                varY += weight * pixelY * pixelY;
+                covXY += weight * pixelX * pixelY;
+            }
+        }
+
+        meanX /= n;
+        meanY /= n;
+        varX = varX / n - meanX * meanX;
+        varY = varY / n - meanY * meanY;
+        covXY = covXY / n - meanX * meanY;
+
+        double numerator = (2 * meanX * meanY + C1) * (2 * covXY + C2);
+        double denominator = (meanX * meanX + meanY * meanY + C1) * (varX + varY + C2);
+
+        return numerator / denominator;
+    }
 
     private void storeSignaturesToDatabase(String requestId, byte[] idSignatureBytes, byte[] letterSignatureBytes) {
         String updateQuery = "UPDATE TS_PROOFS SET id_signature = ?, letter_signature = ? WHERE request_id = ?";

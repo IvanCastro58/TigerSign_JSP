@@ -12,10 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../resources/css/sidebar.css">
+     <link rel="stylesheet" href="../resources/css/sidebar.css">
     <link rel="stylesheet" href="../resources/css/table.css">
     <link rel="stylesheet" href="../resources/css/pendingclaim.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/confetti.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <style>
     .transaction-table th{
@@ -24,6 +27,142 @@
     
     .transaction-table td{
         padding: 5px 5px;
+    }
+    
+    .transaction-table th, .transaction-table td {
+        white-space: nowrap;
+        text-align: left;
+    }
+
+    .transaction-table th:nth-child(1), .transaction-table td:nth-child(1) {
+        width: 15%;
+    }
+
+    .transaction-table th:nth-child(2), .transaction-table td:nth-child(2) {
+        width: 30%;
+    }
+
+    .transaction-table th:nth-child(3), .transaction-table td:nth-child(3) {
+        width: 10%;
+    }
+
+    .transaction-table th:nth-child(4), .transaction-table td:nth-child(4) {
+        width: 15%;
+    }
+    .transaction-table th:nth-child(5), .transaction-table td:nth-child(5) {
+        width: 10%;
+    }
+    .transaction-table th:nth-child(6), .transaction-table td:nth-child(6) {
+        width: 30%;
+    }
+    .transaction-table th:nth-child(7), .transaction-table td:nth-child(7) {
+        width: 10%;
+    }
+    
+    .sort-icons {
+        font-size: 12px;
+        display: inline-block;
+        transform: scale(0.8);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    .sort-icons.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    .spin-up {
+        animation: spin-up 0.3s linear forwards;
+    }
+    
+    @keyframes spin-up {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(180deg); 
+        }
+    }
+    
+    .spin-down {
+        animation: spin-down 0.3s linear forwards;
+    }
+    
+    @keyframes spin-down {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(-180deg);
+        }
+    }
+    
+    .parent {
+        position: relative;
+        height: 90vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        font-size: 16px;
+        font-weight: 560;
+        gap: 20px;
+    }
+    
+    .loader {
+        position: relative;
+        width: 120px;
+        height: 150px;
+        background: #F4BB00;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    
+    .loader:before {
+      content: '';
+      position: absolute;
+      width: 54px;
+      height: 25px;
+      left: 50%;
+      top: 0;
+      background-image: radial-gradient(ellipse at center, #0000 24%, #101010 25%, #101010 64%, #0000 65%), linear-gradient(to bottom, #0000 34%, #a1a1a1 35%);
+      background-size: 12px 12px, 100% auto;
+      background-repeat: no-repeat;
+      background-position: center top;
+      transform: translate(-50%, -65%);
+      box-shadow: 0 -3px rgba(0, 0, 0, 0.25) inset;
+    }
+    
+    .loader:after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 20%;
+      transform: translateX(-50%);
+      width: 66%;
+      height: 60%;
+      background: linear-gradient(to bottom, #101010 30%, #0000 31%);
+      background-size: 100% 16px;
+      animation: writeDown 2s ease-out infinite;
+    }
+    
+    @keyframes writeDown {
+      0% {
+        height: 0%;
+        opacity: 0;
+      }
+      20% {
+        height: 0%;
+        opacity: 1;
+      }
+      80% {
+        height: 65%;
+        opacity: 1;
+      }
+      100% {
+        height: 65%;
+        opacity: 0;
+      }
     }
 </style>
 <body>
@@ -42,16 +181,78 @@
     <%@ include file="/WEB-INF/components/sidebar_admin.jsp" %>
     
     <div class="main-content">
-        <div class="margin-content">
+        <div class="parent">
+            <div class="loader"></div>
+            Retrieving Data...
+        </div>
+        <div id="margin-content" class="margin-content" style="display: none;">
             <h2 class="title-page">PENDING CLAIMS</h2>
+            <div class="top-nav">
+                    <div class="row1">
+                        <div class="nav-item1">
+                            <div class="item1-label">Show</div>
+                            <select id="rows-per-page" class="number">
+                                <option value="10" selected>10</option>
+                                <option value="5">5</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>
+                    
+                        <div class="nav-item2">
+                            <i class="fa-regular fa-calendar" id="calendar-icon"></i>
+                            <div class="input-container">
+                                <input type="text" id="date-range" class="date-input" placeholder="Select Date Range" readonly>
+                                <i class="bi bi-x-circle-fill" id="clear-date" style="display:none;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row2">
+                        <div class="nav-item4">
+                            <select class="status">
+                                <option value="" selected>Select Status</option> 
+                                <option value="pending">PENDING</option>
+                                <option value="processing">PROCESSING</option>
+                                <option value="hold">ON HOLD</option>
+                                <option value="available">AVAILABLE</option>
+                            </select>
+                        </div>
+    
+                        <div class="nav-item3">
+                            <div class="search-container">
+                                <input type="text" id="search-input" class="search-input" placeholder="Search...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <div class="table-container">
                 <div class="table-wrapper">
                     <table class="transaction-table" id="pending_table">
                     <thead>
                         <tr>
-                            <th>O.R. Number</th>
-                            <th>Name</th>
-                            <th>Date of Payment</th>
+                            <th style="cursor: pointer;">
+                                O.R. Number
+                                <span class="sort-icons">
+                                    <i class="fa fa-sort"></i>
+                                    <i class="fa fa-caret-up" style="display:none;"></i>
+                                    <i class="fa fa-caret-down" style="display:none;"></i>
+                                </span>
+                            </th>
+                            <th style="cursor: pointer;">
+                                Name
+                                <span class="sort-icons">
+                                    <i class="fa fa-sort"></i>
+                                    <i class="fa fa-caret-up" style="display:none;"></i>
+                                    <i class="fa fa-caret-down" style="display:none;"></i>
+                                </span>
+                            </th>
+                            <th style="cursor: pointer;">
+                                Date of Payment
+                                <span class="sort-icons">
+                                    <i class="fa fa-sort"></i>
+                                    <i class="fa fa-caret-up" style="display:none;"></i>
+                                    <i class="fa fa-caret-down" style="display:none;"></i>
+                                </span>
+                            </th>
                             <th style="text-align: center;">Status</th>
                             <th>College</th>
                             <th>Request</th>
@@ -59,19 +260,19 @@
                         </tr>
                     </thead>
                         <tbody id="pending-table-body">
-                            <%
-                                PendingClaimsService service = new PendingClaimsService();
-                                List<PendingClaim> pendingClaims = null;
-                            
-                                try {
-                                    pendingClaims = service.getActivePendingClaims();
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                }
-                            
-                                if (pendingClaims != null && !pendingClaims.isEmpty()) {
-                                    for (PendingClaim claim : pendingClaims) {
-                            %>
+                                <%
+                                    PendingClaimsService service = new PendingClaimsService();
+                                    List<PendingClaim> pendingClaims = null;
+    
+                                    try {
+                                        pendingClaims = service.getActivePendingClaims();
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                
+                                    if (pendingClaims != null && !pendingClaims.isEmpty()) {
+                                        for (PendingClaim claim : pendingClaims) {
+                                %>
                                         <tr class="actual-data">
                                             <td class="expandable-text"><%= claim.getOrNumber() %></td>
                                             <td class="expandable-text"><%= claim.getCustomerName() %></td>
@@ -120,12 +321,27 @@
                             %>
                     </tbody>
                     </table>
-                    <div style="text-align: center; margin-top: 20px;" id="no-results">
+                    <% 
+                            if (pendingClaims == null || pendingClaims.isEmpty()) { 
+                        %>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 200px; height: 200px;" />
+                                <p style="font-size: 14px; font-weight: 500;">No pending claims available at the moment.</p>
+                            </div>
+                        <% 
+                            } 
+                        %>
+                    <div style="text-align: center; margin-top: 20px; display: none;" id="no-results">
                         <img src="<%= request.getContextPath() %>/resources/images/empty.jpg" alt="No Data" style="width: 200px; height: 200px;" />
-                        <p style="font-size: 14px; font-weight: 500;">No matching claims found.</p>
+                        <p style="font-size: 14px; font-weight: 500;">No results match your search.</p>
                     </div>
                 </div>
             </div>
+                <div class="pagination">
+                    <ul class="pagination-list">
+                        <!-- Pagination links will be generated by JavaScript -->
+                    </ul>
+                </div>
             <div id="claimer-type-modal" class="popup-overlay">
                 <div class="popup">
                     <div class="popup-header">
@@ -149,6 +365,7 @@
                     </div>
                 </div>
             </div>
+            
             <div id="confirm-hold-popup" class="popup-overlay">
                 <div class="popup">
                     <div class="popup-header">
@@ -169,11 +386,19 @@
     </div>
     <%@ include file="/WEB-INF/components/script.jsp" %>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const parent = document.querySelector(".parent");
+        const marginContent = document.getElementById("margin-content");
+
+        parent.style.display = "none";
+        marginContent.style.display = "block";
+    });
+    </script>
     <script type="text/javascript">
     const adminFullName = "<%= fullName %>";
     const adminEmail = "<%= email %>";
     $(document).ready(function() {
-    var contextPath = '<%= request.getContextPath() %>';
         // Function to update the available options based on the current status
         function updateDropdownOptions(dropdown) {
             const currentStatus = dropdown.val();
@@ -183,19 +408,21 @@
 
             // Apply restrictions based on the current status
             if (currentStatus === 'PENDING') {
-                dropdown.find('option[value="HOLD"]').prop('disabled', true);
+                dropdown.find('option[value="HOLD"]').prop('disabled', false);
             } else if (currentStatus === 'PROCESSING') {
                 dropdown.find('option[value="PENDING"]').prop('disabled', true);
                 dropdown.find('option[value="HOLD"]').prop('disabled', false);
             } else if (currentStatus === 'HOLD') {
                 dropdown.find('option[value="PENDING"]').prop('disabled', true);
                 dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
-            } else if (currentStatus === 'AVAILABLE') {
+            }
+             else if (currentStatus === 'AVAILABLE') {
                 dropdown.find('option[value="PENDING"]').prop('disabled', true);
                 dropdown.find('option[value="PROCESSING"]').prop('disabled', true);
                 dropdown.find('option[value="HOLD"]').prop('disabled', true);
             }
         }
+        window.updateDropdownOptions = updateDropdownOptions;
     
         // Apply the initial restriction when the page loads
         $('.status-dropdown').each(function() {
@@ -203,11 +430,10 @@
         });
     
         // Update options when the dropdown value changes
-       $('.status-dropdown').change(function() {
+       $(document).on('change', '.status-dropdown', function() {
         const newStatus = $(this).val();
         const requestId = $(this).data('request-id');
         const currentDropdown = $(this); // Set the current dropdown for reference
-        const previousStatusValue = currentDropdown.val(); // Store previous value
         
         if (newStatus === "HOLD") {
             $('#request-id-hold').val(requestId); // Set request ID in hidden input
@@ -254,6 +480,7 @@
                 break;
         }
     }
+    window.updateStatusStyle = updateStatusStyle;
 
     function updateButtonState(button, status) {
         // Enable or disable the button based on the status
@@ -272,215 +499,330 @@
         updateButtonState(button, dropdown.val()); // Set initial button state
     });
 });
-const searchInput = document.getElementById('search-admin');
-        const tableRows = document.querySelectorAll('#pending-table-body tr.actual-data');
-        const noResultsDiv = document.getElementById('no-results');
+  document.addEventListener('DOMContentLoaded', function () {
+    const dataRows = document.querySelectorAll('.actual-data');
+    const table = document.getElementById('pending_table');
+    const tbody = table.querySelector('tbody');
+    const paginationContainer = document.querySelector('.pagination');
+    const searchInput = document.getElementById('search-input');
+    const rowsPerPageSelect = document.getElementById('rows-per-page');
+    const dateRangeInput = document.getElementById('date-range');
+    const clearDateRangeButton = document.getElementById('clear-date');
+    const calendarIcon = document.getElementById('calendar-icon');
+    const statusSelect = document.querySelector('.nav-item4 .status');
 
-        // Function to check if any rows are visible and update the no-results message accordingly
-        function checkNoResults() {
-            let hasVisibleRows = Array.from(tableRows).some(row => row.style.display !== 'none');
-            noResultsDiv.style.display = hasVisibleRows ? 'none' : 'block'; 
+    let currentPage = 1;
+    let rows = Array.from(dataRows);
+    let filteredRows = [...rows];
+    let currentSort = { columnIndex: null, isAscending: true };
+    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+    
+    const searchTerm = localStorage.getItem("pendingClaimsSearchTerm");
+
+    if (searchTerm) {
+        searchInput.value = searchTerm;
+        localStorage.removeItem("pendingClaimsSearchTerm"); 
+    } 
+    
+    flatpickr(dateRangeInput, {
+        mode: 'range',
+        dateFormat: 'Y-m-d',
+        onClose: function(selectedDates) {
+            if (selectedDates.length === 2) {
+                const startDate = selectedDates[0];
+                const endDate = selectedDates[1];
+                filterByDateRange(startDate, endDate);
+                clearDateRangeButton.style.display = 'block';
+            } else {
+                clearDateRangeButton.style.display = 'none';
+            }
+        }
+    });
+    
+    calendarIcon.addEventListener('click', function() {
+        dateRangeInput._flatpickr.open();
+    });
+
+    function filterByDateRange(startDate, endDate) {
+    endDate.setHours(23, 59, 59, 999);
+
+    filteredRows = rows.filter(row => {
+        const dateText = row.cells[2].textContent.trim(); // Use index 2 for Date of Payment
+        const rowDate = new Date(dateText);
+        return rowDate >= startDate && rowDate <= endDate;
+    });
+
+    // Ensure to show data rows after filtering
+    renderTable(1, filteredRows);
+
+    const noResultsDiv = document.getElementById('no-results');
+    noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
+}
+
+clearDateRangeButton.addEventListener('click', function() {
+    // Clear the date range input
+    dateRangeInput._flatpickr.clear();
+
+    // Reset filtered rows to show all rows
+    filteredRows = [...rows];
+    
+    // Render the table with all rows
+    renderTable(1, filteredRows);
+    
+    clearDateRangeButton.style.display = 'none';
+
+    // Hide the 'No Results' message if it is displayed
+    const noResultsDiv = document.getElementById('no-results');
+    noResultsDiv.style.display = 'none';
+});
+
+    function showDataRows() {
+        dataRows.forEach(row => row.style.display = 'none');
+        setTimeout(() => {
+            dataRows.forEach(row => row.style.display = 'table-row');
+            renderTable(currentPage);
+        }, 1);
+    }
+    
+    // Filter by status
+    statusSelect.addEventListener('change', function() {
+        const selectedStatus = this.value.toUpperCase(); // Get selected status (e.g., 'PENDING', 'PROCESSING', etc.)
+        filterByStatus(selectedStatus);
+    });
+
+    function filterByStatus(status) {
+        // Reset filtered rows based on the selected status
+        if (status === 'ALL' || !status) {
+            filteredRows = [...rows];  // Show all rows if 'ALL' or no status is selected
+        } else {
+            filteredRows = rows.filter(row => {
+                const rowStatus = row.querySelector('.status-dropdown').value.toUpperCase(); // Get the status from the row
+                return rowStatus === status;
+            });
         }
 
-        // Initially check if there are results on page load
-        checkNoResults();
+        // Render the table with the filtered rows
+        renderTable(1, filteredRows);
 
-        searchInput.addEventListener('input', () => {
-            const searchValue = searchInput.value.toLowerCase();
-            let hasMatches = false; 
+        // Show or hide 'No Results' message
+        const noResultsDiv = document.getElementById('no-results');
+        noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
+    }
 
-            tableRows.forEach((row) => {
-                const nameCell = row.querySelector('td:nth-child(2)').textContent.toLowerCase(); // Name
-                const transactionIdCell = row.querySelector('td:nth-child(1)').textContent.toLowerCase(); // Transaction ID
 
-                if (nameCell.includes(searchValue) || transactionIdCell.includes(searchValue)) {
-                    row.style.display = 'table-row';
-                    hasMatches = true; 
-                } else {
-                    row.style.display = 'none';
-                }
+    searchInput.addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase().trim();  // Make sure to trim extra spaces
+
+        // If search term is empty, reset the filtered rows to show all rows
+        if (searchTerm === '') {
+            filteredRows = [...rows];  // Reset to all rows when search input is cleared
+        } else {
+            // Filter rows based on the search term
+            filteredRows = rows.filter(row => {
+                const orNumberCell = row.cells[0].textContent.toLowerCase(); // Index 0 for O.R. Number
+                const nameCell = row.cells[1].textContent.toLowerCase(); // Index 1 for Name
+                const collegeCell = row.cells[4].textContent.toLowerCase(); // Index 4 for College
+
+                // Only include the row if it matches any of the relevant columns
+                return orNumberCell.includes(searchTerm) || 
+                       nameCell.includes(searchTerm) || 
+                       collegeCell.includes(searchTerm);
             });
+        }
 
-            // Check for results after filtering
-            checkNoResults();
+        renderTable(1, filteredRows);  // Render filtered rows
+
+        // Show or hide 'No Results' message
+        const noResultsDiv = document.getElementById('no-results');
+        noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
+    });
+
+    // Trigger the 'input' event manually after the page loads to apply the filter
+    if (searchTerm) {
+        searchInput.dispatchEvent(new Event('input'));  // This triggers the filtering logic
+    }
+
+    rowsPerPageSelect.addEventListener('change', function () {
+        rowsPerPage = parseInt(this.value);
+        currentPage = 1;
+        renderTable(currentPage);
+    });
+
+    const headers = table.querySelectorAll('th');
+    headers.forEach((header, index) => {
+        const sortIcons = header.querySelector('.sort-icons');
+        if (sortIcons) {
+            sortIcons.addEventListener('click', () => {
+                const isAscending = currentSort.columnIndex !== index ? true : !currentSort.isAscending;
+                currentSort = { columnIndex: index, isAscending };
+                sortTableByColumn(index, isAscending, filteredRows);
+                toggleSortIcons(sortIcons, isAscending);
+                renderTable(1, filteredRows);
+            });
+        }
+    });
+
+
+    function renderTable(page, rowsToRender = filteredRows) {
+        const rowsPerPage = parseInt(document.getElementById('rows-per-page').value);
+        const startIndex = (page - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+    
+        tbody.innerHTML = '';  // Clear the table body before re-rendering
+    
+        // Get visible rows based on pagination
+        const visibleRows = rowsToRender.slice(startIndex, endIndex);
+        visibleRows.forEach(row => tbody.appendChild(row));  // Add rows to the table body
+    
+        // Reapply status styles for all status dropdowns after rendering rows
+        $('.status-dropdown').each(function() {
+            updateStatusStyle($(this)); // Reapply the style for each dropdown
+            updateDropdownOptions($(this));
         });
+    
+        renderPagination(rowsToRender);  // Update pagination
+    }
+    
+function renderPagination(rowsToRender) {
+    const paginationContainer = document.querySelector('.pagination');
+    paginationContainer.innerHTML = '';  // Clear pagination container
+
+    const pageCount = Math.ceil(rowsToRender.length / rowsPerPage);
+    const paginationList = document.createElement('ul');
+    paginationList.className = 'pagination-list';
+
+    const addPaginationLink = (page, text = page, isActive = false) => {
+        const paginationItem = document.createElement('li');
+        paginationItem.className = 'pagination-item';
+
+        const paginationLink = document.createElement('a');
+        paginationLink.className = 'pagination-link';
+        paginationLink.href = '#';
+        paginationLink.textContent = text;
+        
+        if (page !== null) {
+            paginationLink.dataset.page = page;
+            paginationLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                currentPage = page;
+                renderTable(currentPage, rowsToRender);
+                updateActiveLink();
+            });
+        } else {
+            // Make ellipsis unclickable
+            paginationLink.classList.add('disabled');
+        }
+
+        if (isActive) {
+            paginationLink.classList.add('active');
+        }
+
+        paginationItem.appendChild(paginationLink);
+        paginationList.appendChild(paginationItem);
+    };
+
+    // Add 'Prev' button
+    if (currentPage > 1) {
+        addPaginationLink(currentPage - 1, 'Prev');
+    }
+
+    // Start of pagination
+    if (currentPage > 3) {
+        addPaginationLink(1); // First page
+        addPaginationLink(null, '...'); // Ellipsis
+    }
+
+    // Main pages around the current page
+    for (let i = Math.max(1, currentPage - 1); i <= Math.min(pageCount, currentPage + 1); i++) {
+        addPaginationLink(i, i, i === currentPage);
+    }
+
+    // End of pagination
+    if (currentPage < pageCount - 2) {
+        addPaginationLink(null, '...'); // Ellipsis
+        addPaginationLink(pageCount); // Last page
+    }
+
+    // Add 'Next' button
+    if (currentPage < pageCount) {
+        addPaginationLink(currentPage + 1, 'Next');
+    }
+
+    paginationContainer.appendChild(paginationList);
+    updateActiveLink();
+}
+
+// Active page highlighting
+function updateActiveLink() {
+    document.querySelectorAll('.pagination-link').forEach(link => {
+        link.classList.toggle('active', parseInt(link.dataset.page) === currentPage);
+    });
+}
+    function sortTableByColumn(columnIndex, isAscending, rowsToSort = rows) {
+        rowsToSort.sort((a, b) => {
+            const aText = a.cells[columnIndex].textContent.trim();
+            const bText = b.cells[columnIndex].textContent.trim();
+
+            if (columnIndex === 4) { // Assuming Date Claimed is in column index 4
+                const aDate = new Date(aText);
+                const bDate = new Date(bText);
+                return isAscending ? aDate - bDate : bDate - aDate;
+            }
+
+            if (!isNaN(aText) && !isNaN(bText)) {
+                return isAscending ? aText - bText : bText - aText;
+            }
+
+            return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        });
+    }
+
+    function resetSortIcons() {
+    headers.forEach(header => {
+        const sortIcons = header.querySelector('.sort-icons');
+        console.log('sortIcons:', sortIcons); // Log the sortIcons element
+
+        if (sortIcons) {
+            const defaultIcon = sortIcons.querySelector('.fa-sort');
+            const upIcon = sortIcons.querySelector('.fa-caret-up');
+            const downIcon = sortIcons.querySelector('.fa-caret-down');
+
+            if (defaultIcon) defaultIcon.style.display = 'inline';
+            if (upIcon) upIcon.style.display = 'none';
+            if (downIcon) downIcon.style.display = 'none';
+
+            sortIcons.classList.remove('spin-up', 'spin-down');
+        } else {
+            console.warn('No sort icons found for header:', header); // Warn if no sortIcons found
+        }
+    });
+}
+
+    function toggleSortIcons(sortIcons, isAscending) {
+        resetSortIcons();
+
+        const defaultIcon = sortIcons.querySelector('.fa-sort');
+        const upIcon = sortIcons.querySelector('.fa-caret-up');
+        const downIcon = sortIcons.querySelector('.fa-caret-down');
+
+        if (isAscending) {
+            defaultIcon.style.display = 'none';
+            upIcon.style.display = 'none';
+            downIcon.style.display = 'inline';
+            sortIcons.classList.remove('spin-up');
+            sortIcons.classList.add('spin-down');
+        } else {
+            defaultIcon.style.display = 'none';
+            upIcon.style.display = 'inline';
+            downIcon.style.display = 'none';
+            sortIcons.classList.remove('spin-down');
+            sortIcons.classList.add('spin-up');
+        }
+    }
+
+    showDataRows();
+});
 </script>
 </body>
 </html>
 
-<%--<!DOCTYPE html>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.tigersign.dao.PendingClaimsService" %>
-<%@ page import="com.tigersign.dao.PendingClaim" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Date" %>
-<%@ page import="java.text.ParseException" %>
-
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pending Claims - TigerSign</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../resources/css/sidebar.css">
-    <link rel="stylesheet" href="../resources/css/table.css">
-    <link rel="stylesheet" href="../resources/css/pendingclaim.css">
-    <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
-</head>
-<style>
-    .transaction-table th{
-        padding: 15px 5px; 
-    } 
-    
-    .transaction-table td{
-        padding: 2px 5px;
-    }
-</style>
-<body>
-    <%@ include file="/WEB-INF/components/session_admin.jsp" %>
-    
-    <% 
-        String statusUpdateId = request.getParameter("id");
-        String statusUpdateValue = request.getParameter("status");
-        String firstName = (String) session.getAttribute("adminFirstName");
-        String lastName = (String) session.getAttribute("adminLastName");
-        String fullName = firstName + " " + lastName;
-        if (statusUpdateId != null && statusUpdateValue != null) {
-            try {
-                int id = Integer.parseInt(statusUpdateId);
-                PendingClaimsService service = new PendingClaimsService();
-                service.updateClaimStatus(id, statusUpdateValue.toUpperCase()); 
-                response.sendRedirect("pending_claim.jsp"); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace(); 
-            }
-        }
-        
-
-        request.setAttribute("activePage", "pending_claim");  
-
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-    %>
-    
-    <%@ include file="/WEB-INF/components/header_admin.jsp" %>
-    <%@ include file="/WEB-INF/components/sidebar_admin.jsp" %>
-    
-    <div class="main-content">
-        <div class="margin-content">
-            <h2 class="title-page">PENDING CLAIMS</h2>
-            <%@ include file="/WEB-INF/components/top_nav.jsp" %>
-            <div class="table-container">
-                <div class="table-wrapper">
-                    <table class="transaction-table" id="pending_table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Transaction ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>College</th>
-                            <th>Date Processed</th>
-                            <th>Files</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                        <tbody>
-                        <%
-                            PendingClaimsService service = new PendingClaimsService();
-                            List<PendingClaim> claims = service.getPendingClaims();
-                            if (claims != null) {
-                                for (PendingClaim claim : claims) {
-                                    String dateStr = claim.getDateProcessed();
-                                    String formattedDate = "";
-                                    if (dateStr != null && !dateStr.isEmpty()) {
-                                        try {
-                                            Date date = inputFormat.parse(dateStr); 
-                                            formattedDate = outputFormat.format(date);
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                        %>
-                            <tr>
-                                <td><%= claim.getId() %></td>
-                                <td><%= claim.getTransactionId() %></td>
-                                <td class="expandable-text"><%= claim.getName() %></td>
-                                <td class="expandable-text"><%= claim.getEmail() %></td>
-                                <td>
-                                    <form action="pending_claim.jsp" method="post">
-                                        <input type="hidden" name="id" value="<%= claim.getId() %>">
-                                        <select name="status" class="status-dropdown 
-                                            <%= "PENDING".equalsIgnoreCase(claim.getStatus()) ? "status-PENDING" : 
-                                                "PROCESSING".equalsIgnoreCase(claim.getStatus()) ? "status-PROCESSING" : 
-                                                "AVAILABLE".equalsIgnoreCase(claim.getStatus()) ? "status-AVAILABLE" : "" %>" 
-                                            onchange="this.form.submit()">
-                                            <option value="pending" <%= "PENDING".equals(claim.getStatus()) ? "selected" : "" %>>PENDING</option>
-                                            <option value="processing" <%= "PROCESSING".equals(claim.getStatus()) ? "selected" : "" %>>PROCESSING</option>
-                                            <option value="available" <%= "AVAILABLE".equals(claim.getStatus()) ? "selected" : "" %>>AVAILABLE</option>
-                                        </select>
-                                        <div style="margin-top: 3px; color: #6c757d;">
-                                            (X days)
-                                        </div>
-                                    </form>
-                                </td>
-                                <td class="expandable-text"><%= claim.getCollege() %></td>
-                                <td><%= formattedDate %></td>
-                                <td class="expandable-text"><%= claim.getFiles() %></td>
-                                <td>
-                                    <button type="submit" class="action-button" 
-                                        <%= "PROCESSING".equalsIgnoreCase(claim.getStatus()) || "PENDING".equalsIgnoreCase(claim.getStatus()) ? "disabled" : "" %>>
-                                        CLAIM
-                                    </button>
-                                </td>
-                            </tr>
-                        <%
-                                }
-                            } else {
-                        %>
-                            <tr>
-                                <td colspan="9">No pending claims found.</td>
-                            </tr>
-                        <%
-                            }
-                        %>
-                    </tbody>
-                    </table>
-                </div>
-            </div>
-            <%@ include file="/WEB-INF/components/pagination.jsp" %>
-            <div id="claimer-type-modal" class="popup-overlay">
-                <div class="popup">
-                    <div class="popup-header">
-                        <strong>CLAIMER TYPE</strong>
-                        <span class="popup-close" id="popup-close">&times;</span>
-                    </div>
-                    <div class="popup-content">
-                        <p class="bigger-text">Select the corresponding type of claimer to activate the Document Receiving Form.</p>
-                        <div class="info-text">
-                            <i class="bi bi-info-circle"></i>
-                            <p class="smaller-text">Select <strong>Primary Claimer</strong> if the original requester is present. If the original requester is not physically present, select <strong>Representative.</strong></p>
-                        </div>
-                        <div class="claimer-button">
-                           <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp" class="primary" target="_blank">
-                                Primary Claimer<i class="bi bi-chevron-right"></i>
-                            </a>
-                            <a href="../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp" class="representative" target="_blank">
-                                Representative<i class="bi bi-chevron-right"></i>
-                            </a>                                                     
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <%@ include file="/WEB-INF/components/script.jsp" %>
-    <script type="text/javascript">
-        const adminFullName = "<%= fullName %>";
-    </script>
-</body>
-</html>--%>

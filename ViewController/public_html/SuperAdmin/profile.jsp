@@ -28,13 +28,11 @@
             <div class="profile-box">
                 <div class="profile-pic">
                     <label for="profile-pic-toggle">
-                        <!-- Display the user's profile picture dynamically -->
                         <img src="<%= (userPicture != null ? userPicture : "../resources/images/tigersign.png") %>" alt="Profile Picture" id="profile-pic-img">
                     </label>
                 </div>
                 <div class="profile-name">
                     <div class="name-line">
-                        <!-- Display the user's first and last names dynamically -->
                         <h3><%= userFirstName %> <%= userLastName %></h3>
                         <span>ACTIVE</span>
                     </div>
