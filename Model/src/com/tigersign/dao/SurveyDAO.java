@@ -170,7 +170,8 @@ public class SurveyDAO {
                 while (rs.next()) {
                     Survey survey = new Survey();
                     survey.setService(rs.getString("service"));
-                    survey.setRating(rs.getInt("avg_rating"));
+                    double avgRating = rs.getDouble("avg_rating");
+                    survey.setWindowRating(avgRating);
                     survey.setEvaluationCount(rs.getInt("eval_count"));
                     serviceScores.add(survey);
                 }

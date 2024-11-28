@@ -109,7 +109,7 @@ header .logo img {
 
 .instruction {
     margin: 20px 0;
-    padding: 15px 15px 5px 15px;
+    padding: 20px;
     background-color: #F0F7FD;
     border-left: 5px solid #CEE4F2;
 }
@@ -431,6 +431,26 @@ header .logo img {
   transform: translateZ(0);
   animation: mltShdSpin 1.7s infinite ease, round 1.7s infinite ease;
   margin: 100px;
+}
+
+.download-section{
+    padding: 20px 0;
+}
+
+.download-link{
+    background-color: var(--red);
+    color: var(--white);
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.download-link i{
+    font-size: 16px;
+    margin-right: 5px;
 }
 
 @keyframes mltShdSpin {

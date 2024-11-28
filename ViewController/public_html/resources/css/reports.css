@@ -235,21 +235,7 @@
     color: var(--primary-color); 
 }
 
-#overall-score .card-number {
-    position: relative;
-    display: inline-block;
-    width: 70px; 
-    height: 70px;
-    line-height: 70px; 
-    background-color: white;
-    border-radius: 50%; 
-    font-weight: bold;
-    font-size: 35px; 
-    text-align: center; 
-    padding: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-    margin: 0 auto; 
-}
+
 
 .feedback-container{
     padding: 10px 0px;

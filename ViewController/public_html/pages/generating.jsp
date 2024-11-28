@@ -29,7 +29,7 @@
       if (targetUrl) {
         window.location.href = targetUrl;
       }
-    }, 1000); 
+    }, 500); 
   </script>
 </body>
 </html>

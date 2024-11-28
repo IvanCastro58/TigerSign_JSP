@@ -1,10 +1,25 @@
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.draw.LineSeparator;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import com.itextpdf.text.Image;
+
+import java.awt.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +32,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.renderer.category.BarRenderer;
+
 @WebServlet("/ReportGeneratorServlet")
 public class ReportGeneratorServlet extends HttpServlet {
     
@@ -24,27 +43,6 @@ public class ReportGeneratorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String format = request.getParameter("format");
         String filterType = request.getParameter("filterType");
-
-        if (filterType != null) {
-            switch (filterType) {
-                case "day":
-                    filterType = "By Day";
-                    break;
-                case "month":
-                    filterType = "By Month";
-                    break;
-                case "range":
-                    filterType = "By Date Range";
-                    break;
-                case "year":
-                    filterType = "By Year";
-                    break;
-                default:
-                    filterType = "";
-                    break;
-            }
-        }
-        
         String filterValue = request.getParameter("filterValue");
         String claimedCount = request.getParameter("claimedCount");
         String[] documentTypesArray = request.getParameterValues("documentTypes");
@@ -141,13 +139,72 @@ public class ReportGeneratorServlet extends HttpServlet {
         headerTable.addCell(logoCell2);
 
         document.add(headerTable);
+        
+        // Add horizontal line 
+        LineSeparator line = new LineSeparator();
+        line.setLineWidth(0.5f);
+        line.setLineColor(new BaseColor(204, 204, 204));
+        document.add(new Chunk(line));
+        
+        document.add(new Paragraph("\n"));
+
+        String readableType = "All Data";
+        String displayValue = "All Data";
+        SimpleDateFormat inputFormat;
+        SimpleDateFormat outputFormat;
+
+        if (filterType != null && !filterType.isEmpty()) {
+            switch (filterType) {
+                case "day":
+                    readableType = "By Day";
+                    inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    outputFormat = new SimpleDateFormat("dd MMM yyyy");
+                    try {
+                        displayValue = outputFormat.format(inputFormat.parse(filterValue));
+                    } catch (ParseException e) {
+                        displayValue = "Invalid Date";
+                    }
+                    break;
+                case "month":
+                    readableType = "By Month";
+                    inputFormat = new SimpleDateFormat("yyyy-MM");
+                    outputFormat = new SimpleDateFormat("MMMM yyyy");
+                    try {
+                        displayValue = outputFormat.format(inputFormat.parse(filterValue));
+                    } catch (ParseException e) {
+                        displayValue = "Invalid Month Format";
+                    }
+                    break;
+                case "range":
+                    readableType = "Date Range";
+                    inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    outputFormat = new SimpleDateFormat("dd MMM yyyy");
+                    try {
+                        String[] range = filterValue.split(",");
+                        String start = outputFormat.format(inputFormat.parse(range[0]));
+                        String end = outputFormat.format(inputFormat.parse(range[1]));
+                        displayValue = start + " to " + end;
+                    } catch (ParseException e) {
+                        displayValue = "Invalid Date Range";
+                    }
+                    break;
+                case "year":
+                    readableType = "By Year";
+                    displayValue = filterValue;
+                    break;
+                default:
+                    readableType = "Unknown Filter";
+                    displayValue = filterValue;
+                    break;
+            }
+        }
 
         PdfPTable filterValueTable = new PdfPTable(4);
         filterValueTable.setWidthPercentage(100);
         filterValueTable.addCell(createCell("Filter Type:", null));
-        filterValueTable.addCell(createCell(filterType.isEmpty() ? "All Data" : filterType, null));
+        filterValueTable.addCell(createCell(readableType, null));
         filterValueTable.addCell(createCell("Filter Value:", null));
-        filterValueTable.addCell(createCell(filterValue.isEmpty() ? "All Data" : filterValue, null));
+        filterValueTable.addCell(createCell(displayValue, null));
         document.add(filterValueTable);
 
         document.add(new Paragraph("\n"));
@@ -166,62 +223,50 @@ public class ReportGeneratorServlet extends HttpServlet {
         requestInfoTable.addCell(claimCell);
         document.add(requestInfoTable);
 
+        document.add(new Chunk(line));
+        
         document.add(new Paragraph("\n"));
 
-        PdfPTable processingInfoTable = new PdfPTable(4);
-        processingInfoTable.setWidthPercentage(100);
-        PdfPCell averageCell = createCell("Average Processing Time of Documents", CUSTOM_GRAY);
-        averageCell.setColspan(4);
-        processingInfoTable.addCell(averageCell);
-
-        document.add(processingInfoTable);
-                         
-        // Document Info Section
-        PdfPTable documentInfoTable = new PdfPTable(4);
-        documentInfoTable.setWidthPercentage(100);
-        PdfPCell documentType = createCell1("Document Type", CUSTOM_LIGHTER_GRAY);
-        documentType.setColspan(2);
-        documentInfoTable.addCell(documentType);
-        documentInfoTable.addCell(createCell1("Total Release", CUSTOM_LIGHTER_GRAY));
-        documentInfoTable.addCell(createCell1("Average Score (hours)", CUSTOM_LIGHTER_GRAY));
-        
-
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (int i = 0; i < documentTypes.size(); i++) {
-            PdfPCell typeCell = createNormalCell(documentTypes.get(i));
-            typeCell.setColspan(2);
-            documentInfoTable.addCell(typeCell);
-            documentInfoTable.addCell(createNormalCell(String.valueOf(documentCounts.get(i))));
-            documentInfoTable.addCell(createNormalCell(String.format("%.2f", documentAvgProcessingHours.get(i))));
+            dataset.addValue(documentCounts.get(i), "Total Releases", documentTypes.get(i));
+            dataset.addValue(documentAvgProcessingHours.get(i) / 24.0, "Avg Processing Time (days)", documentTypes.get(i)); 
         }
 
-        document.add(documentInfoTable);
+        JFreeChart barChart = ChartFactory.createBarChart(
+            "Average Processing Time of Documents",
+            "Document Type",
+            "Values",
+            dataset,
+            PlotOrientation.HORIZONTAL,
+            true,
+            true,
+            false
+        );
+
+        CategoryPlot plot = barChart.getCategoryPlot();
+        plot.setRangeGridlinePaint(java.awt.Color.BLACK);
+        plot.setBackgroundPaint(Color.WHITE);
         
-//        Font footerFont = FontFactory.getFont(FontFactory.TIMES, 10, BaseColor.GRAY);
-//        String imagePath = getServletContext().getRealPath("/resources/images/tigersign.png");
-//
-//            try {
-//                Image footerImage = Image.getInstance(imagePath);
-//                float width = 10f;
-//                float height = 10f;
-//
-//                footerImage.scaleToFit(width, height);
-//
-//                footerImage.setAlignment(Image.ALIGN_LEFT);
-//                  
-//                Chunk imageChunk = new Chunk(footerImage, 0, 0);
-//                Chunk textChunk = new Chunk(" This document is for verification purposes only.", footerFont);
-//
-//                Phrase footerPhrase = new Phrase();
-//                footerPhrase.add(imageChunk);
-//                footerPhrase.add(textChunk);
-//
-//                Paragraph footer = new Paragraph(footerPhrase);
-//                footer.setAlignment(Element.ALIGN_CENTER);
-//                  
-//                document.add(footer);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setMaximumBarWidth(0.04); 
+        renderer.setItemMargin(0.02); 
+        
+        renderer.setSeriesPaint(0, new java.awt.Color(244, 187, 0));  
+        renderer.setSeriesPaint(1, new java.awt.Color(59, 131, 251));
+        
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setAutoRangeIncludesZero(true);
+        rangeAxis.setTickUnit(new org.jfree.chart.axis.NumberTickUnit(1)); 
+
+        java.awt.image.BufferedImage chartImage = barChart.createBufferedImage(800, 800);
+        ByteArrayOutputStream chartOutputStream = new ByteArrayOutputStream();
+        javax.imageio.ImageIO.write(chartImage, "png", chartOutputStream);
+        byte[] chartBytes = chartOutputStream.toByteArray();
+        Image chartPdfImage = Image.getInstance(chartBytes);
+
+        chartPdfImage.scaleToFit(550, 700);
+        document.add(chartPdfImage);
             
         document.close();
 
@@ -253,7 +298,7 @@ public class ReportGeneratorServlet extends HttpServlet {
 
     private static PdfPCell createNormalCell(String content) {
         PdfPCell cell = new PdfPCell(new Phrase(content, FontFactory.getFont(FontFactory.HELVETICA, 8))); 
-        cell.setPadding(3);
+        cell.setPadding(4);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setBorder(PdfPCell.NO_BORDER);
         return cell;

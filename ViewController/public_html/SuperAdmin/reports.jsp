@@ -683,6 +683,9 @@
                 const option = document.createElement("option");
                 option.value = year;
                 option.text = year;
+                if (year === currentYear) {
+                    option.selected = true;
+                }
                 yearSelect.add(option);
             }
         }
@@ -712,6 +715,16 @@
             }
             closeModal();
         }
+        
+        window.onload = function() {
+            const currentPage = window.location.pathname;
+            const currentQuery = window.location.search;
+        
+            if (!currentPage.endsWith("reports.jsp") || !currentQuery.includes("filterType")) {
+                localStorage.removeItem("filterType");
+                localStorage.removeItem("filterValue");
+            }
+        };
     </script>
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>

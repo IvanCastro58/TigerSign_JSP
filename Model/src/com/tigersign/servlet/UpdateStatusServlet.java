@@ -1,6 +1,7 @@
 package com.tigersign.servlet;
 
 import com.tigersign.dao.AuditLogger;
+import com.tigersign.dao.AuditLoggerSuperAdmin;
 import com.tigersign.dao.DatabaseConnection;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class UpdateStatusServlet extends HttpServlet {
         String newStatus = request.getParameter("newStatus");
         String reason = request.getParameter("reason"); 
         String adminEmail = (String) request.getSession().getAttribute("adminEmail"); 
+        String userEmail = (String) request.getSession().getAttribute("userEmail");
 
         String updateQuery = "UPDATE TS_REQUEST SET FILE_STATUS = ?, ON_HOLD_REASON = ?, " +
                              "DATE_ON_HOLD = CASE WHEN ? = 'HOLD' THEN SYSDATE ELSE DATE_ON_HOLD END, " +
@@ -57,7 +59,11 @@ public class UpdateStatusServlet extends HttpServlet {
 
                 if (orNumber != null) {
                     String activity = "Updated status of O.R. Number " + orNumber + " to " + newStatus + " (Request: " + requestData + ")";
-                    AuditLogger.logActivity(adminEmail, activity);
+                    if (adminEmail != null) {
+                        AuditLogger.logActivity(adminEmail, activity);
+                    } else if (userEmail != null) {
+                        AuditLoggerSuperAdmin.logActivity(userEmail, activity);
+                    }
                 }
             } else {
                 response.getWriter().write("Status not updated. No matching record found.");

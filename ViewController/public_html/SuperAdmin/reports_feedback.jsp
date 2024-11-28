@@ -53,7 +53,7 @@
                             String formattedFeedbackDate = feedbackDate.format(feedbackFormatter);
                     
                             StringBuilder starRating = new StringBuilder();
-                            for (int i = 1; i <= 5; i++) { // Change to 5 stars
+                            for (int i = 1; i <= 4; i++) { 
                                 if (i <= rating) {
                                     starRating.append("<i class='fa-solid fa-star'></i>"); 
                                 } else {

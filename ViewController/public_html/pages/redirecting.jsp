@@ -29,7 +29,7 @@
     
     setTimeout(function() {
       window.location.href = targetUrl + queryParams;
-    }, 1000); 
+    }, 500); 
   </script>
 </body>
 </html>

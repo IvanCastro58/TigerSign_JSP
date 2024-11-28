@@ -265,12 +265,24 @@
                 <div class="card" id="overall-score">
                     <h3 class="card-heading">Average Overall Score</h3>
                     <div class="card-number" 
-                         style="color: <%= averageScore >= 3.5 ? "#1C8454" : 
-                                          (averageScore >= 2 ? "#F4BB00" : "#d9534f") %>;
-                                border: 5px solid <%= averageScore >= 3.5 ? "#1C8454" : 
-                                                     (averageScore >= 2 ? "#F4BB00" : "#d9534f") %>;">
+                         style="color: <%= averageScore > 3.5 ? "#1C8454" : 
+                                          (averageScore >= 2.1 ? "#F4BB00" : "#d9534f") %>;">
                         <%= String.format("%.1f", averageScore) %>
                     </div>
+                    <div class="stars">
+                        <% int fullStars = (int) averageScore; %>
+                        <% boolean hasHalfStar = (averageScore % 1) >= 0.5; %>
+                        <% for (int i = 1; i <= 4; i++) { %>
+                            <% if (i <= fullStars) { %>
+                                <i class="fas fa-star" style="color: #F4BB00;"></i>
+                            <% } else if (i == fullStars + 1 && hasHalfStar) { %>
+                                <i class="fas fa-star-half-alt" style="color: #F4BB00;"></i>
+                            <% } else { %>
+                                <i class="far fa-star" style="color: #F4BB00;"></i>
+                            <% } %>
+                        <% } %>
+                    </div>
+
                 </div>
                 <div class="card" id="eval-received">
                     <h3 class="card-heading">Evaluation Received</h3>
@@ -327,7 +339,7 @@
                                             <tr>
                                                 <td><%= serviceTitle %></td>                       
                                                 <td><%= survey.getEvaluationCount() %></td> 
-                                                <td><%= survey.getRating() %></td>
+                                                <td><%= survey.getWindowRating() %></td>
                                             </tr>
                                         <% } %>
                                     </tbody>
@@ -774,6 +786,9 @@
                 const option = document.createElement("option");
                 option.value = year;
                 option.text = year;
+                if (year === currentYear) {
+                    option.selected = true;
+                }
                 yearSelect.add(option);
             }
         }
@@ -816,6 +831,16 @@
             }
             closeModal();
         }
+        
+        window.onload = function() {
+            const currentPage = window.location.pathname;
+            const currentQuery = window.location.search;
+        
+            if (!currentPage.endsWith("reports_survey.jsp") || !currentQuery.includes("filterType")) {
+                localStorage.removeItem("filterType");
+                localStorage.removeItem("filterValue");
+            }
+        };
     </script>
     
     <%@ include file="/WEB-INF/components/script.jsp" %>  

@@ -7,6 +7,7 @@ public class Survey {
     private String email;
     private String service;
     private int rating;
+    private double windowRating;
     private String standout;
     private String feedback;
     private String otherService;
@@ -79,6 +80,14 @@ public class Survey {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+    
+    public double getWindowRating() {
+        return windowRating;
+    }
+
+    public void setWindowRating(double windowRating) {
+        this.windowRating = windowRating;
     }
 
     public String getStandout() {

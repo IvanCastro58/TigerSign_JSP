@@ -104,11 +104,6 @@ header label span {
     z-index: 1000;
     top: 59px;
     left: 0;
-    /* Disable transition for initial page load */
-    transition: none;
-}
-
-.sidebar.transition {
     transition: transform 0.2s ease, width 0.2s ease;
 }
 
@@ -145,11 +140,7 @@ header label span {
     margin-top: 60px;
     margin-left: 250px;
     width: calc(100% - 250px);
-    transition: none;
-}
-
-.main-content.transition {
-    transition: margin-left 0.2s ease;
+    transition: margin-left 0.2s ease, width 0.2s ease;
 }
 
 .margin-content {
@@ -282,11 +273,6 @@ header label span {
     display: none;
     justify-content: center;
     align-items: center;
-}
-
-.sidebar.no-transition,
-.main-content.no-transition {
-    transition: none !important;
 }
 
 @media (min-width: 993px) {

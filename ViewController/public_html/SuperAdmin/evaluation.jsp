@@ -45,10 +45,11 @@
         window.onload = function() {
             const url = new URL(window.location.href);
             const successMessage = url.searchParams.get("success");
+            const failedMessage = url.searchParams.get("failed");
         
             if (successMessage) {
                 Toastify({
-                    text: "<i class='bi bi-check-circle-fill toast-icon-success'></i> Survey/Evaluation Link Sent Successfully !",
+                    text: "<i class='bi bi-check-circle-fill toast-icon-success'></i> Survey/Evaluation Link Sent Successfully!",
                     backgroundColor: '#ffffff',
                     gravity: 'bottom',
                     position: 'right',
@@ -56,15 +57,13 @@
                     escapeMarkup: false,
                     duration: 3000
                 }).showToast();
-
-                url.searchParams.delete("success");
-                window.history.replaceState({}, document.title, url.pathname + url.search); 
+        
+                window.history.replaceState({}, document.title, url.pathname);
             }
-            
-            const failedMessage = url.searchParams.get("failed");
+        
             if (failedMessage) {
                 Toastify({
-                    text: "<i class='bi bi-exclamation-circle-fill toast-icon-error'></i> Failed to Sent Survey/Evaluation Link !",
+                    text: "<i class='bi bi-exclamation-circle-fill toast-icon-error'></i> Failed to Send Survey/Evaluation Link!",
                     backgroundColor: '#ffffff',
                     gravity: 'bottom',
                     position: 'right',
@@ -73,8 +72,7 @@
                     duration: 3000
                 }).showToast();
         
-                url.searchParams.delete("failed");
-                window.history.replaceState(null, null, url.toString());
+                window.history.replaceState({}, document.title, url.pathname);
             }
         };
     </script>

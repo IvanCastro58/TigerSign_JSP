@@ -9,35 +9,35 @@
         </div>
         <div class="horizontal-line"></div>
         <li>
-            <a href="${pageContext.request.contextPath}/Admin/dashboard.jsp" class="${activePage == 'dashboard' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/Admin/dashboard.jsp" class="<%= "dashboard".equals(request.getAttribute("activePage")) ? "active" : "" %>">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
                 <span class="tooltip">Dashboard</span>
             </a>
         </li>
         <li class="profile">
-            <a href="${pageContext.request.contextPath}/Admin/profile.jsp" class="${activePage == 'profile' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/Admin/profile.jsp" class="<%= "profile".equals(request.getAttribute("activePage")) ? "active" : "" %>">
                 <i class="bi bi-person-circle"></i>
                 <span>Profile</span>
                 <span class="tooltip">Profile</span>
             </a>
         </li>
         <li>
-            <a href="${pageContext.request.contextPath}/Admin/pending_claim.jsp" class="${activePage == 'pending_claim' ? 'active' : ''}">
-                <i class="bi bi-clock-history"></i>
+            <a href="${pageContext.request.contextPath}/Admin/pending_claim.jsp" class="<%= "pending_claim".equals(request.getAttribute("activePage")) ? "active" : "" %>">
+                <i class="bi bi-clock-fill"></i>
                 <span>Pending Claims</span>
-                <span class="tooltip">Pending Claims</span>
+                <span class="tooltip">Paid Application</span>
             </a>
         </li>
         <li>
-            <a href="${pageContext.request.contextPath}/Admin/claimed_request.jsp" class="${activePage == 'claimed_request' ? 'active' : ''}">
-                <i class="bi bi-check-circle-fill"></i>
+            <a href="${pageContext.request.contextPath}/Admin/claimed_request.jsp" class="<%= "claimed_request".equals(request.getAttribute("activePage")) ? "active" : "" %>">
+                <i class="bi bi-check-circle"></i>
                 <span>Claimed Request</span>
                 <span class="tooltip">Claimed Request</span>
             </a>
         </li>
         <li>
-            <a href="${pageContext.request.contextPath}/Admin/evaluation.jsp" class="${activePage == 'evaluation' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/Admin/evaluation.jsp" class="<%= "evaluation".equals(request.getAttribute("activePage")) ? "active" : "" %>">
                 <i class="bi bi-star-fill"></i>
                 <span>Evaluation</span>
                 <span class="tooltip">Evaluation</span>

@@ -51,19 +51,15 @@
         }
     
         .transaction-table th:nth-child(1), .transaction-table td:nth-child(1) {
-            width: 25%;
+            width: 20%;
         }
     
         .transaction-table th:nth-child(2), .transaction-table td:nth-child(2) {
-            width: 10%;
+            width: 70%;
         }
     
         .transaction-table th:nth-child(3), .transaction-table td:nth-child(3) {
-            width: 50%;
-        }
-    
-        .transaction-table th:nth-child(4), .transaction-table td:nth-child(4) {
-            width: 15%;
+            width: 10%;
         }
         
         .sort-icons {
@@ -186,9 +182,8 @@
                         <table class="transaction-table" id="audit_logs">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
                                     <th style="cursor: pointer;">
-                                        Admin ID
+                                        Name
                                         <span class="sort-icons">
                                             <i class="fa-solid fa-sort sort-icon"></i>
                                             <i class="fa-solid fa-caret-up sort-icon" style="display: none;"></i>
@@ -225,7 +220,6 @@
         
                                                 </div>
                                             </td>
-                                            <td><div class="skeleton" style="width: 80%; height: 1em;"></div></td>
                                             <td><div class="skeleton" style="width: 100%; height: 1em;"></div></td>
                                             <td>
                                                 <div style="display: flex; flex-direction: column;">
@@ -242,22 +236,22 @@
                                 <%
                                     if (auditList != null && !auditList.isEmpty()) {
                                         for (AuditLog audit : auditList) {
+                                            String firstName = audit.getFirstName() != null ? audit.getFirstName() : userFirstName;
+                                            String lastName = audit.getLastName() != null ? audit.getLastName() : userLastName;
+                                            String position = audit.getPosition() != null ? audit.getPosition() : "Super Admin";
+                                            String picture = audit.getPicture() != null ? audit.getPicture() : userPicture;
+                                            String defaultPicture = request.getContextPath() + "/resources/images/default-profile.jpg";
                                 %>
                                     <tr class="data-row" style="display: none;">
                                         <td>
                                             <div style="display: flex; align-items: center;">
-                                                <%
-                                                    String picture = audit.getPicture();
-                                                    String defaultPicture = request.getContextPath() + "/resources/images/default-profile.jpg";
-                                                %>
                                                 <img src="<%= picture != null ? picture : defaultPicture %>" alt="Admin Picture" style="border-radius: 50%; margin-right: 10px;" width="30" height="30"/>
                                                 <div>
-                                                    <div style="font-size: 12px; font-weight: 600;"><%= audit.getFirstName() + " " + audit.getLastName() %></div>
-                                                    <div style="font-size: 10px; color: #a1a1a1; font-weight: 500;"><%= audit.getPosition() %></div>
+                                                    <div style="font-size: 12px; font-weight: 600;"><%= firstName + " " + lastName %></div>
+                                                    <div style="font-size: 10px; color: #a1a1a1; font-weight: 500;"><%= position %></div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><%= audit.getAdminId() %></td>
                                         <td class="expandable-text"><%= audit.getActivity() %></td>
                                         <td>
                                             <%
@@ -374,7 +368,7 @@
                     const searchTerm = this.value.toLowerCase();
                     filteredRows = rows.filter(row => {
                         const nameCell = row.cells[0].textContent.toLowerCase();
-                        const activityCell = row.cells[2].textContent.toLowerCase();
+                        const activityCell = row.cells[1].textContent.toLowerCase();
                         return nameCell.includes(searchTerm) || activityCell.includes(searchTerm);
                     });
                 
@@ -490,6 +484,12 @@
                     filteredRows.sort((a, b) => {
                         const aText = a.cells[columnIndex].textContent.trim();
                         const bText = b.cells[columnIndex].textContent.trim();
+                        
+                        if (columnIndex === 2) { 
+                            const aDate = new Date(aText);
+                            const bDate = new Date(bText);
+                            return isAscending ? aDate - bDate : bDate - aDate;
+                        }
             
                         if (!isNaN(aText) && !isNaN(bText)) {
                             return isAscending ? aText - bText : bText - aText;

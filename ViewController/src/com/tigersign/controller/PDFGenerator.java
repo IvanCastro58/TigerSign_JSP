@@ -20,9 +20,6 @@ import com.tigersign.dao.ClaimedRequestDetails;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 import java.util.Base64;
 
 import javax.servlet.ServletContext;
@@ -216,8 +213,6 @@ public class PDFGenerator {
         
         document.add(new Paragraph("\n"));
         document.add(new Paragraph("\n"));
-        document.add(new Paragraph("\n"));
-        document.add(new Paragraph("\n"));
         
         PdfPTable signatureTable = new PdfPTable(1);
         signatureTable.setWidthPercentage(100);
@@ -259,7 +254,7 @@ public class PDFGenerator {
         nestedSignatureTable.addCell(signatureNoteCell);
 
         Chunk dateLabel = new Chunk("Date: ", FontFactory.getFont(FontFactory.HELVETICA, 8, Font.ITALIC));
-        Chunk dateValue = new Chunk(getCurrentDate(), FontFactory.getFont(FontFactory.HELVETICA, 8, Font.BOLD));
+        Chunk dateValue = new Chunk(details.getProofDate(), FontFactory.getFont(FontFactory.HELVETICA, 8, Font.BOLD));
 
         Phrase datePhrase = new Phrase();
         datePhrase.add(dateLabel);
@@ -279,7 +274,6 @@ public class PDFGenerator {
         // Add the signature table to the document
         document.add(signatureTable);
         
-        document.add(new Paragraph("\n"));
         document.add(new Paragraph("\n"));
         
         // Note section
@@ -304,6 +298,70 @@ public class PDFGenerator {
         noteParagraph.add(noteBody);
 
         document.add(noteParagraph);
+        
+        document.newPage();
+
+        PdfPTable imageTable = new PdfPTable(1);
+        imageTable.setWidthPercentage(100);
+        imageTable.setSpacingBefore(10f);
+        imageTable.setSpacingAfter(10f);
+
+        if (details.getPhotoBase64() != null && !details.getPhotoBase64().isEmpty()) {
+            byte[] proofBytes = Base64.getDecoder().decode(details.getPhotoBase64());
+            Image proofImage = Image.getInstance(proofBytes);
+            proofImage.scaleToFit(400, 300);
+            PdfPCell proofCell = new PdfPCell(proofImage);
+            proofCell.setBorder(PdfPCell.NO_BORDER);
+            proofCell.setPadding(10);
+            proofCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            imageTable.addCell(proofCell);
+
+            PdfPCell proofCaption = new PdfPCell(new Phrase("Image Proof with Documents", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10)));
+            proofCaption.setBorder(PdfPCell.NO_BORDER);
+            proofCaption.setHorizontalAlignment(Element.ALIGN_CENTER);
+            imageTable.addCell(proofCaption);
+            
+            PdfPCell spacerCell = new PdfPCell();
+            spacerCell.setBorder(PdfPCell.NO_BORDER);
+            spacerCell.setFixedHeight(50); 
+            imageTable.addCell(spacerCell);
+        }
+        
+        if (details.getIdPhotoBase64() != null && !details.getIdPhotoBase64().isEmpty()) {
+            byte[] idBytes = Base64.getDecoder().decode(details.getIdPhotoBase64());
+            Image idImage = Image.getInstance(idBytes);
+            idImage.scaleToFit(400, 300);
+            PdfPCell idCell = new PdfPCell(idImage);
+            idCell.setBorder(PdfPCell.NO_BORDER);
+            idCell.setPadding(10);
+            idCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            imageTable.addCell(idCell);
+
+            PdfPCell idCaption = new PdfPCell(new Phrase("ID Photo", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10)));
+            idCaption.setBorder(PdfPCell.NO_BORDER);
+            idCaption.setHorizontalAlignment(Element.ALIGN_CENTER);
+            imageTable.addCell(idCaption);
+        }
+        
+        document.newPage();
+
+        if (details.getLetterPhotoBase64() != null && !details.getLetterPhotoBase64().isEmpty()) {
+            byte[] letterBytes = Base64.getDecoder().decode(details.getLetterPhotoBase64());
+            Image letterImage = Image.getInstance(letterBytes);
+            letterImage.scaleToFit(500, 500);
+            PdfPCell letterCell = new PdfPCell(letterImage);
+            letterCell.setBorder(PdfPCell.NO_BORDER);
+            letterCell.setPadding(10);
+            letterCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            imageTable.addCell(letterCell);
+
+            PdfPCell letterCaption = new PdfPCell(new Phrase("Authorization Letter", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10)));
+            letterCaption.setBorder(PdfPCell.NO_BORDER);
+            letterCaption.setHorizontalAlignment(Element.ALIGN_CENTER);
+            imageTable.addCell(letterCaption);
+        }
+
+        document.add(imageTable);
 
         document.close();
         return byteArrayOutputStream.toByteArray();
@@ -322,15 +380,9 @@ public class PDFGenerator {
 
     private static PdfPCell createNormalCell(String content) {
         PdfPCell cell = new PdfPCell(new Phrase(content, FontFactory.getFont(FontFactory.HELVETICA, 8))); 
-        cell.setPadding(3);
+        cell.setPadding(4);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         cell.setBorder(PdfPCell.NO_BORDER);
         return cell;
-    }
-    
-    private static String getCurrentDate() {
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
-        return today.format(formatter);
     }
 }

@@ -23,7 +23,7 @@
         <div class="container">
         <div class="column left-column">
             <div class="heading">Online and Walk-In Document Request</div>
-            <div class="heading1">Check status of walk in application of student records via O.R. number.</div>
+            <div class="heading1">Check status of online and walk in application of student records via O.R. number.</div>
             <div class="highlight-bar"></div>
             <div class="instruction">
                 <div class="instruction-heading">
@@ -31,14 +31,22 @@
                 </div>
                 <ul class="instruction-list">
                     <li>1. Your Official Receipt (OR) number will serve as your identification.</li>
-                    <li>2. Kindly enter your Official Receipt (OR) number in the search field, for example: <strong>01-100374932</strong>.</li>
+                    <li>2. Kindly enter your Official Receipt (OR) number in the search field, for example: <strong>01-123456789</strong>.</li>
+                    <li>3. If a representative will claim your requested documents, they must present an Authorization Letter along with a valid ID of the requester.</li>
                 </ul>
+                
+                <div class="download-section">
+                    <a href="${pageContext.request.contextPath}/resources/documents/Authorization_Letter.pdf" target="_blank" class="download-link"> 
+                        <i class="bi bi-filetype-pdf"></i>
+                        Download PDF
+                    </a>
+                </div>
             </div>
             <div class="box">
                 <div class="search-container">
                     <div class="input-group">
                         <i class="fas fa-barcode input-group-icon"></i>
-                        <input type="text" class="search-input" placeholder="ENTER O.R. NUMBER">
+                        <input type="text" class="search-input" placeholder="01-123456789">
                     </div>
                     <button class="search-button"><i class="bi bi-search"></i>Search Now</button>
                 </div>
@@ -74,7 +82,7 @@
                         <li class="sub-list1">Claimers must bring a valid ID to provide proof of identity before claiming their requested documents.</li>
                         <br>
                         <li class="sub-list">Special Requirements</li>
-                        <li class="sub-list1">If the claimer is a representative of the requester, they must provide a letter of authorization and a valid ID of the requester.</li>
+                        <li class="sub-list1">If the claimer is a representative of the applicant, they must provide a letter of authorization and a valid ID of the applicant.</li>
 
                 </ul>
                 <div class="heading">
@@ -84,19 +92,22 @@
                 <ul class="indented-list">
                         <li class="sub-list">Accessing the Tracker</li>
                         <li class="sub-list1">To use the tracker, you must input the transaction ID provided when you paid for your document request.</li>
-                        <li class="sub-list1">Once entered you will find the current status of your document request.</li>
+                        <li class="sub-list1">Once entered, you will find the status of your document request.</li>
                 </ul>
                 <div class="heading">
                     <span>Request Status</span>
                     
                 </div>
                 <ul class="indented-list">
-                        <li class="sub-list">Pending</li>
+                        <li class="sub-list">Paid</li>
 
-                        <li class="sub-list1">The request has been paid for, but the office has not begun processing it.</li>
+                        <li class="sub-list1">The request has been paid for, but the office needs to begin processing it.</li>
                         <br>
                         <li class="sub-list">Processing</li>
-                        <li class="sub-list1">The office has begun the processing of your request and is almost ready for claim.</li>
+                        <li class="sub-list1">The office has begun the processing of your request and is almost ready for claiming.</li>
+                        <br>
+                        <li class="sub-list">On Hold</li>
+                        <li class="sub-list1"></li>
                         <br>
                         <li class="sub-list">Available for Claim</li>
                         <li class="sub-list1">Documents are ready to be claimed. You may claim your documents at the Office of the Registrar.</li>
@@ -148,7 +159,7 @@
                         data: { or_number: orNumber },
                         success: function(data) {
                             $(".search-message-container").empty().show(); // Show and clear the message container
-                            $(".results").empty().css("display", "block").addClass("highlight-background");
+                            $(".results").empty().css("display", "block").removeClass("highlight-background1").addClass("highlight-background");
                             $(".loader").hide();
 
                             // Add the search-message

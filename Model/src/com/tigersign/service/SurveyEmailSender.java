@@ -1,13 +1,8 @@
 import com.tigersign.dao.AuditLogger;
-import com.tigersign.dao.DatabaseConnection;
+import com.tigersign.dao.AuditLoggerSuperAdmin;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -116,6 +111,7 @@ public class SurveyEmailSender extends HttpServlet {
             message.setFrom(new InternetAddress("specialprojects.registrar@ust.edu.ph"));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email)); 
             message.setContent(content, "text/html");
+            message.setSubject(subject);
 
             Transport.send(message);
             return true;
@@ -125,22 +121,6 @@ public class SurveyEmailSender extends HttpServlet {
         }
     }
 
-    private int getAdminId(String adminEmail) {
-        int adminId = -1;
-        String query = "SELECT ID FROM TS_ADMIN WHERE EMAIL = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, adminEmail);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                adminId = resultSet.getInt("ID");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return adminId;
-    }
-
     private void redirectToSessionBasedPage(HttpServletRequest request, HttpServletResponse response, String adminEmail, String userEmail, String email, boolean success)
             throws IOException {
         String contextPath = request.getContextPath();
@@ -148,11 +128,10 @@ public class SurveyEmailSender extends HttpServlet {
 
         if (adminEmail != null) {
             response.sendRedirect(contextPath + "/Admin/" + redirectPage);
-            if (adminEmail != null) {
-                AuditLogger.logActivity(adminEmail, "Sent a survey/evaluation form to the email address " + email);
-            }
+            AuditLogger.logActivity(adminEmail, "Sent a survey/evaluation form to the email address " + email);
         } else if (userEmail != null) {
             response.sendRedirect(contextPath + "/SuperAdmin/" + redirectPage);
+            AuditLoggerSuperAdmin.logActivity(userEmail, "Sent a survey/evaluation form to the email address " + email);
         } else {
             response.sendRedirect(contextPath + "/error.jsp");
         }
