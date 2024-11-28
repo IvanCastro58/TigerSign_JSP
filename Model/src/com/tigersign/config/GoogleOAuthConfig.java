@@ -84,6 +84,8 @@ public class GoogleOAuthConfig extends HttpServlet {
                     session.setAttribute("userFirstName", firstName);
                     session.setAttribute("userLastName", lastName);
                     session.setAttribute("userPicture", picture);
+                    
+                    updateSuperAdminInfo(conn, email, firstName, lastName, picture);
 
                     // Check if TOTP secret exists for the user
                     String secret = getTOTPSecret(conn, email);
@@ -102,7 +104,6 @@ public class GoogleOAuthConfig extends HttpServlet {
                         }
 
                         if (rememberMe) {
-                           
                             response.sendRedirect("SuperAdmin/dashboard.jsp");
                         } else {
                             
@@ -161,6 +162,17 @@ public class GoogleOAuthConfig extends HttpServlet {
             }
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
+        }
+    }
+    
+    private void updateSuperAdminInfo(Connection conn, String email, String firstName, String lastName, String picture) throws SQLException {
+        String updateQuery = "UPDATE TS_SUPERADMIN SET firstname = ?, lastname = ?, picture = ? WHERE email = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+            stmt.setString(1, firstName);
+            stmt.setString(2, lastName);
+            stmt.setString(3, picture);
+            stmt.setString(4, email);
+            stmt.executeUpdate();
         }
     }
 

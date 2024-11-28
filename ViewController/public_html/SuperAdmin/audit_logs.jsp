@@ -236,11 +236,11 @@
                                 <%
                                     if (auditList != null && !auditList.isEmpty()) {
                                         for (AuditLog audit : auditList) {
-                                            String firstName = audit.getFirstName() != null ? audit.getFirstName() : userFirstName;
-                                            String lastName = audit.getLastName() != null ? audit.getLastName() : userLastName;
+                                            String firstName = audit.getFirstName() != null ? audit.getFirstName() : "Unknown";
+                                            String lastName = audit.getLastName() != null ? audit.getLastName() : "User";
                                             String position = audit.getPosition() != null ? audit.getPosition() : "Super Admin";
-                                            String picture = audit.getPicture() != null ? audit.getPicture() : userPicture;
                                             String defaultPicture = request.getContextPath() + "/resources/images/default-profile.jpg";
+                                            String picture = audit.getPicture() != null ? audit.getPicture() : defaultPicture;     
                                 %>
                                     <tr class="data-row" style="display: none;">
                                         <td>
