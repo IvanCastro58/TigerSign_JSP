@@ -20,6 +20,7 @@
                 <h1>Access Denied</h1>
             </div>
             <div class="message">Your account has been deactivated by the Super Admin.</div>
+            <div class="message">Please contact <strong><u>registrar.office@ust.edu.ph</u></strong></div>
             <div class="button-div">
                 <a href="${pageContext.request.contextPath}/Admin/login.jsp"><i class="bi bi-box-arrow-in-right" style="margin-right: 5px;"></i>Go to Login Page</a>
             </div>

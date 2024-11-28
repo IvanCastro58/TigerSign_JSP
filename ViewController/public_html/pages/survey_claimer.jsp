@@ -11,6 +11,22 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../resources/css/survey.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var images = [];
+        
+        // Add images from background1.jpg to background15.jpg
+        for (var i = 1; i <= 10; i++) {
+            images.push("../resources/images/background" + i + ".JPG");
+        }
+        
+        // Select a random image
+        var randomImage = images[Math.floor(Math.random() * images.length)];
+        
+        // Set the selected image as the background
+        document.body.style.backgroundImage = "url('" + randomImage + "')";
+    });
+</script>
 </head>
 <body>
     <input type="checkbox" id="menu-toggle" hidden>

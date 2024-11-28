@@ -67,30 +67,52 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    claimButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            if (!button.disabled) {
-                const row = button.closest('tr');
-                const orNumber = row.querySelector('td:nth-child(1)').textContent.trim();
-                const customerName = row.querySelector('td:nth-child(2)').textContent.trim();
-                const feeName = row.querySelector('td:nth-child(6)').textContent.trim();
-                const requestId = row.querySelector('.status-dropdown').dataset.requestId;
+claimButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        if (!button.disabled) {
+            const row = button.closest('tr');
+            const orNumber = row.querySelector('td:nth-child(1)').textContent.trim();
+            const customerName = row.querySelector('td:nth-child(2)').textContent.trim();
+            const feeName = row.querySelector('td:nth-child(6)').textContent.trim();
+            const requestId = row.querySelector('.status-dropdown').dataset.requestId;
 
-                const primaryLink = claimerPopup.querySelector('.claimer-button .primary');
-                const representativeLink = claimerPopup.querySelector('.claimer-button .representative');
+            const primaryLink = claimerPopup.querySelector('.claimer-button .primary');
+            const representativeLink = claimerPopup.querySelector('.claimer-button .representative');
 
-                primaryLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&email=${encodeURIComponent(adminEmail)}&requestId=${encodeURIComponent(requestId)}`;
+            // Set the href attributes of the links
+            primaryLink.href = ../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&admin=${encodeURIComponent(adminEmail)}&user=${encodeURIComponent(userEmail)}&requestId=${encodeURIComponent(requestId)};
+            representativeLink.href = ../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&admin=${encodeURIComponent(adminEmail)}&user=${encodeURIComponent(userEmail)}&requestId=${encodeURIComponent(requestId)};
 
-                representativeLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&email=${encodeURIComponent(adminEmail)}&requestId=${encodeURIComponent(requestId)}`;
+            // Add event listeners to open the links in new tabs and redirect the current page
+            primaryLink.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent the default behavior of navigating the current window
+                window.open(primaryLink.href, '_blank'); // Open the primary link in a new tab
+                closePopup(claimerPopup);
+                redirectBasedOnRole();
+            });
 
-                // Add event listeners to close the popup when links are clicked
-                primaryLink.addEventListener('click', () => closePopup(claimerPopup));
-                representativeLink.addEventListener('click', () => closePopup(claimerPopup));
+            representativeLink.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent the default behavior of navigating the current window
+                window.open(representativeLink.href, '_blank'); // Open the representative link in a new tab
+                closePopup(claimerPopup);
+                redirectBasedOnRole();
+            });
 
-                showPopup(claimerPopup);
-            }
-        });
+            showPopup(claimerPopup);
+        }
     });
+});
+
+// Function to redirect based on the user role
+function redirectBasedOnRole() {
+    if (userRole === 'superadmin') {
+        window.location.href = `${BASE_URL}/SuperAdmin/dashboard.jsp`;
+    } else if (userRole === 'admin') {
+        window.location.href = `${BASE_URL}/Admin/dashboard.jsp`;
+    } else {
+        window.location.href = `${BASE_URL}/dashboard.jsp`;  // Default
+    }
+}
 
     // Close the claimer popup
     closeClaimerPopupButton.addEventListener('click', () => closePopup(claimerPopup));

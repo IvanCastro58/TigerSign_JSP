@@ -17,39 +17,6 @@ import java.util.Set;
 import oracle.jdbc.OracleTypes;
 
 public class PendingClaimsService {
-    
-//    public List<PendingClaim> getActivePendingClaims() throws SQLException {
-//       List<PendingClaim> claims = new ArrayList<>();
-//
-//       // Fetch all required columns directly from TS_REQUEST
-//       String query = "SELECT REQUEST_ID, OR_NUMBER, CUSTOMER_NAME, COLLEGE, FILE_STATUS, PAYMENT_DATE, REQUESTS, REQUEST_DESCRIPTION FROM TS_REQUEST WHERE IS_CLAIMED = 'N'";
-//
-//       try (Connection connection = DatabaseConnection.getConnection();
-//            PreparedStatement stmt = connection.prepareStatement(query);
-//            ResultSet rs = stmt.executeQuery()) {
-//
-//           while (rs.next()) {
-//               String orNumber = rs.getString("OR_NUMBER");
-//               String customerName = rs.getString("CUSTOMER_NAME");
-//               String college = rs.getString("COLLEGE");
-//               String fileStatus = rs.getString("FILE_STATUS");
-//               Timestamp dateProcessed = rs.getTimestamp("PAYMENT_DATE");
-//               String feeName = rs.getString("REQUESTS");
-//               String feeDesc = rs.getString("REQUEST_DESCRIPTION");
-//               String requestId = rs.getString("REQUEST_ID");
-//
-//               // Create a PendingClaim instance with all retrieved values
-//               claims.add(new PendingClaim(orNumber, customerName, dateProcessed, college, feeName, feeDesc, requestId, fileStatus));
-//           }
-//       }
-//
-//       return claims;
-//   }
-
-    // Caching mechanism to store the last fetched claims
-    private static List<PendingClaim> cachedClaims = null;
-    private static long lastFetchedTime = 0;  // Track when the cache was last updated
-    private static final long CACHE_EXPIRATION_TIME = 0; // Cache expiration time (e.g., 1 minute)
 
     // Fetches data from TIGERSIGNX.PKG
     public List<PendingClaim> getActivePendingClaimsFromPkg() throws SQLException {
@@ -100,48 +67,35 @@ public class PendingClaimsService {
         System.out.println("Fetched claims from TIGERSIGNX.PKG: " + claims.size());
         return claims;
     }
-    
-    // Counts total rows in TS_REQUEST table to verify if data has changed
-    private int countAllRowsInTsRequest() throws SQLException {
-        String countQuery = "SELECT COUNT(*) FROM TS_REQUEST";
+
+    // Retrieves data rows of TS_REQUEST table
+    public List<PendingClaim> getActivePendingClaimsFromTsRequest() throws SQLException {
+        List<PendingClaim> claims = new ArrayList<>();
+        String query = "SELECT REQUEST_ID, OR_NUMBER, CUSTOMER_NAME, COLLEGE, FILE_STATUS, PAYMENT_DATE, REQUESTS, REQUEST_DESCRIPTION "
+                     + "FROM TS_REQUEST WHERE IS_CLAIMED = 'N' ORDER BY CUSTOMER_NAME ASC";
+
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(countQuery);
+             PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+
+            while (rs.next()) {
+                String orNumber = rs.getString("OR_NUMBER");
+                String customerName = rs.getString("CUSTOMER_NAME");
+                String college = rs.getString("COLLEGE");
+                String fileStatus = rs.getString("FILE_STATUS");
+                Timestamp dateProcessed = rs.getTimestamp("PAYMENT_DATE");
+                String feeName = rs.getString("REQUESTS");
+                String feeDesc = rs.getString("REQUEST_DESCRIPTION");
+                String requestId = rs.getString("REQUEST_ID");
+
+                claims.add(new PendingClaim(orNumber, customerName, dateProcessed, college, feeName, feeDesc, requestId, fileStatus));
             }
         }
-        return 0;
+
+        System.out.println("Fetched claims from TS_REQUEST: " + claims.size());
+        return claims;
     }
 
-    // Retrieves data rows of TS_REQUEST table if no new data is fetched
-    public List<PendingClaim> getActivePendingClaimsFromTsRequest() throws SQLException {
-            List<PendingClaim> claims = new ArrayList<>();
-            String query = "SELECT REQUEST_ID, OR_NUMBER, CUSTOMER_NAME, COLLEGE, FILE_STATUS, PAYMENT_DATE, REQUESTS, REQUEST_DESCRIPTION "
-                         + "FROM TS_REQUEST WHERE IS_CLAIMED = 'N' ORDER BY CUSTOMER_NAME ASC";
-
-            try (Connection connection = DatabaseConnection.getConnection();
-                 PreparedStatement stmt = connection.prepareStatement(query);
-                 ResultSet rs = stmt.executeQuery()) {
-
-                while (rs.next()) {
-                    String orNumber = rs.getString("OR_NUMBER");
-                    String customerName = rs.getString("CUSTOMER_NAME");
-                    String college = rs.getString("COLLEGE");
-                    String fileStatus = rs.getString("FILE_STATUS");
-                    Timestamp dateProcessed = rs.getTimestamp("PAYMENT_DATE");
-                    String feeName = rs.getString("REQUESTS");
-                    String feeDesc = rs.getString("REQUEST_DESCRIPTION");
-                    String requestId = rs.getString("REQUEST_ID");
-
-                    claims.add(new PendingClaim(orNumber, customerName, dateProcessed, college, feeName, feeDesc, requestId, fileStatus));
-                }
-            }
-
-            System.out.println("Fetched claims from TS_REQUEST: " + claims.size());
-            return claims;
-        }
-    
     // Inserts new claims into TS_REQUEST
     public void insertPendingClaims(List<PendingClaim> pendingClaims) throws SQLException {
         String existingQuery = "SELECT OR_NUMBER, REQUESTS FROM TS_REQUEST";
@@ -195,43 +149,26 @@ public class PendingClaimsService {
 
     // Main method to fetch claims, inserting only if new data is found
     public List<PendingClaim> getActivePendingClaims() throws SQLException {
-           // Check if the cached data is still valid (not expired)
-           long currentTime = System.currentTimeMillis();
-           if (cachedClaims != null && currentTime - lastFetchedTime < CACHE_EXPIRATION_TIME) {
-               System.out.println("Returning cached claims.");
-               return cachedClaims; // Return cached data if it's not expired
-           }
+        System.out.println("Fetching claims directly from TS_REQUEST...");
+        return getActivePendingClaimsFromTsRequest();
+    }
+    
+    public void processPendingClaims() throws SQLException {
+        System.out.println("Starting process to fetch claims from TIGERSIGNX.PKG...");
 
-           // Fetch claims from TIGERSIGNX.PKG
-           List<PendingClaim> claimsFromPkg = getActivePendingClaimsFromPkg();
-           // Count rows in TS_REQUEST table
-           int totalTsRequestRows = countAllRowsInTsRequest();
+        // Fetch claims from TIGERSIGNX.PKG
+        List<PendingClaim> claimsFromPkg = getActivePendingClaimsFromPkg();
 
-           // If no claims were fetched from the package, just return from TS_REQUEST
-           if (claimsFromPkg.isEmpty()) {
-               System.out.println("No claims fetched from TIGERSIGNX.PKG; fetching claims from TS_REQUEST.");
-               return getActivePendingClaimsFromTsRequest();
-           }
+        if (claimsFromPkg.isEmpty()) {
+            System.out.println("No new claims fetched from TIGERSIGNX.PKG.");
+            return;
+        }
 
-           // Log the claim counts to compare
-           System.out.println("Fetched claims from TIGERSIGNX.PKG: " + claimsFromPkg.size());
-           System.out.println("Total claims in TS_REQUEST: " + totalTsRequestRows);
+        // Insert new claims into TS_REQUEST
+        insertPendingClaims(claimsFromPkg);
 
-           // If the number of claims from the package is different from the number of rows in TS_REQUEST,
-           // or if there are new claims in the package that are not in TS_REQUEST, insert new data
-           if (claimsFromPkg.size() != totalTsRequestRows) {
-               System.out.println("New data found in TIGERSIGNX.PKG; inserting new claims into TS_REQUEST.");
-               insertPendingClaims(claimsFromPkg); // Insert new rows if there is new data
-               cachedClaims = claimsFromPkg; // Update the cache
-               lastFetchedTime = currentTime; // Update cache timestamp
-               return claimsFromPkg;  // Return the newly added claims
-           } else {
-               System.out.println("Data already up-to-date; fetching claims from TS_REQUEST.");
-               cachedClaims = getActivePendingClaimsFromTsRequest();  // Update the cache with TS_REQUEST data
-               lastFetchedTime = currentTime;  // Update cache timestamp
-               return cachedClaims;  // If no new data, fetch from TS_REQUEST
-           }
-       }
+        System.out.println("Process complete. Pending claims inserted.");
+    }
 
     private String getRequestIdByOrNumber(String orNumber, Connection connection) throws SQLException {
         String requestId = null;
@@ -248,42 +185,42 @@ public class PendingClaimsService {
 
         return requestId;
     }
-    
+
     private String getFileStatusByOrNumber(String orNumber, Connection connection) throws SQLException {
-           String fileStatus = null;
-           String fileStatusQuery = "SELECT FILE_STATUS FROM TS_REQUEST WHERE OR_NUMBER = ?"; // Add file_status query
+        String fileStatus = null;
+        String fileStatusQuery = "SELECT FILE_STATUS FROM TS_REQUEST WHERE OR_NUMBER = ?"; // Add file_status query
 
-           try (PreparedStatement pstmt = connection.prepareStatement(fileStatusQuery)) {
-               pstmt.setString(1, orNumber);
-               try (ResultSet rs = pstmt.executeQuery()) {
-                   if (rs.next()) {
-                       fileStatus = rs.getString("FILE_STATUS");
-                   }
-               }
-           }
-
-           return fileStatus;
-       }
-    
-    public int getDaysSinceProcessing(String requestId) throws SQLException {
-            String query = "SELECT DATE_PROCESSING FROM TS_REQUEST WHERE REQUEST_ID = ?";
-            int days = 0;
-
-            try (Connection connection = DatabaseConnection.getConnection();
-                 PreparedStatement pstmt = connection.prepareStatement(query)) {
-                pstmt.setString(1, requestId);
-                ResultSet rs = pstmt.executeQuery();
-
+        try (PreparedStatement pstmt = connection.prepareStatement(fileStatusQuery)) {
+            pstmt.setString(1, orNumber);
+            try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    Timestamp dateProcessing = rs.getTimestamp("DATE_PROCESSING");
-                    if (dateProcessing != null) {
-                        // Calculate the difference in days
-                        long diffInMillis = System.currentTimeMillis() - dateProcessing.getTime();
-                        days = (int) (diffInMillis / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
-                    }
+                    fileStatus = rs.getString("FILE_STATUS");
                 }
             }
-
-            return days;
         }
+
+        return fileStatus;
+    }
+
+    public int getDaysSinceProcessing(String requestId) throws SQLException {
+        String query = "SELECT DATE_PROCESSING FROM TS_REQUEST WHERE REQUEST_ID = ?";
+        int days = 0;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, requestId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                Timestamp dateProcessing = rs.getTimestamp("DATE_PROCESSING");
+                if (dateProcessing != null) {
+                    // Calculate the difference in days
+                    long diffInMillis = System.currentTimeMillis() - dateProcessing.getTime();
+                    days = (int) (diffInMillis / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+                }
+            }
+        }
+
+        return days;
+    }
 }

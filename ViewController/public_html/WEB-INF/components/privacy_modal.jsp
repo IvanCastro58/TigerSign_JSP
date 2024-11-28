@@ -25,7 +25,7 @@
                 <strong>Contact:</strong>
                 <p class="bigger-text">For questions or to exercise your rights, contact us at</p>
                 <ul>
-                    <li>(632) 880-1611 Loc. 8216</li>
+                    <li>(632) 8880-1611 Loc. 8216</li>
                     <li>registrar.office@ust.edu.ph</li>
                 </ul>
             </div>

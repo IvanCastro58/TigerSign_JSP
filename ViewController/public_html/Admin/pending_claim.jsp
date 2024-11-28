@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pending Claims - TigerSign</title>
+    <title>Paid Applications - TigerSign</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -171,8 +171,9 @@
     <% 
         String firstName = (String) session.getAttribute("adminFirstName");
         String lastName = (String) session.getAttribute("adminLastName");
-        String email = (String) session.getAttribute("adminEmail");
+        String admin = (String) session.getAttribute("adminEmail");
         String fullName = firstName + " " + lastName;
+        String userRole = "admin";
 
         request.setAttribute("activePage", "pending_claim"); 
     %>
@@ -186,7 +187,7 @@
             Retrieving Data...
         </div>
         <div id="margin-content" class="margin-content" style="display: none;">
-            <h2 class="title-page">PENDING CLAIMS</h2>
+            <h2 class="title-page">PAID APPLICATIONS</h2>
             <div class="top-nav">
                     <div class="row1">
                         <div class="nav-item1">
@@ -210,7 +211,7 @@
                         <div class="nav-item4">
                             <select class="status">
                                 <option value="" selected>Select Status</option> 
-                                <option value="pending">PENDING</option>
+                                <option value="pending">PAID</option>
                                 <option value="processing">PROCESSING</option>
                                 <option value="hold">ON HOLD</option>
                                 <option value="available">AVAILABLE</option>
@@ -230,7 +231,7 @@
                     <thead>
                         <tr>
                             <th style="cursor: pointer;">
-                                O.R. Number
+                                Service Invoice
                                 <span class="sort-icons">
                                     <i class="fa fa-sort"></i>
                                     <i class="fa fa-caret-up" style="display:none;"></i>
@@ -285,7 +286,7 @@
                                             </td>
                                             <td style="text-align: center;">
                                                 <select class="status-dropdown" data-request-id="<%= claim.getRequestId() %>">
-                                                    <option value="PENDING" <%= claim.getFileStatus().equals("PENDING") ? "selected" : "" %>>PENDING</option>
+                                                    <option value="PENDING" <%= claim.getFileStatus().equals("PENDING") ? "selected" : "" %>>PAID</option>
                                                     <option value="PROCESSING" <%= claim.getFileStatus().equals("PROCESSING") ? "selected" : "" %>>PROCESSING</option>
                                                     <option value="HOLD" <%= claim.getFileStatus().equals("HOLD") ? "selected" : "" %>>ON HOLD</option>
                                                     <option value="AVAILABLE" <%= claim.getFileStatus().equals("AVAILABLE") ? "selected" : "" %>>AVAILABLE</option>
@@ -397,7 +398,10 @@
     </script>
     <script type="text/javascript">
     const adminFullName = "<%= fullName %>";
-    const adminEmail = "<%= email %>";
+    const adminEmail = "<%= admin %>";
+    const userEmail = "";
+    const BASE_URL = "<%= request.getContextPath() %>";
+    const userRole = "<%= userRole %>";
     $(document).ready(function() {
         // Function to update the available options based on the current status
         function updateDropdownOptions(dropdown) {
@@ -409,6 +413,7 @@
             // Apply restrictions based on the current status
             if (currentStatus === 'PENDING') {
                 dropdown.find('option[value="HOLD"]').prop('disabled', false);
+                dropdown.find('option[value="AVAILABLE"]').prop('disabled', true);
             } else if (currentStatus === 'PROCESSING') {
                 dropdown.find('option[value="PENDING"]').prop('disabled', true);
                 dropdown.find('option[value="HOLD"]').prop('disabled', false);
@@ -531,7 +536,7 @@
             if (selectedDates.length === 2) {
                 const startDate = selectedDates[0];
                 const endDate = selectedDates[1];
-                filterByDateRange(startDate, endDate);
+                filterData(startDate, endDate, statusSelect.value, searchInput.value);
                 clearDateRangeButton.style.display = 'block';
             } else {
                 clearDateRangeButton.style.display = 'none';
@@ -543,110 +548,173 @@
         dateRangeInput._flatpickr.open();
     });
 
-    function filterByDateRange(startDate, endDate) {
-    endDate.setHours(23, 59, 59, 999);
-
-    filteredRows = rows.filter(row => {
-        const dateText = row.cells[2].textContent.trim(); // Use index 2 for Date of Payment
-        const rowDate = new Date(dateText);
-        return rowDate >= startDate && rowDate <= endDate;
+ 
+    clearDateRangeButton.addEventListener('click', function() {
+        dateRangeInput._flatpickr.clear();
+        clearDateRangeButton.style.display = 'none';
+        filterData(null, null, statusSelect.value, searchInput.value);
     });
+    
+    function showDataRows() {
+    dataRows.forEach(row => row.style.display = 'none');
+    setTimeout(() => {
+        dataRows.forEach(row => row.style.display = 'table-row');
+        renderTable(currentPage);
+    }, 1);
+    }
 
-    // Ensure to show data rows after filtering
+
+function filterData(startDate, endDate, status, searchTerm) {
+    filteredRows = rows;
+
+    // Filter by date range
+    if (startDate && endDate) {
+        endDate.setHours(23, 59, 59, 999);
+        filteredRows = filteredRows.filter(row => {
+            const dateText = row.cells[2].textContent.trim();
+            const rowDate = new Date(dateText);
+            return rowDate >= startDate && rowDate <= endDate;
+        });
+    }
+
+    // Filter by status
+    if (status && status !== 'ALL') {
+        filteredRows = filteredRows.filter(row => {
+            const rowStatus = row.querySelector('.status-dropdown').value.toUpperCase();
+            return rowStatus === status.toUpperCase();
+        });
+    }
+
+    // Filter by search term
+    if (searchTerm && searchTerm.trim() !== '') {
+        searchTerm = searchTerm.toLowerCase().trim();
+        filteredRows = filteredRows.filter(row => {
+            const orNumberCell = row.cells[0].textContent.toLowerCase();
+            const nameCell = row.cells[1].textContent.toLowerCase();
+            const collegeCell = row.cells[4].textContent.toLowerCase();
+            return orNumberCell.includes(searchTerm) || nameCell.includes(searchTerm) || collegeCell.includes(searchTerm);
+        });
+    }
+
     renderTable(1, filteredRows);
 
+    // Show or hide the 'No results' div
     const noResultsDiv = document.getElementById('no-results');
     noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
 }
 
-clearDateRangeButton.addEventListener('click', function() {
-    // Clear the date range input
-    dateRangeInput._flatpickr.clear();
-
-    // Reset filtered rows to show all rows
-    filteredRows = [...rows];
-    
-    // Render the table with all rows
-    renderTable(1, filteredRows);
-    
-    clearDateRangeButton.style.display = 'none';
-
-    // Hide the 'No Results' message if it is displayed
-    const noResultsDiv = document.getElementById('no-results');
-    noResultsDiv.style.display = 'none';
-});
-
-    function showDataRows() {
-        dataRows.forEach(row => row.style.display = 'none');
-        setTimeout(() => {
-            dataRows.forEach(row => row.style.display = 'table-row');
-            renderTable(currentPage);
-        }, 1);
-    }
-    
-    // Filter by status
+    // Status filter
     statusSelect.addEventListener('change', function() {
-        const selectedStatus = this.value.toUpperCase(); // Get selected status (e.g., 'PENDING', 'PROCESSING', etc.)
-        filterByStatus(selectedStatus);
+        const selectedStatus = this.value.toUpperCase();
+        filterData(null, null, selectedStatus, searchInput.value);
     });
 
-    function filterByStatus(status) {
-        // Reset filtered rows based on the selected status
-        if (status === 'ALL' || !status) {
-            filteredRows = [...rows];  // Show all rows if 'ALL' or no status is selected
-        } else {
-            filteredRows = rows.filter(row => {
-                const rowStatus = row.querySelector('.status-dropdown').value.toUpperCase(); // Get the status from the row
-                return rowStatus === status;
-            });
-        }
-
-        // Render the table with the filtered rows
-        renderTable(1, filteredRows);
-
-        // Show or hide 'No Results' message
-        const noResultsDiv = document.getElementById('no-results');
-        noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
-    }
-
-
+    // Search input filter
     searchInput.addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase().trim();  // Make sure to trim extra spaces
+    const searchTerm = this.value;
+    filterData(null, null, statusSelect.value, searchTerm);
 
-        // If search term is empty, reset the filtered rows to show all rows
-        if (searchTerm === '') {
-            filteredRows = [...rows];  // Reset to all rows when search input is cleared
-        } else {
-            // Filter rows based on the search term
-            filteredRows = rows.filter(row => {
-                const orNumberCell = row.cells[0].textContent.toLowerCase(); // Index 0 for O.R. Number
-                const nameCell = row.cells[1].textContent.toLowerCase(); // Index 1 for Name
-                const collegeCell = row.cells[4].textContent.toLowerCase(); // Index 4 for College
-
-                // Only include the row if it matches any of the relevant columns
-                return orNumberCell.includes(searchTerm) || 
-                       nameCell.includes(searchTerm) || 
-                       collegeCell.includes(searchTerm);
-            });
-        }
-
-        renderTable(1, filteredRows);  // Render filtered rows
-
-        // Show or hide 'No Results' message
-        const noResultsDiv = document.getElementById('no-results');
-        noResultsDiv.style.display = filteredRows.length === 0 ? 'block' : 'none';
+    // Update status styles after search term changes
+    $('.status-dropdown').each(function() {
+        updateStatusStyle($(this)); // Reapply the status style to the dropdowns
     });
-
-    // Trigger the 'input' event manually after the page loads to apply the filter
-    if (searchTerm) {
-        searchInput.dispatchEvent(new Event('input'));  // This triggers the filtering logic
-    }
+});
 
     rowsPerPageSelect.addEventListener('change', function () {
         rowsPerPage = parseInt(this.value);
         currentPage = 1;
-        renderTable(currentPage);
+        renderTable(currentPage, filteredRows);
     });
+
+    function renderTable(page, rowsToRender = filteredRows) {
+        const startIndex = (page - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+    
+        tbody.innerHTML = '';  // Clear the table body before re-rendering
+        const visibleRows = rowsToRender.slice(startIndex, endIndex);
+        visibleRows.forEach(row => tbody.appendChild(row));  // Add rows to the table body
+        renderPagination(rowsToRender);  // Update pagination
+    }
+
+    function renderPagination(rowsToRender) {
+        const pageCount = Math.ceil(rowsToRender.length / rowsPerPage);
+        paginationContainer.innerHTML = '';  // Clear pagination container
+        const paginationList = document.createElement('ul');
+        paginationList.className = 'pagination-list';
+
+        const addPaginationLink = (page, text = page, isActive = false) => {
+            const paginationItem = document.createElement('li');
+            paginationItem.className = 'pagination-item';
+
+            const paginationLink = document.createElement('a');
+            paginationLink.className = 'pagination-link';
+            paginationLink.href = '#';
+            paginationLink.textContent = text;
+            
+            if (page !== null) {
+                paginationLink.dataset.page = page;
+                paginationLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    currentPage = page;
+                    renderTable(currentPage, rowsToRender);
+                    updateActiveLink();
+                });
+            } else {
+                paginationLink.classList.add('disabled');
+            }
+
+            if (isActive) {
+                paginationLink.classList.add('active');
+            }
+
+            paginationItem.appendChild(paginationLink);
+            paginationList.appendChild(paginationItem);
+        };
+
+        // Add 'Prev' button
+        if (currentPage > 1) {
+            addPaginationLink(currentPage - 1, 'Prev');
+        }
+
+        // Start of pagination
+        if (currentPage > 3) {
+            addPaginationLink(1);
+            addPaginationLink(null, '...');
+        }
+
+        // Main pages around the current page
+        for (let i = Math.max(1, currentPage - 1); i <= Math.min(pageCount, currentPage + 1); i++) {
+            addPaginationLink(i, i, i === currentPage);
+        }
+
+        // End of pagination
+        if (currentPage < pageCount - 2) {
+            addPaginationLink(null, '...');
+            addPaginationLink(pageCount);
+        }
+
+        // Add 'Next' button
+        if (currentPage < pageCount) {
+            addPaginationLink(currentPage + 1, 'Next');
+        }
+
+        paginationContainer.appendChild(paginationList);
+        updateActiveLink();
+    }
+
+    // Active page highlighting
+    function updateActiveLink() {
+        document.querySelectorAll('.pagination-link').forEach(link => {
+            link.classList.toggle('active', parseInt(link.dataset.page) === currentPage);
+        });
+    }
+    
+     if (searchTerm) {
+        searchInput.dispatchEvent(new Event('input'));
+    }
+
+    // Initial rendering of the table with no filters applied
+    showDataRows();
 
     const headers = table.querySelectorAll('th');
     headers.forEach((header, index) => {
@@ -662,102 +730,6 @@ clearDateRangeButton.addEventListener('click', function() {
         }
     });
 
-
-    function renderTable(page, rowsToRender = filteredRows) {
-        const rowsPerPage = parseInt(document.getElementById('rows-per-page').value);
-        const startIndex = (page - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-    
-        tbody.innerHTML = '';  // Clear the table body before re-rendering
-    
-        // Get visible rows based on pagination
-        const visibleRows = rowsToRender.slice(startIndex, endIndex);
-        visibleRows.forEach(row => tbody.appendChild(row));  // Add rows to the table body
-    
-        // Reapply status styles for all status dropdowns after rendering rows
-        $('.status-dropdown').each(function() {
-            updateStatusStyle($(this)); // Reapply the style for each dropdown
-            updateDropdownOptions($(this));
-        });
-    
-        renderPagination(rowsToRender);  // Update pagination
-    }
-    
-function renderPagination(rowsToRender) {
-    const paginationContainer = document.querySelector('.pagination');
-    paginationContainer.innerHTML = '';  // Clear pagination container
-
-    const pageCount = Math.ceil(rowsToRender.length / rowsPerPage);
-    const paginationList = document.createElement('ul');
-    paginationList.className = 'pagination-list';
-
-    const addPaginationLink = (page, text = page, isActive = false) => {
-        const paginationItem = document.createElement('li');
-        paginationItem.className = 'pagination-item';
-
-        const paginationLink = document.createElement('a');
-        paginationLink.className = 'pagination-link';
-        paginationLink.href = '#';
-        paginationLink.textContent = text;
-        
-        if (page !== null) {
-            paginationLink.dataset.page = page;
-            paginationLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                currentPage = page;
-                renderTable(currentPage, rowsToRender);
-                updateActiveLink();
-            });
-        } else {
-            // Make ellipsis unclickable
-            paginationLink.classList.add('disabled');
-        }
-
-        if (isActive) {
-            paginationLink.classList.add('active');
-        }
-
-        paginationItem.appendChild(paginationLink);
-        paginationList.appendChild(paginationItem);
-    };
-
-    // Add 'Prev' button
-    if (currentPage > 1) {
-        addPaginationLink(currentPage - 1, 'Prev');
-    }
-
-    // Start of pagination
-    if (currentPage > 3) {
-        addPaginationLink(1); // First page
-        addPaginationLink(null, '...'); // Ellipsis
-    }
-
-    // Main pages around the current page
-    for (let i = Math.max(1, currentPage - 1); i <= Math.min(pageCount, currentPage + 1); i++) {
-        addPaginationLink(i, i, i === currentPage);
-    }
-
-    // End of pagination
-    if (currentPage < pageCount - 2) {
-        addPaginationLink(null, '...'); // Ellipsis
-        addPaginationLink(pageCount); // Last page
-    }
-
-    // Add 'Next' button
-    if (currentPage < pageCount) {
-        addPaginationLink(currentPage + 1, 'Next');
-    }
-
-    paginationContainer.appendChild(paginationList);
-    updateActiveLink();
-}
-
-// Active page highlighting
-function updateActiveLink() {
-    document.querySelectorAll('.pagination-link').forEach(link => {
-        link.classList.toggle('active', parseInt(link.dataset.page) === currentPage);
-    });
-}
     function sortTableByColumn(columnIndex, isAscending, rowsToSort = rows) {
         rowsToSort.sort((a, b) => {
             const aText = a.cells[columnIndex].textContent.trim();
@@ -820,7 +792,6 @@ function updateActiveLink() {
         }
     }
 
-    showDataRows();
 });
 </script>
 </body>

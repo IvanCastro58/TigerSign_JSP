@@ -63,7 +63,7 @@
             </div>
             <div class="signature-result">
                 <i class="bi bi-check-circle"></i> Signature Similarity Score: 
-                <%= details.getSignatureSimilarityScore() %>%
+                <%= String.format("%.2f", details.getSignatureSimilarityScore()) %>%
             </div>
         </div>
     </div>

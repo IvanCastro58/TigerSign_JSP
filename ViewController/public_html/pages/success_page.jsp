@@ -13,16 +13,21 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var images = [
-                "../resources/images/background.jpg",
-                "../resources/images/background2.jpg",
-                "../resources/images/background3.jpg"
-            ];
-            var randomImage = images[Math.floor(Math.random() * images.length)];
-            document.body.style.backgroundImage = "url('" + randomImage + "')";
-        });
-    </script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var images = [];
+        
+        // Add images from background1.jpg to background15.jpg
+        for (var i = 1; i <= 10; i++) {
+            images.push("../resources/images/background" + i + ".JPG");
+        }
+        
+        // Select a random image
+        var randomImage = images[Math.floor(Math.random() * images.length)];
+        
+        // Set the selected image as the background
+        document.body.style.backgroundImage = "url('" + randomImage + "')";
+    });
+</script>
 </head>
 <style>
     .success-checkmark {
@@ -180,6 +185,13 @@
         top: 77.52px;
     }
 }
+
+#countdownText {
+        text-align: center;
+        font-size: 14px; 
+        color: gray;     
+        margin-top: 20px; 
+    }
 </style>
 <body>
     <header>
@@ -199,22 +211,33 @@
                   <div class="icon-fix"></div>
                 </div>
             </div>
+
             <div class="success-text">
                 <i class="bi bi-info-circle"></i>
                 <p>A <strong>Survey Evaluation Form</strong> will be sent to the Email Address you provided in the Document Receiving Form. 
                 Your response will be highly appreciated for the improvement of our service. Thank you!</p>
             </div>
+            
+            <div id="countdownText">
+                Redirecting back to Dashboard in: <span id="countdown">10</span>s
+            </div>
         </div>
     </div>
     
-<script>
-    $("button").click(function () {
-  $(".check-icon").hide();
-  setTimeout(function () {
-    $(".check-icon").show();
-  }, 10);
-});
-</script>
+    <script>
+        var countdownElement = document.getElementById("countdown");
+        var countdownValue = 10;
+
+        var countdownInterval = setInterval(function() {
+            countdownValue--;
+            countdownElement.textContent = countdownValue;
+
+            if (countdownValue <= 0) {
+                clearInterval(countdownInterval);
+                window.close();
+            }
+        }, 1000); 
+    </script>
 </body>
 
 </html>

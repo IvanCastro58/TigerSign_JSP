@@ -7,6 +7,22 @@
     <link rel="stylesheet" href="../resources/css/totp.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/totp.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var images = [];
+        
+        // Add images from background1.jpg to background15.jpg
+        for (var i = 1; i <= 10; i++) {
+            images.push("../resources/images/background" + i + ".JPG");
+        }
+        
+        // Select a random image
+        var randomImage = images[Math.floor(Math.random() * images.length)];
+        
+        // Set the selected image as the background
+        document.body.style.backgroundImage = "url('" + randomImage + "')";
+    });
+</script>
 </head>
 <body>
     <%@ include file="/WEB-INF/components/session_admin.jsp" %>

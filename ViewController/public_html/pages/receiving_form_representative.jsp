@@ -6,6 +6,7 @@
 <%@ page import="com.tigersign.dao.EmailService" %>
 <%@ page import="com.tigersign.dao.AuditLogger" %>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="com.tigersign.dao.AuditLoggerSuperAdmin" %>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -19,19 +20,20 @@
     <link rel="stylesheet" href="../resources/css/manage_account.css">
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
     <script>
-       document.addEventListener("DOMContentLoaded", function() {
-        var images = [
-            "../resources/images/background.jpg",
-            "../resources/images/background2.jpg",
-            "../resources/images/background3.jpg"
-        ];
-        var randomImage = images[Math.floor(Math.random() * images.length)];
-        var mainContent = document.querySelector('.main-content'); 
-        
-        if (mainContent) {
-            mainContent.style.backgroundImage = "url('" + randomImage + "')";
-        }
-    });
+        document.addEventListener("DOMContentLoaded", function() {
+            var images = [];
+            
+            // Add images from background1.jpg to background15.jpg
+            for (var i = 1; i <= 10; i++) {
+                images.push("../resources/images/background" + i + ".JPG");
+            }
+            
+            // Select a random image
+            var randomImage = images[Math.floor(Math.random() * images.length)];
+            
+            // Set the selected image as the background
+            document.body.style.backgroundImage = "url('" + randomImage + "')";
+        });
     </script>
 </head>
 
@@ -68,7 +70,8 @@
                                 String idData = request.getParameter("id-data");
                                 String letterData = request.getParameter("letter-data");
                                 String fullName = request.getParameter("fullname");
-                                String adminEmail = request.getParameter("email");
+                                String adminEmail = request.getParameter("admin");
+                                String userEmail = request.getParameter("user");
                                 String submit = request.getParameter("submit"); 
                                 
                                    if (submit != null && name != null && email != null) {
@@ -90,6 +93,9 @@
                                         if (adminEmail != null && !adminEmail.isEmpty()) {
                                             String activity = "Released the document titled '" + feeName + "' associated with O.R. Number " + orNumber + " to an authorized representative.";
                                             AuditLogger.logActivity(adminEmail, activity);
+                                        } else if (userEmail != null && !userEmail.isEmpty()) {
+                                            String activity = "Released the document titled '" + feeName + "' associated with O.R. Number " + orNumber + " to an authorized representative.";
+                                            AuditLoggerSuperAdmin.logActivity(userEmail, activity);
                                         }
                                         
                                         if (emailSent) {
@@ -119,7 +125,7 @@
                                 </div>
                                 <div class="input-fields">
                                     <label for="claimer-email" class="form-label">Email Address:</label>
-                                    <input type="text" name="field-email" id="field-email" placeholder="Enter email address" required>
+                                    <input type="email" name="field-email" id="field-email" placeholder="Enter email address" required>
                                 </div>
                                  
                                <div class="input-fields">
