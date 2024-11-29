@@ -26,8 +26,27 @@
         // Set the selected image as the background
         document.body.style.backgroundImage = "url('" + randomImage + "')";
     });
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        const textarea = document.getElementById('feedback');
+        const charCounter = document.getElementById('char-counter');
+        
+        textarea.addEventListener('input', () => {
+            charCounter.textContent = textarea.value.length;
+        });
+    });
 </script>
 </head>
+<style>
+.character-counter {
+    font-size: 0.9em;
+    color: #555;
+}
+.character-counter span {
+    font-weight: bold;
+    color: #000;
+}
+</style>
 <body>
     <input type="checkbox" id="menu-toggle" hidden>
     <header>
@@ -182,7 +201,12 @@
                                     </div>
                                     <div class="input-fields">
                                         <label for="feedback" class="form-label">Feedback</label>
-                                        <textarea id="feedback" name="feedback" rows="4" placeholder="Enter your feedback here..."></textarea>
+                                        <div class="textarea-wrapper">
+                                            <textarea id="feedback" name="feedback" rows="4" placeholder="Enter your feedback here..." maxlength="500"></textarea>
+                                            <div class="character-counter">
+                                                <span id="char-counter">0</span>/500
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="submit-button-container">

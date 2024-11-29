@@ -108,7 +108,7 @@
                                     }
                                 }
                                 %>
-                            <h2 class="number-form"><span>O.R. Number: <%= orNumber != null ? "#" + orNumber : "" %></span></h2>
+                            <h2 class="number-form"><span>Service Invoice: <%= orNumber != null ? "#" + orNumber : "" %></span></h2>
                             <form action="" class="form" method="POST" id="document-receiving-form">
                                 <input type="hidden" name="photo-data" id="photo-data">
                                 <input type="hidden" name="signature-data" id="signature-data">

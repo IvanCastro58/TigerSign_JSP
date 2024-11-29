@@ -100,7 +100,7 @@
 
             <div class="search">
                 <div class="search-box">
-                    <h2>Search for Pending Claims</h2>
+                    <h2>Search for Paid Applications</h2>
                     <div class="search-container">
                         <input type="text" id="dashboard-search-input" class="search-input" placeholder="Search...">
                         <button id="search-button" class="search-button">Search <i class="fa-solid fa-magnifying-glass"></i></button>

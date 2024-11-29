@@ -25,8 +25,8 @@
         <li>
             <a href="${pageContext.request.contextPath}/SuperAdmin/pending_claim.jsp" class="<%= "pending_claim".equals(request.getAttribute("activePage")) ? "active" : "" %>">
                 <i class="bi bi-clock-fill"></i>
-                <span>Pending Claims</span>
-                <span class="tooltip">Paid Application</span>
+                <span>Paid Applications</span>
+                <span class="tooltip">Paid Applications</span>
             </a>
         </li>
         <li>

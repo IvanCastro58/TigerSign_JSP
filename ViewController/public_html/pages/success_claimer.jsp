@@ -208,6 +208,9 @@
                 <p>Thank you for submitting the <strong>Survey Evaluation Form</strong>! Your response has been successfully recorded. We appreciate 
                 your feedback, as it helps us improve our service.</p>
             </div>
+            <div class="button-div">
+                <a href="${pageContext.request.contextPath}/pages/survey_claimer.jsp"><i class="bi bi-box-arrow-in-right" style="margin-right: 5px;"></i>Submit another response</a> 
+            </div>
         </div>
     </div>
     

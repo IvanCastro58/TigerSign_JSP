@@ -356,6 +356,31 @@ hr {
     font-weight: 500;
 }
 
+.button-div{
+    margin-top: 30px;
+    display: flex;
+    justify-content: center; /* Horizontally center the button */
+    align-items: center;
+}
+
+.button-div a{
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--primary-color);
+    color: var(--blackish); 
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.button-div a:hover {
+    box-shadow: none;
+}
 @media (max-width: 830px) {
     .title-sucess{
         font-size: 24px;
