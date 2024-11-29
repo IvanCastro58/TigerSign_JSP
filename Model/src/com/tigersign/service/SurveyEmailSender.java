@@ -87,7 +87,7 @@ public class SurveyEmailSender extends HttpServlet {
                 + "<h2 style='color: #333; width: fit-content; border-bottom: 3px solid #F4BB00;'>Survey/Evaluation Form</h2>"
                 + "</center>"
                 + "<p style='font-size: 14px; color: #555; margin-top: 20px;'>Thank you for visiting the Office of the Registrar and completing your procedures.</p>"
-                + "<p style='font-size: 14px; color: #555;'>We strive to improve our services and would greatly appreciate it if you could take a moment to share your feedback through a brief survey. Your input is essential in helping us enhance the experience for all our visitors.</p>"
+                + "<p style='font-size: 14px; color: #555;'>We strive to improve our services and would greatly appreciate it if you could take a moment to share your feedback through a brief survey. Your input is essential in helping us enhance the experience for all our stakeholders.</p>"
                 + "<p style='font-size: 14px; color: #555;'>Please complete the survey by clicking the button below. Your responses will be treated with the utmost care and confidentiality.</p>"
                 + "<a href='" + redirectPage + "?redirect=" + encodedSurveyLink
                 + "' style='background-color: #F4BB00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; font-weight: 600; font-family: Montserrat, sans-serif;'>Take the Survey</a>"

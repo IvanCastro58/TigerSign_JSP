@@ -80,8 +80,8 @@ claimButtons.forEach(button => {
             const representativeLink = claimerPopup.querySelector('.claimer-button .representative');
 
             // Set the href attributes of the links
-            primaryLink.href = ../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&admin=${encodeURIComponent(adminEmail)}&user=${encodeURIComponent(userEmail)}&requestId=${encodeURIComponent(requestId)};
-            representativeLink.href = ../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&admin=${encodeURIComponent(adminEmail)}&user=${encodeURIComponent(userEmail)}&requestId=${encodeURIComponent(requestId)};
+            primaryLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_primary.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&admin=${encodeURIComponent(adminEmail)}&user=${encodeURIComponent(userEmail)}&requestId=${encodeURIComponent(requestId)}`;
+            representativeLink.href = `../pages/redirecting.jsp?redirect=../pages/receiving_form_representative.jsp&orNumber=${encodeURIComponent(orNumber)}&customerName=${encodeURIComponent(customerName)}&feeName=${encodeURIComponent(feeName)}&fullname=${encodeURIComponent(adminFullName)}&admin=${encodeURIComponent(adminEmail)}&user=${encodeURIComponent(userEmail)}&requestId=${encodeURIComponent(requestId)}`;
 
             // Add event listeners to open the links in new tabs and redirect the current page
             primaryLink.addEventListener('click', (e) => {

@@ -341,7 +341,7 @@
                 function filterByDateRange(startDate, endDate) {
                     if (startDate && endDate) {
                         filteredRows = rows.filter(row => {
-                            const dateText = row.cells[3].querySelector("div").textContent.trim();
+                            const dateText = row.cells[2].querySelector("div").textContent.trim();
                             const rowDate = new Date(dateText);
                             return rowDate >= startDate && rowDate <= endDate;
                         });

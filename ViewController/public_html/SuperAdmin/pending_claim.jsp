@@ -169,9 +169,7 @@
 <body>
     <%@ include file="/WEB-INF/components/session_check.jsp" %>
     
-    <% 
-        session.setAttribute("adminEmail", null);
-        
+    <%  
         String firstName = (String) session.getAttribute("userFirstName");
         String lastName = (String) session.getAttribute("userLastName");
         String fullName = firstName + " " + lastName;

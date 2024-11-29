@@ -208,7 +208,7 @@ public class SendInvitationServlet extends HttpServlet {
                     + "<center>"
                     + "<h2 style='color: #333; width: fit-content; border-bottom: 3px solid #F4BB00;'>Admin Activation</h2>"
                     + "</center>"
-                    + "<p style='font-size: 14px; color: #555;'>You have been invited to become an Admin for TigerSign as a <strong>" + displayPosition + "</strong>.</p>" 
+                    + "<p style='font-size: 14px; color: #555;'>You have been assigned to become an Admin for TigerSign as <strong>" + displayPosition + "</strong>.</p>" 
                     + "<p style='font-size: 14px; color: #555;'>As an Admin, you will have access to a limited selection of features and responsibilities within the system.</p>"
                     + "<p style='font-size: 14px; color: #555;'>To get started, please click the button below to log in to your new Admin account.</p>"
                     + "<a href='" + redirectPage + "?redirect=" + encodedInvitationLink + "' "

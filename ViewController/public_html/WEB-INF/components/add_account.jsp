@@ -37,7 +37,7 @@
                 </select>
 
                 <div style="display: inline-flex; align-items: center; width: fit-content; margin-left: auto;">
-                    <button type="submit" class="submit-btn" id="sendButton">Send Invitation <i class="bi bi-chevron-right"></i></button>
+                    <button type="submit" class="submit-btn" id="sendButton">Create Account <i class="bi bi-chevron-right"></i></button>
                 </div>
             </form>
         </div>
@@ -130,7 +130,7 @@
         }
     
         const sendButton = document.getElementById('sendButton');
-        sendButton.innerHTML = "Sending Invitation<div class='spinner'></div>";
+        sendButton.innerHTML = "Creating Account<div class='spinner'></div>";
         sendButton.disabled = true; 
         sendButton.classList.add('sending');
     
