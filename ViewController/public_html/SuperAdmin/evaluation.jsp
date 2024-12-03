@@ -31,7 +31,7 @@
             <div class="box">
                 <h2 class="title-email">Enter Email Address<span style="color: #DB3444;">*</span></h2>
                 <form action="${pageContext.request.contextPath}/SendSurveyServlet" method="POST" id="surveyForm" class="send-container">
-                    <input type="email" name="email" class="send-input" placeholder="Ex. juandelacruz@gmail.com" required>
+                    <input type="email" name="email" class="send-input" id="emailInput" placeholder="Ex. juandelacruz@gmail.com" required>
                     <button type="submit" class="send-button" id="sendButton">Send
                         <i class='bx bxs-send'></i>
                     </button>
@@ -89,6 +89,20 @@
             setTimeout(() => {
                 this.submit();
             }, 2000);
+        });
+        
+        const emailInput = document.getElementById('emailInput');
+        const sendButton = document.getElementById('sendButton');
+    
+        emailInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') { 
+                event.preventDefault(); 
+                sendButton.click(); 
+            }
+        });
+    
+        sendButton.addEventListener('click', function (event) {
+            console.log("Send button clicked! Form is being submitted.");
         });
     </script>
     <%@ include file="/WEB-INF/components/script.jsp" %>

@@ -25,7 +25,7 @@ import org.apache.commons.imaging.Imaging;
 public class ClaimedRequestDetailsService {
 
     private static final String API_URL = "https://ping.arya.ai/api/v2/signature-detection";
-    private static final String API_TOKEN = "9d27aa98a13769c3a528e4b04fd4fd1b";
+    private static final String API_TOKEN = "9873fbc8a73439c0f279e1b04c82ab17";
 
     public ClaimedRequestDetails getClaimedRequestDetails(String requestId) {
         ClaimedRequestDetails details = null;
@@ -215,29 +215,41 @@ public class ClaimedRequestDetailsService {
         BufferedImage preprocessed1 = preprocessImage(image1);
         BufferedImage preprocessed2 = preprocessImage(image2);
 
-        // Compute SSIM
-        return computeEnhancedSSIM(preprocessed1, preprocessed2);
+        // Compute SSIM Score
+        double ssimScore = computeEnhancedSSIM(preprocessed1, preprocessed2);
+
+        // If SSIM score is above a threshold but the images are still different, compare edges for fine-grained analysis
+        if (ssimScore > 0.90) {
+            int edgeDifference = compareEdges(preprocessed1, preprocessed2);
+            if (edgeDifference > 500) { // A threshold for significant edge difference
+                System.out.println("Significant edge difference detected despite high SSIM. Adjusting score.");
+                ssimScore -= 0.05; // Adjust SSIM score based on edge difference
+            }
+        }
+
+        return ssimScore;
     }
-    
+
     private BufferedImage preprocessImage(BufferedImage img) {
         // Convert to grayscale
         BufferedImage grayscale = toGrayscale(img);
 
-        // Remove unnecessary edges or noise (trimming)
+        // Trim unnecessary edges or noise
         BufferedImage trimmed = trimEdges(grayscale);
 
-        // Resize to common dimensions (e.g., 256x256)
+        // Resize to consistent dimensions (e.g., 256x256)
         BufferedImage resized = resizeImage(trimmed, 256, 256);
 
-        // Normalize pixel intensities
+        // Normalize intensities for uniformity
         return normalizeIntensity(resized);
     }
+
 
     private BufferedImage trimEdges(BufferedImage img) {
         int width = img.getWidth();
         int height = img.getHeight();
 
-        // Assume a basic threshold to find non-background pixels
+        // Find non-background pixels
         int threshold = 200;
         int minX = width, minY = height, maxX = 0, maxY = 0;
 
@@ -253,11 +265,11 @@ public class ClaimedRequestDetailsService {
             }
         }
 
-        // Crop the image based on detected edges
+        // Crop image based on detected edges
         if (minX < maxX && minY < maxY) {
             return img.getSubimage(minX, minY, maxX - minX + 1, maxY - minY + 1);
         }
-        return img; // Return original if no significant edges detected
+        return img;
     }
 
     private BufferedImage normalizeIntensity(BufferedImage img) {
@@ -299,6 +311,55 @@ public class ClaimedRequestDetailsService {
         resized.getGraphics().drawImage(img, 0, 0, width, height, null);
         return resized;
     }
+    
+    private BufferedImage detectEdges(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        BufferedImage edges = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+
+        // Apply a simple Sobel operator for edge detection
+        for (int y = 1; y < height - 1; y++) {
+            for (int x = 1; x < width - 1; x++) {
+                int gx = (-1 * img.getRaster().getSample(x - 1, y - 1, 0)) +
+                         (-2 * img.getRaster().getSample(x - 1, y, 0)) +
+                         (-1 * img.getRaster().getSample(x - 1, y + 1, 0)) +
+                         (1 * img.getRaster().getSample(x + 1, y - 1, 0)) +
+                         (2 * img.getRaster().getSample(x + 1, y, 0)) +
+                         (1 * img.getRaster().getSample(x + 1, y + 1, 0));
+
+                int gy = (-1 * img.getRaster().getSample(x - 1, y - 1, 0)) +
+                         (-2 * img.getRaster().getSample(x, y - 1, 0)) +
+                         (-1 * img.getRaster().getSample(x + 1, y - 1, 0)) +
+                         (1 * img.getRaster().getSample(x - 1, y + 1, 0)) +
+                         (2 * img.getRaster().getSample(x, y + 1, 0)) +
+                         (1 * img.getRaster().getSample(x + 1, y + 1, 0));
+
+                int magnitude = (int) Math.sqrt(gx * gx + gy * gy);
+                edges.getRaster().setSample(x, y, 0, Math.min(255, magnitude));
+            }
+        }
+
+        return edges;
+    }
+    
+    private int compareEdges(BufferedImage img1, BufferedImage img2) {
+        BufferedImage edges1 = detectEdges(img1);
+        BufferedImage edges2 = detectEdges(img2);
+
+        int width = edges1.getWidth();
+        int height = edges1.getHeight();
+        int edgeDifference = 0;
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel1 = edges1.getRaster().getSample(x, y, 0);
+                int pixel2 = edges2.getRaster().getSample(x, y, 0);
+                edgeDifference += Math.abs(pixel1 - pixel2);
+            }
+        }
+
+        return edgeDifference;
+    }
 
     private double computeEnhancedSSIM(BufferedImage img1, BufferedImage img2) {
         double C1 = 6.5025, C2 = 58.5225;
@@ -308,19 +369,17 @@ public class ClaimedRequestDetailsService {
         int height = img1.getHeight();
         int n = width * height;
 
+        // Compute means, variances, and covariance of images
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int pixelX = img1.getRaster().getSample(x, y, 0);
                 int pixelY = img2.getRaster().getSample(x, y, 0);
 
-                // Apply central weighting (higher importance to central pixels)
-                double weight = 1.0 - Math.sqrt(Math.pow(x - width / 2, 2) + Math.pow(y - height / 2, 2)) / (Math.sqrt(2) * width / 2);
-
-                meanX += weight * pixelX;
-                meanY += weight * pixelY;
-                varX += weight * pixelX * pixelX;
-                varY += weight * pixelY * pixelY;
-                covXY += weight * pixelX * pixelY;
+                meanX += pixelX;
+                meanY += pixelY;
+                varX += pixelX * pixelX;
+                varY += pixelY * pixelY;
+                covXY += pixelX * pixelY;
             }
         }
 
@@ -330,6 +389,7 @@ public class ClaimedRequestDetailsService {
         varY = varY / n - meanY * meanY;
         covXY = covXY / n - meanX * meanY;
 
+        // Compute SSIM formula
         double numerator = (2 * meanX * meanY + C1) * (2 * covXY + C2);
         double denominator = (meanX * meanX + meanY * meanY + C1) * (varX + varY + C2);
 

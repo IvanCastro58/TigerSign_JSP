@@ -614,14 +614,14 @@
 
         // Search input filter
         searchInput.addEventListener('input', function () {
-        const searchTerm = this.value;
-        filterData(null, null, statusSelect.value, searchTerm);
-    
-        // Update status styles after search term changes
-        $('.status-dropdown').each(function() {
-            updateStatusStyle($(this)); // Reapply the status style to the dropdowns
+            const searchTerm = this.value;
+            filterData(null, null, statusSelect.value, searchTerm);
+        
+            // Reapply the status styles after the search filter
+            $('.status-dropdown').each(function () {
+                updateStatusStyle($(this)); // Apply status-specific styling
+            });
         });
-    });
 
     rowsPerPageSelect.addEventListener('change', function () {
         rowsPerPage = parseInt(this.value);
@@ -630,14 +630,21 @@
     });
 
     function renderTable(page, rowsToRender = filteredRows) {
-        const startIndex = (page - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-    
-        tbody.innerHTML = '';  // Clear the table body before re-rendering
-        const visibleRows = rowsToRender.slice(startIndex, endIndex);
-        visibleRows.forEach(row => tbody.appendChild(row));  // Add rows to the table body
-        renderPagination(rowsToRender);  // Update pagination
-    }
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    tbody.innerHTML = ''; // Clear the table body before re-rendering
+    const visibleRows = rowsToRender.slice(startIndex, endIndex);
+    visibleRows.forEach(row => tbody.appendChild(row)); // Add rows to the table body
+
+    // Reapply styles to status dropdowns
+    $('.status-dropdown').each(function () {
+        updateStatusStyle($(this)); // Apply status-specific styling
+    });
+
+    renderPagination(rowsToRender); // Update pagination
+}
+
 
     function renderPagination(rowsToRender) {
         const pageCount = Math.ceil(rowsToRender.length / rowsPerPage);

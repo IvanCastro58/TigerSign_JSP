@@ -360,7 +360,7 @@
             <% if (claimedCount > 0) { %>
                 <div class="reports">
                     <div class="latest-reports">
-                        <div class="report-column right">
+                        <div class="report-column right" style="padding-right: 60px;">
                             <div class="heading-container">
                                 <h3>Average Processing Time of Documents</h3>
                             </div>
@@ -480,7 +480,7 @@
                 },
                 plugins: {
                     legend: {
-                        position: 'right',
+                        position: 'top',
                         labels: {
                             boxWidth: 20,
                             padding: 20,
@@ -725,6 +725,24 @@
                 localStorage.removeItem("filterValue");
             }
         };
+        
+  function formatNumber(num) {
+        if (num >= 1000 && num <= 9999) {
+            return (num / 1000).toFixed(1) + "K+";
+        } else if (num >= 10000 && num <= 99999) {
+            return (num / 1000).toFixed(1) + "K+";
+        }
+        return num;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all card numbers
+        const cardNumbers = document.querySelectorAll(".card-number");
+        cardNumbers.forEach(card => {
+            const number = parseInt(card.textContent.trim(), 10); // Convert content to number
+            card.textContent = formatNumber(number); // Update the text with formatted number
+        });
+    });
     </script>
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>

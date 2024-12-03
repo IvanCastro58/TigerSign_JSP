@@ -284,10 +284,10 @@
                     </div>
 
                 </div>
-                <div class="card" id="eval-received">
-                    <h3 class="card-heading">Evaluation Received</h3>
-                    <div class="card-number"><%= evaluationsReceived %></div>
-                </div>
+<div class="card" id="eval-received">
+    <h3 class="card-heading">Evaluation Received</h3>
+    <div class="card-number" id="evaluation-count"><%= evaluationsReceived %></div>
+</div>
             </div>
             <div class="reports">
                 <div class="highlight-bar2"></div>
@@ -547,7 +547,7 @@
                 cutout: '50%',
                 plugins: {
                     legend: {
-                        position: 'right',
+                        position: 'top',
                         labels: {
                             boxWidth: 20,
                             padding: 20,
@@ -577,8 +577,10 @@
                 },
                 layout: {
                     padding: {
+                        top: 10, 
+                        bottom: 10,
                         left: 10,
-                        right: 20
+                        right: 10
                     }
                 }
             },
@@ -841,6 +843,24 @@
                 localStorage.removeItem("filterValue");
             }
         };
+        
+        // Function to format numbers
+  function formatNumber(num) {
+        if (num >= 1000 && num <= 9999) {
+            return (num / 1000).toFixed(1) + "K+";
+        } else if (num >= 10000 && num <= 99999) {
+            return (num / 1000).toFixed(1) + "K+";
+        }
+        return num;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const evaluationCountElem = document.getElementById("evaluation-count");
+        if (evaluationCountElem) {
+            const number = parseInt(evaluationCountElem.textContent.trim(), 10);
+            evaluationCountElem.textContent = formatNumber(number);
+        }
+    });
     </script>
     
     <%@ include file="/WEB-INF/components/script.jsp" %>  

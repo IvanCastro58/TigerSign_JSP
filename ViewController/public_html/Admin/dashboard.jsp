@@ -133,7 +133,30 @@
         }
         window.location.href = '<%= request.getContextPath() %>/Admin/pending_claim.jsp'; // Redirect to pending claims
     });
-    </script>
+
+    // Function to format numbers
+    function formatNumber(num) {
+        if (num >= 1000 && num <= 9999) {
+            return (num / 1000).toFixed(1) + "K+";
+        } else if (num >= 10000 && num <= 99999) {
+            return (num / 1000).toFixed(1) + "K+";
+        }
+        return num; // Return the original number for values outside the range
+    }
+
+    // Apply formatting to the card numbers
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all card number elements
+        const cardNumbers = document.querySelectorAll(".card-number");
+
+        // Format and update each card number
+        cardNumbers.forEach(card => {
+            const number = parseInt(card.textContent.trim(), 10); // Parse the number
+            card.textContent = formatNumber(number); // Update with formatted value
+        });
+    });
+</script>
+
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>
 </html>

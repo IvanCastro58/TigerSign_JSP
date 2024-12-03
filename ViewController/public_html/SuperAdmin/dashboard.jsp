@@ -146,7 +146,48 @@
         }
         window.location.href = '<%= request.getContextPath() %>/SuperAdmin/pending_claim.jsp'; // Redirect to pending claims
     });
-    </script>
+
+    // Function to format numbers
+    function formatNumber(num) {
+        if (num >= 1000 && num <= 9999) {
+            return (num / 1000).toFixed(1) + "K+";
+        } else if (num >= 10000 && num <= 99999) {
+            return (num / 1000).toFixed(1) + "K+";
+        }
+        return num; // Return the original number for values outside the range
+    }
+
+    // Apply formatting to the card numbers
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all card number elements
+        const cardNumbers = document.querySelectorAll(".card-number");
+
+        // Format and update each card number
+        cardNumbers.forEach(card => {
+            const number = parseInt(card.textContent.trim(), 10); // Parse the number
+            card.textContent = formatNumber(number); // Update with formatted value
+        });
+    });
+    const searchInput = document.getElementById('dashboard-search-input');
+    const searchButton = document.getElementById('search-button');
+
+    // Add an event listener for the "keydown" event
+    searchInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') { // Check if the key pressed is "Enter"
+            searchButton.click(); // Trigger the search button's click event
+        }
+    });
+
+    // Example: Click event for the search button
+    searchButton.addEventListener('click', function () {
+        const query = searchInput.value.trim();
+        if (query) {
+            console.log(`Searching for: ${query}`); // Replace this with your actual search logic
+        } else {
+            console.log('Please enter a search query');
+        }
+    });
+</script>
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>
 </html>
