@@ -22,9 +22,14 @@
     <link rel="icon" href="../resources/images/tigersign.png" type="image/x-icon">
 </head>
 <body>
+    <%@ include file="/WEB-INF/components/session_check.jsp" %>
+    <% 
+        request.setAttribute("activePage", "reports");  
+    %>
+    
     <%@ include file="/WEB-INF/components/header.jsp" %>
     <%@ include file="/WEB-INF/components/sidebar.jsp" %>
-
+    
     <div class="main-content">
         <div class="margin-content">  
             <div class="title-section">

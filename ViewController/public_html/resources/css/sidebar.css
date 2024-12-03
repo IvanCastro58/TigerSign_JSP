@@ -104,7 +104,7 @@ header label span {
     z-index: 1000;
     top: 59px;
     left: 0;
-    transition: transform 0.5s ease, width 0.5s ease;
+    transition: transform 0.4s ease, width 0.4s ease;
 }
 
 .sidebar ul {

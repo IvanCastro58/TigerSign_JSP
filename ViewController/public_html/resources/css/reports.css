@@ -279,9 +279,10 @@
 }
 
 .responsive-canvas {
-    width: 100% !important;
-    max-width: 700px;
-    height: auto !important;
+    width: 100%;
+    max-width: 700px;  
+    height: auto;      
+    max-height: 500px; 
 }
 
 .bar-canvas {
@@ -292,12 +293,23 @@
     display: flex;
     justify-content: center; 
     align-items: center;   
+    margin-top: 20px;
     width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 30px;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+    background-color: var(--lighter-gray);
 }
 
 .report-column.left .canvas-container{
     display: flex;
     justify-content: center;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 30px;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+    background-color: var(--lighter-gray);
 }
 
 .calendar-container,
