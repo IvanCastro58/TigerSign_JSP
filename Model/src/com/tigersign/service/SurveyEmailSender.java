@@ -68,8 +68,8 @@ public class SurveyEmailSender extends HttpServlet {
 
     private boolean sendSurveyEmail(String email, HttpServletRequest request) {
         String subject = "Survey/Evaluation Form Link - TigerSign";
-        String surveyLink = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/survey_claimer.jsp";
-        String redirectPage = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/redirecting.jsp";
+        String surveyLink = "https://registrarbeta.ust.edu.ph/tigersign/pages/survey_claimer.jsp";
+        String redirectPage = "https://registrarbeta.ust.edu.ph/tigersign/pages/redirecting.jsp";
 
         String encodedSurveyLink;
         try {
