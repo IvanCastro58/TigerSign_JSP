@@ -186,7 +186,7 @@
                                 Request ID
                             </th>
                             <th style="cursor: pointer;">
-                                O.R. Number
+                                Service Invoice
                                 <span class="sort-icons">
                                     <i class="fa fa-sort"></i>
                                     <i class="fa fa-caret-up" style="display:none;"></i>
