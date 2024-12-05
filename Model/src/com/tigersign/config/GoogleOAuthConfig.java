@@ -105,10 +105,10 @@ public class GoogleOAuthConfig extends HttpServlet {
                         }
 
                         if (rememberMe) {
-                            response.sendRedirect("SuperAdmin/dashboard.jsp");
+                            response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/SuperAdmin/dashboard.jsp");
                         } else {
                             
-                            response.sendRedirect("SuperAdmin/verify_superadmin.jsp");
+                            response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/SuperAdmin/verify_superadmin.jsp");
                         }
                     } else {
                         
@@ -116,7 +116,7 @@ public class GoogleOAuthConfig extends HttpServlet {
                         request.getRequestDispatcher("SuperAdmin/totp_setup.jsp").forward(request, response);
                     }
                 } else {
-                    response.sendRedirect("error/error_unauthorized.jsp");
+                    response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/error/error_unauthorized.jsp");
                 }
             } catch (SQLException e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
@@ -148,7 +148,7 @@ public class GoogleOAuthConfig extends HttpServlet {
                             rememberMeCookie.setMaxAge(60 * 60 * 24 * 30); 
                             response.addCookie(rememberMeCookie);
                         }
-                        response.sendRedirect("SuperAdmin/dashboard.jsp");
+                        response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/SuperAdmin/dashboard.jsp");
                     } else {
                         request.setAttribute("errorMessage", "Invalid TOTP");
                         request.getRequestDispatcher("/SuperAdmin/verify_superadmin.jsp").forward(request, response);

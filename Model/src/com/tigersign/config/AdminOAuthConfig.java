@@ -112,14 +112,14 @@ public class AdminOAuthConfig extends HttpServlet {
                     }
 
                     if (rememberMe) {
-                        response.sendRedirect("Admin/dashboard.jsp");
+                        response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/Admin/dashboard.jsp");
                     } else {
-                        response.sendRedirect("Admin/verify_admin.jsp");
+                        response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/Admin/verify_admin.jsp");
                     }
                 } else if ("DEACTIVATED".equals(adminStatus)) {
-                    response.sendRedirect("error/error_deactivated_admin.jsp");
+                    response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/error/error_deactivated_admin.jsp");
                 } else {
-                    response.sendRedirect("error/error_unauthorized_admin.jsp");
+                    response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/error/error_unauthorized_admin.jsp");
                 }
             } catch (SQLException e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
@@ -150,7 +150,7 @@ public class AdminOAuthConfig extends HttpServlet {
                             rememberMeCookie.setMaxAge(60 * 60 * 24 * 30); // 1 month
                             response.addCookie(rememberMeCookie);
                         }
-                        response.sendRedirect("Admin/dashboard.jsp");
+                        response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/Admin/dashboard.jsp");
                     } else {
                         request.setAttribute("errorMessage", "Invalid TOTP");
                         request.getRequestDispatcher("/Admin/verify_admin.jsp").forward(request, response);
