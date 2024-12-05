@@ -76,7 +76,14 @@ public class ReportGeneratorServlet extends HttpServlet {
                                    String claimedCount, List<String> documentTypes, 
                                    List<Integer> documentCounts, List<Double> documentAvgProcessingHours) 
                                    throws IOException, DocumentException {
+        String sanitizedFilterValue = (filterValue == null || filterValue.isEmpty()) 
+            ? "All_Data" 
+            : filterValue.replaceAll("[^a-zA-Z0-9-_]", "_");
+
+        String filename = "document_report_" + sanitizedFilterValue + ".pdf";
+
         response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 20, 20, 20, 20);
@@ -270,8 +277,10 @@ public class ReportGeneratorServlet extends HttpServlet {
             
         document.close();
 
+        // Write the PDF to the response output stream for direct download
         response.getOutputStream().write(byteArrayOutputStream.toByteArray());
         response.getOutputStream().flush();
+        response.getOutputStream().close();
     }
     
     private static PdfPCell createCell(String content, BaseColor backgroundColor) {

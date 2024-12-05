@@ -207,6 +207,36 @@ body {
 .profile-details .edit-btn:hover {
      box-shadow: none;
 }
+
+.btn-signout{
+    display: none;
+}
+
+.logout-btn{
+    font-family: 'Montserrat', sans-serif;
+    width: fit-content;
+    background-color: #DB3444;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 30px;
+    border: none;
+    margin-right: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); 
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.logout-btn i{
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.logout-btn:hover{
+    box-shadow: none;
+}
+
 .btn-activate .deactivate-btn{
     font-family: 'Montserrat', sans-serif;
     width: fit-content;
@@ -219,7 +249,7 @@ body {
     margin-right: 20px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); 
-    transition: box-shadow 0.3s ease, transform 0.3s ease;;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .btn-activate .deactivate-btn:hover{
@@ -542,6 +572,13 @@ body {
         padding-bottom: 20px;
         border-bottom: 4px solid var(--primary-color);
         width: 100%;
+    }
+    
+    .btn-signout{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
     }
 }
 

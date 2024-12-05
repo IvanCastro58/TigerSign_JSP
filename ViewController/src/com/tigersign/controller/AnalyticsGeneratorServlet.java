@@ -79,12 +79,17 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
     private static final BaseColor CUSTOM_GRAY = new BaseColor(209, 209, 209);
 
     private void generatePDFAnalytics(HttpServletResponse response, SurveyDAO surveyDAO, String filterType, String filterValue) 
-                                       throws IOException, DocumentException {
-         response.setContentType("application/pdf");
-
-         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-         Document document = new Document(PageSize.A4, 20, 20, 20, 20);
-         PdfWriter.getInstance(document, byteArrayOutputStream);
+            throws IOException, DocumentException {
+            
+            String sanitizedFilterValue = (filterValue == null || filterValue.isEmpty()) ? "All_Data" 
+                                         : filterValue.replaceAll("[^a-zA-Z0-9-_]", "_");
+            String filename = "survey_analytics_" + sanitizedFilterValue + ".pdf";
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+    
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            Document document = new Document(PageSize.A4, 20, 20, 20, 20);
+            PdfWriter.getInstance(document, byteArrayOutputStream);
 
          document.open();
 

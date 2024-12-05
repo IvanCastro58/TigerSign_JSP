@@ -33,9 +33,9 @@ public class GenerateProofServlet extends HttpServlet {
 
                 response.setContentType("application/pdf");
                 String filename = details.getOrNumber() + "_" + "ProofOfClaim" + ".pdf";
-                response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
                 response.getOutputStream().write(pdfBytes);
-                
+
             } catch (DocumentException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating PDF");

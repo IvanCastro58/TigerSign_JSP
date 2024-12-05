@@ -156,13 +156,13 @@
                 nameElement.style.display = 'inline';
             }
         }
+        
         function openPdfInNewTab() {
             const requestId = '<%= details.getRequestId() %>';
             const pdfUrl = '<%= request.getContextPath() %>/GenerateProofServlet?requestId=' + requestId;
-            const redirectPageUrl = '<%= request.getContextPath() %>/pages/generating.jsp?generate=' + encodeURIComponent(pdfUrl);
-        
-            window.open(redirectPageUrl, '_blank');
             
+            window.open(pdfUrl, '_blank');
+                
             logActivity(requestId);
         }
 

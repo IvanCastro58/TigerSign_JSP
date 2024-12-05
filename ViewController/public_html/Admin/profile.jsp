@@ -62,7 +62,10 @@
                         </div>
                     </div>
                 </div>
-            </div>           
+            </div>
+            <div class="btn-signout">
+                <a href="${pageContext.request.contextPath}/superadmin-signout" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+            </div>
         </div>
     </div>
     <div class="overlay"></div>
