@@ -184,8 +184,10 @@ public class SendInvitationServlet extends HttpServlet {
             }
         });
 
-        String redirectPage = "https://registrarbeta.ust.edu.ph/tigersign/pages/redirecting.jsp";
-        String invitationLink = "https://registrarbeta.ust.edu.ph/tigersign/Admin/login.jsp";
+        //String redirectPage = "https://registrarbeta.ust.edu.ph/tigersign/pages/redirecting.jsp";
+        //String invitationLink = "https://registrarbeta.ust.edu.ph/tigersign/Admin/login.jsp";
+        String redirectPage = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/redirecting.jsp";
+        String invitationLink = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/Admin/login.jsp";
 
         String encodedInvitationLink;
         try {

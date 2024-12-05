@@ -31,8 +31,10 @@ public class EmailService {
         try {
             executorService.submit(() -> {
                 String subject = "Survey/Evaluation Form Link - TigerSign";
-                String surveyLink = "https://registrarbeta.ust.edu.ph/tigersign/pages/survey_claimer.jsp"; 
-                String redirectPage = "https://registrarbeta.ust.edu.ph/tigersign/pages/redirecting.jsp"; 
+                //String surveyLink = "https://registrarbeta.ust.edu.ph/tigersign/pages/survey_claimer.jsp"; 
+                //String redirectPage = "https://registrarbeta.ust.edu.ph/tigersign/pages/redirecting.jsp"; 
+                String surveyLink = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/survey_claimer.jsp"; 
+                String redirectPage = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/redirecting.jsp"; 
 
                 String encodedSurveyLink;
                 try {
