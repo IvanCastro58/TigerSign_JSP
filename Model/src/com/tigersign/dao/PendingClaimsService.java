@@ -28,8 +28,8 @@ public class PendingClaimsService {
 
             stmt.registerOutParameter(1, OracleTypes.CURSOR);
             stmt.setString(2, null);
-            stmt.setString(3, "01-JAN-2011");
-            stmt.setString(4, "01-MAR-2011");
+            stmt.setString(3, "01-OCT-2024");
+            stmt.setString(4, "30-NOV-2024");
 
             stmt.execute();
 

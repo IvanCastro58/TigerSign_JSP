@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public class PendingClaimsScheduler {
 
     private static final long INITIAL_DELAY = 0L;
-    private static final long PERIOD = 1L; // Period in minutes
+    private static final long PERIOD = 5L; // Period in minutes
     private static boolean isSchedulerStarted = false; // Static flag to track scheduler initialization
 
     public static synchronized void startScheduler() {
