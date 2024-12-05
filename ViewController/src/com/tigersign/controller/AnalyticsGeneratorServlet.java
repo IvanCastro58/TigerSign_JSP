@@ -98,8 +98,10 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
          headerTable.setSpacingBefore(10f);
          headerTable.setSpacingAfter(10f);
 
-         String logoPath1 = getServletContext().getRealPath("/resources/images/ust.png");
-         String logoPath2 = getServletContext().getRealPath("/resources/images/registrar.png");
+         String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
+         //String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
+         String logoPath1 = contextRoot + "/resources/images/ust.png";
+         String logoPath2 = contextRoot + "/resources/images/registrar.png";
 
          Image logo1 = Image.getInstance(logoPath1);
          logo1.scaleToFit(60, 60);

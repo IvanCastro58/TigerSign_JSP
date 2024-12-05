@@ -22,14 +22,12 @@ import java.io.IOException;
 
 import java.util.Base64;
 
-import javax.servlet.ServletContext;
-
 public class PDFGenerator {
 
     // Define the custom gray color
     private static final BaseColor CUSTOM_GRAY = new BaseColor(209, 209, 209);
 
-    public static byte[] generateProofOfClaimPDF(ClaimedRequestDetails details, ServletContext context) throws DocumentException, IOException {
+    public static byte[] generateProofOfClaimPDF(ClaimedRequestDetails details) throws DocumentException, IOException {
         Document document = new Document(PageSize.A4, 20, 20, 20, 20);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(document, byteArrayOutputStream);
@@ -41,9 +39,11 @@ public class PDFGenerator {
         headerTable.setSpacingBefore(10f);
         headerTable.setSpacingAfter(10f);
 
-        // Load logos and create cells
-        String logoPath1 = context.getRealPath("/resources/images/ust.png");
-        String logoPath2 = context.getRealPath("/resources/images/registrar.png");
+        // Load logos directly using the context root
+        String logoPath1 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/ust.png";
+        String logoPath2 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/registrar.png";
+        //String logoPath1 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/ust.png";
+        //String logoPath2 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/registrar.png";
 
         Image logo1 = Image.getInstance(logoPath1);
         logo1.scaleToFit(60, 60);

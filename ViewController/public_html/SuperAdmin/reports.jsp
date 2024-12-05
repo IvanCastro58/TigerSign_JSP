@@ -340,7 +340,7 @@
             </div>
             <div class="card-view">
                 <div class="card" id="pending-card-reports">
-                    <h3 class="card-heading">Pending Requests</h3>
+                    <h3 class="card-heading">Paid Applications</h3>
                     <div class="card-number"><%= pendingCount %></div>
                 </div>
                 <div class="card" id="processing-card-reports">

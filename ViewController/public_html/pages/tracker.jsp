@@ -23,15 +23,15 @@
         <div class="container">
         <div class="column left-column">
             <div class="heading">Online and Walk-In Document Request</div>
-            <div class="heading1">Check status of online and walk in application of student records via O.R. number.</div>
+            <div class="heading1">Check status of online and walk in application of student records via Service Invoice.</div>
             <div class="highlight-bar"></div>
             <div class="instruction">
                 <div class="instruction-heading">
                     <span>General Instructions</span>
                 </div>
                 <ul class="instruction-list">
-                    <li>1. Your Official Receipt (OR) number will serve as your identification.</li>
-                    <li>2. Kindly enter your Official Receipt (OR) number in the search field, for example: <strong>01-123456789</strong>.</li>
+                    <li>1. Your Service Invoice number will serve as your identification.</li>
+                    <li>2. Kindly enter your Service Invoice number in the search field, for example: <strong>01-123456789</strong>.</li>
                     <li>3. If a representative will claim your requested documents, they must present an Authorization Letter along with a valid ID of the requester.</li>
                 </ul>
                 

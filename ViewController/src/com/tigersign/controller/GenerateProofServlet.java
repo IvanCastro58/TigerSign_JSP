@@ -7,7 +7,6 @@ import com.tigersign.dao.ClaimedRequestDetailsService;
 
 import java.io.IOException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,12 +23,9 @@ public class GenerateProofServlet extends HttpServlet {
         ClaimedRequestDetailsService service = new ClaimedRequestDetailsService();
         ClaimedRequestDetails details = service.getClaimedRequestDetails(requestId);
 
-        ServletContext context = getServletContext(); 
-        String adminEmail = (String) request.getSession().getAttribute("adminEmail"); 
-
         if (details != null) {
             try {
-                byte[] pdfBytes = PDFGenerator.generateProofOfClaimPDF(details, context);
+                byte[] pdfBytes = PDFGenerator.generateProofOfClaimPDF(details);
 
                 response.setContentType("application/pdf");
                 String filename = details.getOrNumber() + "_" + "ProofOfClaim" + ".pdf";
@@ -51,13 +47,10 @@ public class GenerateProofServlet extends HttpServlet {
         String adminEmail = (String) request.getSession().getAttribute("adminEmail");
         ClaimedRequestDetailsService service = new ClaimedRequestDetailsService();
         ClaimedRequestDetails details = service.getClaimedRequestDetails(requestId);
-        
-        String activity = "Generated proof of claim file for O.R. Number: " + details.getOrNumber()  + " (Request: " + details.getRequestedDocuments() + ")";
+
+        String activity = "Generated proof of claim file for O.R. Number: " + details.getOrNumber() + " (Request: " + details.getRequestedDocuments() + ")";
         AuditLogger.logActivity(adminEmail, activity);
 
         response.getWriter().write("Activity logged successfully");
     }
 }
-
-
-
