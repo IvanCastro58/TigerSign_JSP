@@ -62,8 +62,15 @@
 
             </div>
             <div class="signature-result">
-                <i class="bi bi-check-circle"></i> Signature Similarity Score: 
-                <%= String.format("%.2f", details.getSignatureSimilarityScore()) %>%
+                <% 
+                    double similarityScore = Math.max(0, details.getSignatureSimilarityScore());
+                    if (similarityScore == 0) { 
+                %>
+                    <i class="bi bi-exclamation-circle"></i> Signature/s not detected
+                <% } else { %>
+                    <i class="bi bi-check-circle"></i> Signature Similarity Score: 
+                    <%= String.format("%.2f", similarityScore) %>%
+                <% } %>
             </div>
         </div>
     </div>

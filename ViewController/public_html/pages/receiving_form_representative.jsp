@@ -91,10 +91,10 @@
                                         boolean emailSent = emailService.sendSurveyEmail(email, request);
                                         
                                         if (adminEmail != null && !adminEmail.isEmpty()) {
-                                            String activity = "Released the document titled '" + feeName + "' associated with O.R. Number " + orNumber + " to an authorized representative.";
+                                            String activity = "Released the document titled '" + feeName + "' associated with Service Invoice Number " + orNumber + " to an authorized representative.";
                                             AuditLogger.logActivity(adminEmail, activity);
                                         } else if (userEmail != null && !userEmail.isEmpty()) {
-                                            String activity = "Released the document titled '" + feeName + "' associated with O.R. Number " + orNumber + " to an authorized representative.";
+                                            String activity = "Released the document titled '" + feeName + "' associated with Service Invoice Number " + orNumber + " to an authorized representative.";
                                             AuditLoggerSuperAdmin.logActivity(userEmail, activity);
                                         }
                                         

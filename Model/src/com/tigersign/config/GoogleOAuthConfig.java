@@ -45,8 +45,8 @@ import org.json.JSONObject;
 public class GoogleOAuthConfig extends HttpServlet {
     private static final String CLIENT_ID = "567397451737-96vf70q3a700obapeov5a43p52aq5mp6.apps.googleusercontent.com";
     private static final String CLIENT_SECRET = "#";
-    //private static final String REDIRECT_URI = "https://registrarbeta.ust.edu.ph/tigersign/oauth2callback
-    private static final String REDIRECT_URI = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/oauth2callback";
+    private static final String REDIRECT_URI = "https://registrarbeta.ust.edu.ph/tigersign/oauth2callback";
+    //private static final String REDIRECT_URI = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/oauth2callback";
     private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USER_INFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
@@ -106,9 +106,11 @@ public class GoogleOAuthConfig extends HttpServlet {
 
                         if (rememberMe) {
                             response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/SuperAdmin/dashboard.jsp");
+                            //response.sendRedirect("SuperAdmin/dashboard.jsp");
                         } else {
                             
                             response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/SuperAdmin/verify_superadmin.jsp");
+                            //.sendRedirect("SuperAdmin/verify_superadmin.jsp");
                         }
                     } else {
                         
@@ -117,6 +119,7 @@ public class GoogleOAuthConfig extends HttpServlet {
                     }
                 } else {
                     response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/error/error_unauthorized.jsp");
+                    //response.sendRedirect("error/error_unauthorized.jsp");
                 }
             } catch (SQLException e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
@@ -149,6 +152,7 @@ public class GoogleOAuthConfig extends HttpServlet {
                             response.addCookie(rememberMeCookie);
                         }
                         response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/SuperAdmin/dashboard.jsp");
+                        //response.sendRedirect("SuperAdmin/dashboard.jsp");
                     } else {
                         request.setAttribute("errorMessage", "Invalid TOTP");
                         request.getRequestDispatcher("/SuperAdmin/verify_superadmin.jsp").forward(request, response);

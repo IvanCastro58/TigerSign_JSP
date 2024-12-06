@@ -97,8 +97,8 @@ public class ReportGeneratorServlet extends HttpServlet {
         headerTable.setSpacingBefore(10f);
         headerTable.setSpacingAfter(10f);
         
-        String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
-        //String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
+        //String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
+        String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
         String logoPath1 = contextRoot + "/resources/images/ust.png";
         String logoPath2 = contextRoot + "/resources/images/registrar.png";
 

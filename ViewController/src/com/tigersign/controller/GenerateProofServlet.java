@@ -48,7 +48,7 @@ public class GenerateProofServlet extends HttpServlet {
         ClaimedRequestDetailsService service = new ClaimedRequestDetailsService();
         ClaimedRequestDetails details = service.getClaimedRequestDetails(requestId);
 
-        String activity = "Generated proof of claim file for O.R. Number: " + details.getOrNumber() + " (Request: " + details.getRequestedDocuments() + ")";
+        String activity = "Generated proof of claim file for Service Invoice Number: " + details.getOrNumber() + " (Request: " + details.getRequestedDocuments() + ")";
         AuditLogger.logActivity(adminEmail, activity);
 
         response.getWriter().write("Activity logged successfully");

@@ -40,10 +40,10 @@ public class PDFGenerator {
         headerTable.setSpacingAfter(10f);
 
         // Load logos directly using the context root
-        String logoPath1 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/ust.png";
-        String logoPath2 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/registrar.png";
-        //String logoPath1 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/ust.png";
-        //String logoPath2 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/registrar.png";
+        //String logoPath1 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/ust.png";
+        //String logoPath2 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/registrar.png";
+        String logoPath1 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/ust.png";
+        String logoPath2 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/registrar.png";
 
         Image logo1 = Image.getInstance(logoPath1);
         logo1.scaleToFit(60, 60);
@@ -106,7 +106,7 @@ public class PDFGenerator {
         // Create a table for Transaction ID with 4 cells
         PdfPTable transactionIdTable = new PdfPTable(4);
         transactionIdTable.setWidthPercentage(100);
-        transactionIdTable.addCell(createNormalCell("O.R. Number"));
+        transactionIdTable.addCell(createNormalCell("Service Invoice"));
         PdfPCell transactionIdCell = createCell(" #" + details.getOrNumber(), null);
         transactionIdCell.setColspan(3); 
         transactionIdCell.setPhrase(new Phrase(" #" + details.getOrNumber(), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8)));

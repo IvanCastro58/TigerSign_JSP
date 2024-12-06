@@ -42,8 +42,8 @@ import org.json.JSONObject;
 public class AdminOAuthConfig extends HttpServlet {
     private static final String CLIENT_ID = "567397451737-96vf70q3a700obapeov5a43p52aq5mp6.apps.googleusercontent.com";
     private static final String CLIENT_SECRET = "#";
-    //private static final String REDIRECT_URI = "https://registrarbeta.ust.edu.ph/tigersign/adminOauth2callback";
-    private static final String REDIRECT_URI = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/adminOauth2callback";
+    private static final String REDIRECT_URI = "https://registrarbeta.ust.edu.ph/tigersign/adminOauth2callback";
+    //private static final String REDIRECT_URI = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/adminOauth2callback";
     private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USER_INFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
@@ -113,13 +113,17 @@ public class AdminOAuthConfig extends HttpServlet {
 
                     if (rememberMe) {
                         response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/Admin/dashboard.jsp");
+                        //response.sendRedirect("Admin/dashboard.jsp");
                     } else {
                         response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/Admin/verify_admin.jsp");
+                        //response.sendRedirect("Admin/verify_admin.jsp");
                     }
                 } else if ("DEACTIVATED".equals(adminStatus)) {
                     response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/error/error_deactivated_admin.jsp");
+                    //response.sendRedirect("error/error_deactivated_admin.jsp");
                 } else {
                     response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/error/error_unauthorized_admin.jsp");
+                    //response.sendRedirect("error/error_unauthorized_admin.jsp");
                 }
             } catch (SQLException e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
@@ -151,6 +155,7 @@ public class AdminOAuthConfig extends HttpServlet {
                             response.addCookie(rememberMeCookie);
                         }
                         response.sendRedirect("https://registrarbeta.ust.edu.ph/tigersign/Admin/dashboard.jsp");
+                        //response.sendRedirect("Admin/dashboard.jsp");
                     } else {
                         request.setAttribute("errorMessage", "Invalid TOTP");
                         request.getRequestDispatcher("/Admin/verify_admin.jsp").forward(request, response);

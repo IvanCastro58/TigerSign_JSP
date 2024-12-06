@@ -418,11 +418,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--green);
-    color: var(--white);
+    background-color: var(--primary-color);
+    color: black;
     font-size: 14px;
     padding: 5px;
     border-radius: 5px;
+    border: 1px solid black; /* Added for black border */
     width: max-content;
     gap: 5px;
     margin: 20px auto 10px auto;

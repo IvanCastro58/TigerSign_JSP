@@ -58,7 +58,7 @@ public class UpdateStatusServlet extends HttpServlet {
                 }
 
                 if (orNumber != null) {
-                    String activity = "Updated status of O.R. Number " + orNumber + " to " + newStatus + " (Request: " + requestData + ")";
+                    String activity = "Updated status of Service Invoice Number " + orNumber + " to " + newStatus + " (Request: " + requestData + ")";
                     if (adminEmail != null) {
                         AuditLogger.logActivity(adminEmail, activity);
                     } else if (userEmail != null) {
