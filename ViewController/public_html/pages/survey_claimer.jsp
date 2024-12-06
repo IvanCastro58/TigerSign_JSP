@@ -78,7 +78,7 @@
                                 </div>
                                     <div class="input-fields">
                                         <label for="claimer-email" class="form-label">Email Address<span style="color: #DB3444;"> *</span></label>
-                                        <input type="text" name="field-email" id="field-email" placeholder="Enter Email Address">
+                                        <input type="text" name="field-email" id="field-email" placeholder="Enter Email Address" required>
                                     </div>
 
                                     <div class="input-fields">
@@ -143,7 +143,7 @@
                                             <div>
                                                 <input type="radio" id="other" name="service" value="other">
                                                 <label for="other" class="form-label2"><strong>Other</strong></label>
-                                                <input type="text" id="other-text" name="other-service" placeholder="Please specify" style="display:none;" required>
+                                                <input type="text" id="other-text" name="other-service" placeholder="Please specify" style="display:none;">
                                             </div>
                                         </div>
                                     </div>

@@ -415,16 +415,16 @@
                 dropdown.find('option[value="HOLD"]').prop('disabled', false);
                 dropdown.find('option[value="AVAILABLE"]').prop('disabled', true);
             } else if (currentStatus === 'PROCESSING') {
-                dropdown.find('option[value="PENDING"]').prop('disabled', true);
+                dropdown.find('option[value="PENDING"]').prop('disabled', false);
                 dropdown.find('option[value="HOLD"]').prop('disabled', false);
             } else if (currentStatus === 'HOLD') {
-                dropdown.find('option[value="PENDING"]').prop('disabled', true);
+                dropdown.find('option[value="PENDING"]').prop('disabled', false);
                 dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
             }
              else if (currentStatus === 'AVAILABLE') {
-                dropdown.find('option[value="PENDING"]').prop('disabled', true);
-                dropdown.find('option[value="PROCESSING"]').prop('disabled', true);
-                dropdown.find('option[value="HOLD"]').prop('disabled', true);
+                dropdown.find('option[value="PENDING"]').prop('disabled', false);
+                dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
+                dropdown.find('option[value="HOLD"]').prop('disabled', false);
             }
         }
         window.updateDropdownOptions = updateDropdownOptions;

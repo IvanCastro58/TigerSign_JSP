@@ -49,7 +49,7 @@
                 <div class="details">
                     <div class="details-container">
                         <div class="title-number">
-                            <span>O.R. Number: <strong>#<%= details.getOrNumber() %></strong></span>
+                            <span>Service Invoice: <strong>#<%= details.getOrNumber() %></strong></span>
                         </div>
                         <div class="request-information">
                             <div class="title-request"><p>Request Information</p></div>
