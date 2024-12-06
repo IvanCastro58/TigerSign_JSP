@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const signatureCanvas = document.getElementById('signature-canvas');
     const signatureCtx = signatureCanvas.getContext('2d');
     const signatureField = document.getElementById('signature-field');
-    const signatureDataField = document.getElementById('signature-data'); // Hidden field for signature data
+    const signatureDataField = document.getElementById('signature-data');
     const signatureControlsModal = document.getElementById('signature-controls-modal');
     const signaturePreviewImg = document.getElementById('signature-preview');
     const closeSignatureControlsModalBtn = document.getElementById('close-signature-controls-modal-btn');
@@ -18,12 +18,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeViewSignatureModalBtn = document.getElementById('close-view-signature-modal-btn');
     
     let drawing = false;
-    let newSignatureData = null; // Store the new signature data for confirmation
 
     function resetSignaturePad() {
         signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
         signatureCtx.beginPath();
         drawing = false;
+        toggleSaveButton(false);
+    }
+
+    function toggleSaveButton(enable) {
+        saveSignatureBtn.disabled = !enable;
+    }
+
+    function canvasIsEmpty() {
+        const blank = document.createElement('canvas');
+        blank.width = signatureCanvas.width;
+        blank.height = signatureCanvas.height;
+        return signatureCanvas.toDataURL() === blank.toDataURL();
     }
 
     function handleDrawing(e) {
@@ -36,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             signatureCtx.lineTo(offsetX, offsetY);
             signatureCtx.stroke();
+            toggleSaveButton(!canvasIsEmpty());
         }
     }
 
@@ -65,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
     openSignatureModalBtn.addEventListener('click', () => {
         signatureModal.style.display = 'block';
         resetSignaturePad();
-        newSignatureData = null; // Clear new signature data
     });
 
     closeSignatureModalBtn.addEventListener('click', () => {
@@ -74,9 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     saveSignatureBtn.addEventListener('click', () => {
         const signatureData = signatureCanvas.toDataURL('image/png');
-        newSignatureData = signatureData;
         signaturePreviewImg.src = signatureData;
-        document.getElementById('signature-data').value = signatureData; // Set the signature data into hidden field
+        document.getElementById('signature-data').value = signatureData;
         signatureControlsModal.style.display = 'block';
         signatureModal.style.display = 'none';
     });

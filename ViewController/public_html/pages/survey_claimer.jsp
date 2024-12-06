@@ -73,9 +73,9 @@
                                         <input type="text" name="field-name" id="field-name" placeholder="Enter Full Name">
                                     </div>
                                     <div class="input-fields">
-                                        <label for="claimer-date" class="form-label">Date<span style="color: #DB3444;"> *</span></label>
-                                        <input type="date" name="field-date" id="field-date" required>
-                                    </div>
+                                    <label for="claimer-date" class="form-label">Date</label>
+                                    <input type="date" name="field-date" id="field-date" value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" readonly>
+                                </div>
                                     <div class="input-fields">
                                         <label for="claimer-email" class="form-label">Email Address<span style="color: #DB3444;"> *</span></label>
                                         <input type="text" name="field-email" id="field-email" placeholder="Enter Email Address">
@@ -143,7 +143,7 @@
                                             <div>
                                                 <input type="radio" id="other" name="service" value="other">
                                                 <label for="other" class="form-label2"><strong>Other</strong></label>
-                                                <input type="text" id="other-text" name="other-service" placeholder="Please specify" style="display:none;">
+                                                <input type="text" id="other-text" name="other-service" placeholder="Please specify" style="display:none;" required>
                                             </div>
                                         </div>
                                     </div>
@@ -242,6 +242,7 @@
             <p>© 2016 Copyright University of Santo Tomas, Office of the Registrar. Proudly powered by <strong>UST-ICT Santo Tomas E-Service Providers</strong></p>
         </div>
     </footer>
+    
     <%@ include file="/WEB-INF/components/script.jsp" %>
 </body>
 </html>
