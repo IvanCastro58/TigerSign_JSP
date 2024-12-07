@@ -153,8 +153,8 @@
                                 <div class="input-fields">
                                     <label for="claimer-photo" class="form-label">Self-Captured Photo</label>
                                     <div class="input-with-button">
-                                        <input type="file" name="field-photo" id="photo-field" accept="image/*">
-                                        <input type="text" id="photo-filename" placeholder="Upload Photo" readonly onclick="viewCapturedImage()" required>
+                                        <input type="file" name="field-photo" id="photo-field" accept="image/*" required>
+                                        <input type="text" id="photo-filename" placeholder="Upload Photo" readonly onclick="viewCapturedImage()">
                                         <button type="button" class="upload-btn" id="open-camera-btn"><i class="fa-solid fa-camera"></i></button>
                                         <i class="fas fa-check-circle success-icon" id="photo-check-icon"></i>
                                     </div>
@@ -174,9 +174,6 @@
     </div>
     <script>
     document.getElementById("open-signature-modal-btn").addEventListener("click", function () {
-        // Simulate signature upload (replace this with your modal logic)
-        document.getElementById("signature-field").value = "Sample Signature"; // Set this after upload
-        document.getElementById("signature-check-icon").style.display = "inline";
         document.getElementById("signature-error").style.display = "none";
     });
 
@@ -186,7 +183,7 @@
 
         if (!signatureField.value) {
             event.preventDefault(); // Prevent form submission
-            signatureError.style.display = "block"; // Show error message
+            signatureError.style.display = "block"; 
         } else {
             signatureError.style.display = "none";
         }
