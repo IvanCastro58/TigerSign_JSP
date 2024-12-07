@@ -196,12 +196,9 @@ public class PDFGenerator {
         authorizationTitle.setSpacingAfter(5);
 
         Chunk authorizationBody = new Chunk(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac libero sit amet elit malesuada facilisis. " +
-            "Curabitur tincidunt, sapien sed sollicitudin tincidunt, nisl nisl gravida purus, eu convallis urna justo vitae odio. " +
-            "Sed non quam et ipsum vehicula auctor. Nulla facilisi. Suspendisse potenti. Sed egestas urna et massa fermentum, " +
-            "non suscipit ex aliquet. Donec imperdiet leo non lectus pharetra, id congue erat ultricies. Fusce nec orci " +
-            "sit amet magna suscipit suscipit. Aenean aliquet, nisl non cursus efficitur, velit orci ullamcorper justo, vitae " +
-            "cursus metus sapien et libero.",
+            "I hereby authorize the University of Santo Tomas - Office of the Registrar to collect, store, use, and process my personal " +
+            "records herein provided for verification purposes as the said office may deem necessary in the fulfillment of their operations, " +
+            "which shall be in accordance with the Data Privacy Act of 2012. The signature herein manifests my consent.",
             FontFactory.getFont(FontFactory.HELVETICA, 10)
         );
 
@@ -274,30 +271,6 @@ public class PDFGenerator {
         // Add the signature table to the document
         document.add(signatureTable);
         
-        document.add(new Paragraph("\n"));
-        
-        // Note section
-        Paragraph noteTitle = new Paragraph(
-            "Note:\n", 
-            FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLDITALIC | Font.UNDERLINE)
-        );
-        noteTitle.setSpacingBefore(10);
-        noteTitle.setSpacingAfter(5); 
-
-        Chunk noteBody = new Chunk(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum. " +
-            "Vestibulum ac est lacinia nisi venenatis tristique. Proin laoreet, nunc ut congue tincidunt, arcu " +
-            "odio congue libero, a posuere felis odio vitae elit. Sed condimentum, turpis et imperdiet tempus, justo " +
-            "est feugiat quam, et pellentesque dui justo eu libero. Aliquam erat volutpat. Fusce sed urna id dui varius " +
-            "imperdiet. Nam volutpat, nulla nec euismod vestibulum, risus libero bibendum risus, et commodo nunc risus et justo.",
-            FontFactory.getFont(FontFactory.HELVETICA, 10)
-        );
-
-        Paragraph noteParagraph = new Paragraph();
-        noteParagraph.add(noteTitle);
-        noteParagraph.add(noteBody);
-
-        document.add(noteParagraph);
         
         document.newPage();
 

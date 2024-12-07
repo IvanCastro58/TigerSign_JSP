@@ -499,27 +499,28 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
 
                      int rowIndex = 0;
                      for (Survey survey : surveys) {
-                         BaseColor backgroundColor = (rowIndex % 2 == 0) ? null : new BaseColor(240, 240, 240);
-                         PdfPCell nameCell1 = createCell1(survey.getName(), backgroundColor);
-                         nameCell1.setColspan(2);  
-                         feedbackTable.addCell(nameCell1);
-                         
-                         PdfPCell dateCell1 = createCell1(survey.getDate(), backgroundColor);
-                         dateCell1.setColspan(2);
-                         feedbackTable.addCell(dateCell1);
-                         
-                         PdfPCell rateCell1 = createCell1(String.valueOf(survey.getRating()), backgroundColor);
-                         rateCell1.setColspan(1);
-                         rateCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-                         feedbackTable.addCell(rateCell1);
-                         
-                         String feedback = survey.getFeedback();
-                         if (feedback != null && !feedback.isEmpty()) {
+                        String feedback = survey.getFeedback();
+                        if (feedback != null && !feedback.isEmpty()) {
+                             BaseColor backgroundColor = (rowIndex % 2 == 0) ? null : new BaseColor(240, 240, 240);
+    
+                             String filteredName = filterName(survey.getName());
+                             PdfPCell nameCell1 = createCell1(filteredName, backgroundColor);
+                             nameCell1.setColspan(2);
+                             feedbackTable.addCell(nameCell1);
+    
+                             PdfPCell dateCell1 = createCell1(survey.getDate(), backgroundColor);
+                             dateCell1.setColspan(2);
+                             feedbackTable.addCell(dateCell1);
+    
+                             PdfPCell rateCell1 = createCell1(String.valueOf(survey.getRating()), backgroundColor);
+                             rateCell1.setColspan(1);
+                             rateCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                             feedbackTable.addCell(rateCell1);
+                             
                              PdfPCell feedCell1 = createCell1(feedback, backgroundColor);
                              feedCell1.setColspan(5);
                              feedbackTable.addCell(feedCell1);
                          }
-                         
                          rowIndex++;
                      }
 
@@ -531,6 +532,28 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
                  response.getOutputStream().write(byteArrayOutputStream.toByteArray());
                  response.getOutputStream().flush();
      }
+    
+    private String filterName(String name) {
+        if (name == null || name.isEmpty()) {
+            return name;
+        }
+
+        String[] parts = name.split(" ");
+        StringBuilder filteredName = new StringBuilder();
+
+        for (String part : parts) {
+            if (part.length() > 1) {
+                filteredName.append(part.charAt(0))
+                             .append("****")
+                             .append(part.charAt(part.length() - 1))
+                             .append(" ");
+            } else {
+                filteredName.append(part).append(" ");
+            }
+        }
+
+        return filteredName.toString().trim();
+    }
 
      private static PdfPCell createCell(String content, BaseColor backgroundColor) {
          PdfPCell cell = new PdfPCell(new Phrase(content, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8)));
