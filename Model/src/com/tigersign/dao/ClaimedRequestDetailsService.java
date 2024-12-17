@@ -32,8 +32,8 @@ public class ClaimedRequestDetailsService {
         String query = "SELECT r.or_number AS orNumber, r.customer_name AS requester_name, r.requests AS files, " +
                        "r.request_description AS files_desc, r.payment_date AS dateProcessed, r.college, " +
                        "c.name AS claimer_name, c.email AS claimer_email, p.proof_date, c.role, " +
-                       "p.photo, p.signature, p.id_photo, p.letter_photo, p.released_by, " +
-                       "p.id_signature, p.letter_signature " +
+                       "p.photo AS photoPath, p.signature AS signaturePath, p.id_photo, p.letter_photo, " +
+                       "p.released_by, p.id_signature, p.letter_signature " +
                        "FROM TS_PROOFS p " +
                        "JOIN TS_REQUEST r ON p.request_id = r.request_id " +
                        "JOIN TS_CLAIMER c ON p.claimer_id = c.claimer_id " +
@@ -58,10 +58,10 @@ public class ClaimedRequestDetailsService {
                     details.setProofDate(dateFormat.format(resultSet.getDate("proof_date")));
                     details.setClaimerRole(resultSet.getString("role"));
                     details.setReleasedBy(resultSet.getString("released_by"));
-
+                    details.setPhotoPath(resultSet.getString("photoPath"));
+                    details.setSignaturePath(resultSet.getString("signaturePath"));
+                    
                     // Convert BLOB to Base64
-                    details.setPhotoBase64(convertBlobToBase64(resultSet.getBinaryStream("photo")));
-                    details.setSignatureBase64(convertBlobToBase64(resultSet.getBinaryStream("signature")));
                     details.setIdPhotoBase64(convertBlobToBase64(resultSet.getBinaryStream("id_photo")));
                     details.setLetterPhotoBase64(convertBlobToBase64(resultSet.getBinaryStream("letter_photo")));
 

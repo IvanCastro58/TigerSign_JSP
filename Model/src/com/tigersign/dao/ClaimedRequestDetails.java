@@ -13,8 +13,8 @@ public class ClaimedRequestDetails {
     private String claimerEmail; //ts_claimer email
     private String proofDate; //ts_proofs proof_date
     private String claimerRole; //ts_claimer role
-    private String photoBase64;//ts_proofs
-    private String signatureBase64;//ts_proofs
+    private String photoPath;//ts_proofs
+    private String signaturePath;//ts_proofs
     private String idPhotoBase64;//ts_proofs
     private String letterPhotoBase64;//ts_proofs
     private String releasedBy;//ts_proofs
@@ -114,20 +114,20 @@ public class ClaimedRequestDetails {
         this.claimerRole = claimerRole;
     }
 
-    public String getPhotoBase64() {
-        return photoBase64;
+    public String getPhotoPath() {
+        return photoPath;
     }
 
-    public void setPhotoBase64(String photoBase64) {
-        this.photoBase64 = photoBase64;
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
     }
 
-    public String getSignatureBase64() {
-        return signatureBase64;
+    public String getSignaturePath() {
+        return signaturePath;
     }
 
-    public void setSignatureBase64(String signatureBase64) {
-        this.signatureBase64 = signatureBase64;
+    public void setSignaturePath(String signaturePath) {
+        this.signaturePath = signaturePath;
     }
 
     public String getIdPhotoBase64() {

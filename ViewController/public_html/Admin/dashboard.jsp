@@ -32,6 +32,7 @@
             int pendingCount = 0;
             int processingCount = 0;
             int holdCount = 0;
+            int availableCount = 0;
             int claimedCount = 0;
 
             try {
@@ -62,6 +63,14 @@
                     holdCount = rs.getInt(1);
                 }
         
+                // Query for Claimed Requests
+                String availableQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE FILE_STATUS = 'AVAILABLE'";
+                stmt = conn.prepareStatement(availableQuery);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    availableCount = rs.getInt(1);
+                }
+                
                 // Query for Claimed Requests
                 String claimedQuery = "SELECT COUNT(*) FROM TS_REQUEST WHERE IS_CLAIMED = 'Y'";
                 stmt = conn.prepareStatement(claimedQuery);
@@ -101,7 +110,7 @@
             <h2>Overview</h2>
             <div class="card-view">
                 <div class="card" id="pending-card">
-                    <h3 class="card-heading">Pending Requests</h3>
+                    <h3 class="card-heading">Paid Applications</h3>
                     <div class="card-number"><%= pendingCount %></div>
                 </div>
                 <div class="card" id="processing-card">
@@ -111,6 +120,10 @@
                 <div class="card" id="available-card">
                     <h3 class="card-heading">On Hold Requests</h3>
                    <div class="card-number"><%= holdCount %></div>
+                </div>
+                <div class="card" id="completed-card">
+                    <h3 class="card-heading">Available Requests</h3>
+                    <div class="card-number"><%= availableCount %></div>
                 </div>
                 <div class="card" id="completed-card">
                     <h3 class="card-heading">Claimed Requests</h3>
@@ -154,6 +167,25 @@
             const number = parseInt(card.textContent.trim(), 10); // Parse the number
             card.textContent = formatNumber(number); // Update with formatted value
         });
+    });
+    const searchInput = document.getElementById('dashboard-search-input');
+    const searchButton = document.getElementById('search-button');
+
+    // Add an event listener for the "keydown" event
+    searchInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') { // Check if the key pressed is "Enter"
+            searchButton.click(); // Trigger the search button's click event
+        }
+    });
+
+    // Example: Click event for the search button
+    searchButton.addEventListener('click', function () {
+        const query = searchInput.value.trim();
+        if (query) {
+            console.log(`Searching for: ${query}`); // Replace this with your actual search logic
+        } else {
+            console.log('Please enter a search query');
+        }
     });
 </script>
 
