@@ -7,6 +7,9 @@ import com.tigersign.dao.ClaimedRequestDetailsService;
 
 import java.io.IOException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -48,8 +51,12 @@ public class GenerateProofServlet extends HttpServlet {
         ClaimedRequestDetailsService service = new ClaimedRequestDetailsService();
         ClaimedRequestDetails details = service.getClaimedRequestDetails(requestId);
 
-        String activity = "Generated proof of claim file for Service Invoice Number: " + details.getOrNumber() + " (Request: " + details.getRequestedDocuments() + ")";
-        AuditLogger.logActivity(adminEmail, activity);
+        Map<String, String> logDetails = new HashMap<>();
+        logDetails.put("File", "Proof of Claim");
+        logDetails.put("Service Invoice", details.getOrNumber());
+        logDetails.put("Request", details.getRequestedDocuments());
+        
+        AuditLogger.logActivity(adminEmail, "GENERATE", logDetails);
 
         response.getWriter().write("Activity logged successfully");
     }

@@ -260,66 +260,112 @@
                             <th style="text-align: center;">Action</th>
                         </tr>
                     </thead>
-                        <tbody id="pending-table-body">
-                                <%
-                                    PendingClaimsService service = new PendingClaimsService();
-                                    List<PendingClaim> pendingClaims = null;
-    
-                                    try {
-                                        pendingClaims = service.getActivePendingClaims();
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
-                                
-                                    if (pendingClaims != null && !pendingClaims.isEmpty()) {
-                                        for (PendingClaim claim : pendingClaims) {
-                                %>
-                                        <tr class="actual-data">
-                                            <td class="expandable-text"><%= claim.getOrNumber() %></td>
-                                            <td class="expandable-text"><%= claim.getCustomerName() %></td>
-                                            <td>
-                                                <% 
-                                                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                                                    String formattedDateProcessed = sdf.format(claim.getDateProcessed());
-                                                %>
-                                                <%= formattedDateProcessed %>
-                                            </td>
-                                            <td style="text-align: center;">
-                                                <select class="status-dropdown" data-request-id="<%= claim.getRequestId() %>">
-                                                    <option value="PENDING" <%= claim.getFileStatus().equals("PENDING") ? "selected" : "" %>>PAID</option>
-                                                    <option value="PROCESSING" <%= claim.getFileStatus().equals("PROCESSING") ? "selected" : "" %>>PROCESSING</option>
-                                                    <option value="HOLD" <%= claim.getFileStatus().equals("HOLD") ? "selected" : "" %>>ON HOLD</option>
-                                                    <option value="AVAILABLE" <%= claim.getFileStatus().equals("AVAILABLE") ? "selected" : "" %>>AVAILABLE</option>
-                                                </select>
-                                                <% if ("PROCESSING".equalsIgnoreCase(claim.getFileStatus())) { %>
-                                                        <div style="margin-top: 5px; color: #6c757d;">
-                                                            <% 
-                                                            
-                                                                int daysSinceProcessing = service.getDaysSinceProcessing(claim.getRequestId());
-                                                                out.print("(" + daysSinceProcessing + " days)");
-                                                            %>
-                                                        </div>
-                                                    <% } %>
-                                            </td>
-                                            <td class="expandable-text"><%= claim.getCollege() %></td>
-                                            <td><%= claim.getFeeName() %></td>
-                                            <td style="text-align: center;">
-                                                <button type="submit" class="action-button" 
-                                                    <%= "PROCESSING".equalsIgnoreCase(claim.getFileStatus()) || "PENDING".equalsIgnoreCase(claim.getFileStatus()) || "HOLD".equalsIgnoreCase(claim.getFileStatus()) ? "disabled" : "" %>>
-                                                    CLAIM
-                                                </button>
-                                            </td>
-                                        </tr>
-                            <%
-                                    }
-                                } else {
-                            %>
-                                    <tr>
-                                        <td colspan="7">No pending claims found.</td>
-                                    </tr>
-                            <%
+                    <tbody id="pending-table-body">
+                        <% 
+                            PendingClaimsService service = new PendingClaimsService();
+                            List<PendingClaim> pendingClaims = null;
+                    
+                            try {
+                                pendingClaims = service.getActivePendingClaims();
+                                if (pendingClaims != null) {
+                                    pendingClaims.sort((c1, c2) -> {
+                                        try {
+                                            int days1 = "PROCESSING".equalsIgnoreCase(c1.getFileStatus()) ? service.getDaysSinceProcessing(c1.getRequestId()) : -1;
+                                            int days2 = "PROCESSING".equalsIgnoreCase(c2.getFileStatus()) ? service.getDaysSinceProcessing(c2.getRequestId()) : -1;
+                    
+                                            if (days1 >= 7 && days2 >= 7) {
+                                                return Integer.compare(days2, days1);
+                                            } else if (days1 >= 7) {
+                                                return -1;
+                                            } else if (days2 >= 7) {
+                                                return 1;
+                                            } else {
+                                                return 0;
+                                            }
+                                        } catch (SQLException e) {
+                                            e.printStackTrace();
+                                            return 0;
+                                        }
+                                    });
                                 }
-                            %>
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                    
+                            if (pendingClaims != null && !pendingClaims.isEmpty()) {
+                                for (PendingClaim claim : pendingClaims) {
+                        %>
+                                <tr class="actual-data" 
+                                    <% 
+                                        if ("PROCESSING".equalsIgnoreCase(claim.getFileStatus()) && service.getDaysSinceProcessing(claim.getRequestId()) >= 7) { 
+                                    %>
+                                        style="background-color: rgba(255, 56, 56, 0.07);"
+                                    <% 
+                                        } 
+                                    %>
+                                >
+                                    <td class="expandable-text">
+                                        <% 
+                                            if ("PROCESSING".equalsIgnoreCase(claim.getFileStatus())) {
+                                                int daysSinceProcessing = service.getDaysSinceProcessing(claim.getRequestId());
+                                                if (daysSinceProcessing >= 7) {
+                                        %>
+                                            <i class="bi bi-exclamation-triangle-fill" style="color: red; margin-right: 5px; font-size: 12px;" id="warning-icon-<%= claim.getRequestId() %>"></i>
+                                        <% 
+                                                }
+                                            }
+                                        %>
+                                        <%= claim.getOrNumber() %>
+                                    </td>
+                                    <td class="expandable-text">
+                                        <%= claim.getCustomerName() %>
+                                    </td>
+                                    <td>
+                                        <% 
+                                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+                                            String formattedDateProcessed = sdf.format(claim.getDateProcessed());
+                                        %>
+                                        <%= formattedDateProcessed %>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <select class="status-dropdown" data-request-id="<%= claim.getRequestId() %>">
+                                            <option value="PENDING" <%= claim.getFileStatus().equals("PENDING") ? "selected" : "" %>>PAID</option>
+                                            <option value="PROCESSING" <%= claim.getFileStatus().equals("PROCESSING") ? "selected" : "" %>>PROCESSING</option>
+                                            <option value="HOLD" <%= claim.getFileStatus().equals("HOLD") ? "selected" : "" %>>ON HOLD</option>
+                                            <option value="AVAILABLE" <%= claim.getFileStatus().equals("AVAILABLE") ? "selected" : "" %>>AVAILABLE</option>
+                                        </select>
+                                        <% if ("PROCESSING".equalsIgnoreCase(claim.getFileStatus())) { %>
+                                            <div style="margin-top: 5px; color: #6c757d;">
+                                                <% 
+                                                    int daysSinceProcessing = service.getDaysSinceProcessing(claim.getRequestId());
+                                                    out.print("(" + daysSinceProcessing + " days)");
+                                                %>
+                                            </div>
+                                        <% } %>
+                                    </td>
+                                    <td class="expandable-text">
+                                        <%= claim.getCollege() %>
+                                    </td>
+                                    <td>
+                                        <%= claim.getFeeName() %>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button type="submit" class="action-button" 
+                                            <%= "PROCESSING".equalsIgnoreCase(claim.getFileStatus()) || "PENDING".equalsIgnoreCase(claim.getFileStatus()) || "HOLD".equalsIgnoreCase(claim.getFileStatus()) ? "disabled" : "" %>>
+                                            CLAIM
+                                        </button>
+                                    </td>
+                                </tr>
+                        <% 
+                                }
+                            } else {
+                        %>
+                                <tr>
+                                    <td colspan="7">No pending claims found.</td>
+                                </tr>
+                        <% 
+                            }
+                        %>
                     </tbody>
                     </table>
                     <% 
@@ -402,66 +448,81 @@
     const userEmail = "";
     const BASE_URL = "<%= request.getContextPath() %>";
     const userRole = "<%= userRole %>";
-    $(document).ready(function() {
-        // Function to update the available options based on the current status
-        function updateDropdownOptions(dropdown) {
-            const currentStatus = dropdown.val();
+   $(document).ready(function() {
+    // Function to update the available options based on the current status
+    function updateDropdownOptions(dropdown) {
+        const currentStatus = dropdown.val();
 
-            // Enable all options initially
-            dropdown.find('option').prop('disabled', false);
+        // Enable all options initially
+        dropdown.find('option').prop('disabled', false);
 
-            // Apply restrictions based on the current status
-            if (currentStatus === 'PENDING') {
-                dropdown.find('option[value="HOLD"]').prop('disabled', false);
-                dropdown.find('option[value="AVAILABLE"]').prop('disabled', true);
-            } else if (currentStatus === 'PROCESSING') {
-                dropdown.find('option[value="PENDING"]').prop('disabled', false);
-                dropdown.find('option[value="HOLD"]').prop('disabled', false);
-            } else if (currentStatus === 'HOLD') {
-                dropdown.find('option[value="PENDING"]').prop('disabled', false);
-                dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
-            }
-             else if (currentStatus === 'AVAILABLE') {
-                dropdown.find('option[value="PENDING"]').prop('disabled', false);
-                dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
-                dropdown.find('option[value="HOLD"]').prop('disabled', false);
-            }
+        // Apply restrictions based on the current status
+        if (currentStatus === 'PENDING') {
+            dropdown.find('option[value="HOLD"]').prop('disabled', false);
+            dropdown.find('option[value="AVAILABLE"]').prop('disabled', true);
+        } else if (currentStatus === 'PROCESSING') {
+            dropdown.find('option[value="PENDING"]').prop('disabled', false);
+            dropdown.find('option[value="HOLD"]').prop('disabled', false);
+        } else if (currentStatus === 'HOLD') {
+            dropdown.find('option[value="PENDING"]').prop('disabled', false);
+            dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
+        } else if (currentStatus === 'AVAILABLE') {
+            dropdown.find('option[value="PENDING"]').prop('disabled', false);
+            dropdown.find('option[value="PROCESSING"]').prop('disabled', false);
+            dropdown.find('option[value="HOLD"]').prop('disabled', false);
         }
-        window.updateDropdownOptions = updateDropdownOptions;
-    
-        // Apply the initial restriction when the page loads
-        $('.status-dropdown').each(function() {
-            updateDropdownOptions($(this));
-        });
-    
-        // Update options when the dropdown value changes
-       $(document).on('change', '.status-dropdown', function() {
-        const newStatus = $(this).val();
-        const requestId = $(this).data('request-id');
-        const currentDropdown = $(this); // Set the current dropdown for reference
-        
-        if (newStatus === "HOLD") {
-            $('#request-id-hold').val(requestId); // Set request ID in hidden input
-            showPopup($('#confirm-hold-popup')[0]); // Display the confirm-hold-popup
-        } else {
-            // Update the status if it’s not HOLD
-            $.ajax({
-                url: '<%= request.getContextPath() %>/UpdateStatusServlet',
-                type: 'POST',
-                data: { requestId: requestId, newStatus: newStatus },
-                success: function(response) {
-                    // Assuming response indicates success, update the dropdown
-                    currentDropdown.val(newStatus); // Update the dropdown to reflect the new status
-                    updateStatusStyle(currentDropdown); // Call to update the UI style
-                    updateButtonState(currentDropdown.closest('tr').find('.action-button'), newStatus); // Update button state
-                    updateDropdownOptions(currentDropdown); // Update available options
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error updating Status:", error);
-                }
-            });
+    }
+
+    window.updateDropdownOptions = updateDropdownOptions;
+
+    // Apply the initial restriction when the page loads
+    $('.status-dropdown').each(function() {
+        updateDropdownOptions($(this));
+    });
+
+    // Update options when the dropdown value changes
+    $(document).on('change', '.status-dropdown', function () {
+    const newStatus = $(this).val();
+    const requestId = $(this).data('request-id');
+    const dropdown = $(this);
+
+    if (newStatus === "HOLD") {
+        // Store the original status before opening the modal
+        const originalStatus = dropdown.data('original-status') || dropdown.val(); // Ensure the original value is stored only once
+        dropdown.data('original-status', originalStatus); // Save original status
+
+        // Temporarily store the intended status (HOLD), but don't change the dropdown value yet
+        dropdown.data('temp-status', 'HOLD'); 
+
+        // Revert the dropdown value to the original status
+        dropdown.val(originalStatus);
+
+        $('#request-id-hold').val(requestId);
+        showPopup($('#confirm-hold-popup')[0]); // Display the confirm-hold-popup
+    } else {
+        // Update status immediately if it's not HOLD
+        updateStatus(requestId, newStatus, dropdown);
+    }
+});
+
+    // Update status function
+    function updateStatus(requestId, newStatus, dropdown) {
+    $.ajax({
+        url: '<%= request.getContextPath() %>/UpdateStatusServlet',
+        type: 'POST',
+        data: { requestId: requestId, newStatus: newStatus },
+        success: function() {
+            dropdown.val(newStatus); // Apply new status
+            updateStatusStyle(dropdown); // Update style
+            updateDropdownOptions(dropdown); // Reset options
+            updateButtonState(dropdown.closest('tr').find('.action-button'), newStatus);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error updating Status:", error);
+            alert("Failed to update the status. Please try again."); // Provide user feedback
         }
     });
+}
 
     function updateStatusStyle(dropdown) {
         const status = dropdown.val();
@@ -485,6 +546,7 @@
                 break;
         }
     }
+
     window.updateStatusStyle = updateStatusStyle;
 
     function updateButtonState(button, status) {
@@ -495,6 +557,42 @@
             button.prop("disabled", false);
         }
     }
+
+    // Handle modal close behavior
+    $('#confirm-hold-popup-close').on('click', function () {
+    const requestId = $('#request-id-hold').val();
+    const dropdown = $('.status-dropdown[data-request-id="' + requestId + '"]');
+
+    // Retrieve the original status stored earlier
+    const originalStatus = dropdown.data('original-status');
+
+    if (originalStatus) {
+        dropdown.val(originalStatus); // Revert to the original status
+        updateStatusStyle(dropdown); // Update UI style
+        updateDropdownOptions(dropdown); // Reset available options
+    }
+
+    $('#deactivation-reason').val(''); // Clear the input field
+    $('#confirm-hold-popup').hide(); // Close the modal
+});
+
+    // Handle the form submission for holding
+    $('#confirm-hold-form').on('submit', function (event) {
+    event.preventDefault();
+
+    const requestId = $('#request-id-hold').val();
+    const reason = $('#deactivation-reason').val();
+    const dropdown = $('.status-dropdown[data-request-id="' + requestId + '"]');
+    const intendedStatus = dropdown.data('temp-status'); // Retrieve temporary status
+
+    if (intendedStatus === "HOLD" && reason.trim() !== "") {
+        updateStatus(requestId, 'HOLD', dropdown); // Update the status to 'HOLD'
+        $('#confirm-hold-popup').hide(); // Close the modal
+        $('#deactivation-reason').val(''); // Clear the input field
+    } else {
+        alert('Please provide a reason for placing the request on hold.');
+    }
+});
 
     // Initialize styles and button states for existing dropdowns when the page loads
     $('.status-dropdown').each(function() {

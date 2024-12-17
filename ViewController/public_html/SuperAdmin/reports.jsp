@@ -206,13 +206,13 @@
     <div class="main-content">
         <div class="highlight-bar"><span><%= formattedDate %></span></div>
         <div class="margin-content">
-            <h2 class="title-page">REPORTS AND ANALYTICS</h2>
+            <h2 class="title-page">REPORTS</h2>
             <div class="nav-buttons">
                 <div class="status-btn">
-                    <button class="reports-btn current-page-btn">Document Status Report</button>
+                    <button class="reports-btn current-page-btn">Document Status</button>
                 </div>
                 <div class="survey-btn">
-                    <button class="reports-btn" onclick="window.location.href='reports_survey.jsp';">Evaluation Analytics</button>
+                    <button class="reports-btn" onclick="window.location.href='reports_survey.jsp';">Survey/Evaluation</button>
                 </div>
                 <div class="filter-btn">
                     <button class="filters-btn"  onclick="openModal()">Filter <i class="fa-solid fa-filter"></i></button>

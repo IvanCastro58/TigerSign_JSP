@@ -7,6 +7,8 @@
 <%@ page import="com.tigersign.dao.AuditLogger" %>
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="com.tigersign.dao.AuditLoggerSuperAdmin" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -79,7 +81,8 @@
                                         int claimerId = claimerDAO.insertClaimer(name, email, role); 
     
                                        if (claimerId > 0) {
-                                        ProofDAO proofsDAO = new ProofDAO();
+                                        ServletContext context = application; 
+                                        ProofDAO proofsDAO = new ProofDAO(context);
                                         proofsDAO.insertProofs(photoData, signatureData, proofDate, idData, letterData, claimerId, requestId, fullName);
                                 
                                         // Update the is_claimed status
@@ -91,11 +94,19 @@
                                         boolean emailSent = emailService.sendSurveyEmail(email, request);
                                         
                                         if (adminEmail != null && !adminEmail.isEmpty()) {
-                                            String activity = "Released the document titled '" + feeName + "' associated with Service Invoice Number " + orNumber + " to an authorized representative.";
-                                            AuditLogger.logActivity(adminEmail, activity);
+                                            Map<String, String> logDetails = new HashMap<>();
+                                            logDetails.put("Request", feeName);
+                                            logDetails.put("Service Invoice", orNumber);
+                                            logDetails.put("Role", "OWNER");
+                                        
+                                            AuditLogger.logActivity(adminEmail, "RELEASE", logDetails);
                                         } else if (userEmail != null && !userEmail.isEmpty()) {
-                                            String activity = "Released the document titled '" + feeName + "' associated with Service Invoice Number " + orNumber + " to an authorized representative.";
-                                            AuditLoggerSuperAdmin.logActivity(userEmail, activity);
+                                            Map<String, String> logDetails = new HashMap<>();
+                                            logDetails.put("Document", feeName);
+                                            logDetails.put("Invoice", orNumber);
+                                            logDetails.put("Role", "OWNER");
+                                            
+                                            AuditLoggerSuperAdmin.logActivity(userEmail, "RELEASE", logDetails);
                                         }
                                         
                                         if (emailSent) {

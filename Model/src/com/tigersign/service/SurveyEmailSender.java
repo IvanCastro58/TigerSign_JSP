@@ -4,6 +4,8 @@ import com.tigersign.dao.AuditLoggerSuperAdmin;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,10 +70,10 @@ public class SurveyEmailSender extends HttpServlet {
 
     private boolean sendSurveyEmail(String email, HttpServletRequest request) {
         String subject = "Survey/Evaluation Form Link - TigerSign";
-        String surveyLink = "https://registrarbeta.ust.edu.ph/tigersign/pages/survey_claimer.jsp";
-        String redirectPage = "https://registrarbeta.ust.edu.ph/tigersign/pages/redirecting.jsp";
-        // surveyLink = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/survey_claimer.jsp";
-        //String redirectPage = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/redirecting.jsp";
+        //String surveyLink = "https://registrarbeta.ust.edu.ph/tigersign/pages/survey_claimer.jsp";
+        //String redirectPage = "https://registrarbeta.ust.edu.ph/tigersign/pages/redirecting.jsp";
+        String surveyLink = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/survey_claimer.jsp";
+        String redirectPage = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/pages/redirecting.jsp";
 
         String encodedSurveyLink;
         try {
@@ -127,13 +129,16 @@ public class SurveyEmailSender extends HttpServlet {
             throws IOException {
         String contextPath = request.getContextPath();
         String redirectPage = success ? "evaluation.jsp?success=true" : "evaluation.jsp?failed=true";
-
+        
+        Map<String, String> details = new HashMap<>();
+        details.put("Survey/Evaluation Form Sent To", email);
+        
         if (adminEmail != null) {
             response.sendRedirect(contextPath + "/Admin/" + redirectPage);
-            AuditLogger.logActivity(adminEmail, "Sent a survey/evaluation form to the email address " + email);
+            AuditLogger.logActivity(adminEmail, "SEND SURVEY", details);
         } else if (userEmail != null) {
             response.sendRedirect(contextPath + "/SuperAdmin/" + redirectPage);
-            AuditLoggerSuperAdmin.logActivity(userEmail, "Sent a survey/evaluation form to the email address " + email);
+            AuditLoggerSuperAdmin.logActivity(userEmail, "SEND SURVEY", details);
         } else {
             response.sendRedirect(contextPath + "/error.jsp");
         }

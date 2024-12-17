@@ -2,17 +2,29 @@ package com.tigersign.dao;
 
 import java.sql.Timestamp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AuditLog {
     private int id;
     private String activity;
     private Timestamp activityDateTime;
     private int adminId;
     private String firstName;
+    private String status;
     private String lastName;
     private String position;
     private String picture;
+    private List<AuditDetail> details = new ArrayList<>();  
 
-    // Getters and Setters
+    public void addAuditDetail(String key, String value) {
+        details.add(new AuditDetail(key, value));
+    }
+
+    public List<AuditDetail> getDetails() {
+        return details;
+    }
+    
     public int getId() {
         return id;
     }
@@ -43,6 +55,14 @@ public class AuditLog {
 
     public void setAdminId(int adminId) {
         this.adminId = adminId;
+    }
+    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getFirstName() {
@@ -94,5 +114,35 @@ public class AuditLog {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getActivityClass() {
+        switch (activity) {
+            case "GENERATE":
+                return "color: #d9534f;"; 
+            case "UPDATE":
+                return "color: #3B83FB;"; 
+            case "RELEASE":
+                return "color: #1C8454;"; 
+            case "SEND SURVEY":
+                return "color: #F4BB00;"; 
+            default:
+                return "color: gray;"; 
+        }
+    }
+
+    public String getActivityIcon() {
+        switch (activity) {
+            case "GENERATE":
+                return "fas fa-file-export";
+            case "UPDATE":
+                return "far fa-edit";
+            case "RELEASE":
+                return "far fa-check-square";
+            case "SEND SURVEY":
+                return "far fa-paper-plane";
+            default:
+                return "fas fa-question-circle";
+        }
     }
 }

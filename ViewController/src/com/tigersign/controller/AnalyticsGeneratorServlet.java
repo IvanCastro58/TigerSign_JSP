@@ -14,6 +14,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
+import com.tigersign.dao.AuditLoggerSuperAdmin;
 import com.tigersign.dao.Survey;
 import com.tigersign.dao.SurveyDAO;
 
@@ -28,6 +29,7 @@ import java.text.AttributedString;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,19 +62,29 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
         String format = request.getParameter("format");
         String filterType = request.getParameter("filterType");
         String filterValue = request.getParameter("filterValue");
-        
+        String userEmail = (String) request.getSession().getAttribute("userEmail");
+
         SurveyDAO surveyDAO = new SurveyDAO();
 
-        if ("pdf".equalsIgnoreCase(format)) {
-            try {
+        try {
+            Map<String, String> logDetails = new HashMap<>();
+            logDetails.put("File", "Evaluation Report");
+            logDetails.put("Filter Value", (filterValue == null || filterValue.isEmpty()) ? "All Data" : filterValue);
+
+            if ("pdf".equalsIgnoreCase(format)) {
                 generatePDFAnalytics(response, surveyDAO, filterType, filterValue);
-            } catch (DocumentException e) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating PDF report");
+                logDetails.put("File Type", "PDF");
+            } else if ("csv".equalsIgnoreCase(format)) {
+                generateCSVReport(response, surveyDAO, filterType, filterValue);
+                logDetails.put("File Type", "CSV");
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid report format");
+                return;
             }
-        } else if ("csv".equalsIgnoreCase(format)) {
-            generateCSVReport(response, surveyDAO, filterType, filterValue);
-        } else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid report format");
+
+            AuditLoggerSuperAdmin.logActivity(userEmail, "GENERATE", logDetails);
+        } catch (DocumentException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating report");
         }
     }
     
@@ -83,7 +95,7 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
             
             String sanitizedFilterValue = (filterValue == null || filterValue.isEmpty()) ? "All_Data" 
                                          : filterValue.replaceAll("[^a-zA-Z0-9-_]", "_");
-            String filename = "survey_analytics_" + sanitizedFilterValue + ".pdf";
+            String filename = "Evaluation_Reports_" + sanitizedFilterValue + ".pdf";
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
     
@@ -98,8 +110,8 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
          headerTable.setSpacingBefore(10f);
          headerTable.setSpacingAfter(10f);
 
-         //String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
-         String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
+         String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
+//         String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
          String logoPath1 = contextRoot + "/resources/images/ust.png";
          String logoPath2 = contextRoot + "/resources/images/registrar.png";
 
@@ -218,6 +230,20 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
          document.add(filterValueTable);
          
          document.add(new Paragraph("\n"));
+         
+         PdfPTable dateGeneratedTable = new PdfPTable(4);
+         dateGeneratedTable.setWidthPercentage(100);
+         dateGeneratedTable.addCell(createCell2("Date Generated:", null));
+
+         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+         String todayDate = dateFormat.format(new Date());
+         dateGeneratedTable.addCell(createCell2(todayDate, null));
+         dateGeneratedTable.addCell(createCell2("", null));
+         dateGeneratedTable.addCell(createCell2("", null));
+         document.add(dateGeneratedTable);
+
+         document.add(new Paragraph("\n"));
+
          
          // Claimed Requests Section
          PdfPTable evaluationInfoTable = new PdfPTable(4);
@@ -608,7 +634,7 @@ public class AnalyticsGeneratorServlet extends HttpServlet {
                                     throws IOException {
         String sanitizedFilterValue = (filterValue == null || filterValue.isEmpty()) ? "All_Data" 
                                          : filterValue.replaceAll("[^a-zA-Z0-9-_]", "_");
-        String filename = "survey_analytics_" + sanitizedFilterValue + ".csv";
+        String filename = "Evaluation_Reports_" + sanitizedFilterValue + ".csv";
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
         

@@ -36,27 +36,22 @@ body {
     overflow-x: auto;
 }
 
+.table-wrapper::-webkit-scrollbar {
+    height: 3px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background-color: var(--light-gray);
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
 .scrollable-table {
     width: 100%; 
     overflow-y: auto;
     max-height: 281px;
-}
-
-.scrollable-table::-webkit-scrollbar {
-    width: 8px;
-}
-
-.scrollable-table::-webkit-scrollbar-thumb {
-    background-color: var(--light-gray);
-    border-radius: 4px;
-}
-
-.scrollable-table::-webkit-scrollbar-track {
-    background: var(--white);
-}
-
-.table-wrapper::-webkit-scrollbar {
-    display: none;
 }
 
 .transaction-table {

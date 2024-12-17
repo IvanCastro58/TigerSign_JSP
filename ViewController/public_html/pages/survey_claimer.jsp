@@ -70,7 +70,7 @@
                                 <form action="${pageContext.request.contextPath}/submitSurvey" method="post" class="form">
                                     <div class="input-fields">
                                         <label for="claimer-name" class="form-label">Enter Name (Optional)</label>
-                                        <input type="text" name="field-name" id="field-name" placeholder="Enter Full Name">
+                                        <input type="text" name="field-name" id="field-name" placeholder="Enter Full Name" maxlength="50">
                                     </div>
                                     <div class="input-fields">
                                     <label for="claimer-date" class="form-label">Date</label>
@@ -177,7 +177,7 @@
                                         <label class="form-label">Which Service stand out for you?<span style="color: #DB3444;"> *</span></label>
                                         <div class="standout-options">
                                             <div>
-                                                <input type="radio" id="standout1" name="standout" value="response">
+                                                <input type="radio" id="standout1" name="standout" value="response" required>
                                                 <label for="standout1" class="form-label"><strong>Response Time</strong></label>
                                             </div>
                                             <div>

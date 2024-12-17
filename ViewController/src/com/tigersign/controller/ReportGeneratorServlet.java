@@ -19,11 +19,15 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import com.itextpdf.text.Image;
 
+import com.tigersign.dao.AuditLoggerSuperAdmin;
+
 import java.awt.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -44,6 +48,7 @@ public class ReportGeneratorServlet extends HttpServlet {
         String format = request.getParameter("format");
         String filterType = request.getParameter("filterType");
         String filterValue = request.getParameter("filterValue");
+        String userEmail = (String) request.getSession().getAttribute("userEmail");
         String claimedCount = request.getParameter("claimedCount");
         String[] documentTypesArray = request.getParameterValues("documentTypes");
         String[] documentCountsArray = request.getParameterValues("documentCounts");
@@ -55,18 +60,26 @@ public class ReportGeneratorServlet extends HttpServlet {
         List<Double> documentAvgProcessingHours = documentAvgProcessingHoursArray != null ?
             Arrays.stream(documentAvgProcessingHoursArray).map(Double::parseDouble).collect(Collectors.toList()) : new ArrayList<>();
         
-        
-        if ("pdf".equalsIgnoreCase(format)) {
             try {
-                generatePDFReport(response, filterType, filterValue, claimedCount, documentTypes, documentCounts, documentAvgProcessingHours);
+                Map<String, String> logDetails = new HashMap<>();
+                logDetails.put("File", "Document Report");
+                logDetails.put("Filter Value", (filterValue == null || filterValue.isEmpty()) ? "All Data" : filterValue);
+                
+                if ("pdf".equalsIgnoreCase(format)) {
+                    generatePDFReport(response, filterType, filterValue, claimedCount, documentTypes, documentCounts, documentAvgProcessingHours);
+                    logDetails.put("File Type", "PDF");
+                } else if ("csv".equalsIgnoreCase(format)) {
+                    generateCSVReport(response, filterType, filterValue, claimedCount, documentTypes, documentCounts, documentAvgProcessingHours);
+                    logDetails.put("File Type", "CSV");
+                } else {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid report format");
+                    return;
+                }
+
+                AuditLoggerSuperAdmin.logActivity(userEmail, "GENERATE", logDetails);
             } catch (DocumentException e) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating PDF report");
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating report");
             }
-        } else if ("csv".equalsIgnoreCase(format)) {
-            generateCSVReport(response, filterType, filterValue, claimedCount, documentTypes, documentCounts, documentAvgProcessingHours);
-        } else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid report format");
-        }
     }
 
     private static final BaseColor CUSTOM_GRAY = new BaseColor(209, 209, 209);
@@ -80,7 +93,7 @@ public class ReportGeneratorServlet extends HttpServlet {
             ? "All_Data" 
             : filterValue.replaceAll("[^a-zA-Z0-9-_]", "_");
 
-        String filename = "document_report_" + sanitizedFilterValue + ".pdf";
+        String filename = "Document_Report_" + sanitizedFilterValue + ".pdf";
 
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
@@ -97,8 +110,8 @@ public class ReportGeneratorServlet extends HttpServlet {
         headerTable.setSpacingBefore(10f);
         headerTable.setSpacingAfter(10f);
         
-        //String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
-        String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
+        String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
+        //String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
         String logoPath1 = contextRoot + "/resources/images/ust.png";
         String logoPath2 = contextRoot + "/resources/images/registrar.png";
 
@@ -323,7 +336,7 @@ public class ReportGeneratorServlet extends HttpServlet {
         // Sanitize the filter value to be used in the filename
         String sanitizedFilterValue = (filterValue == null || filterValue.isEmpty()) ? "All_Data" 
                                          : filterValue.replaceAll("[^a-zA-Z0-9-_]", "_");
-        String filename = "document_report_" + sanitizedFilterValue + ".csv";
+        String filename = "Document_Report_" + sanitizedFilterValue + ".csv";
         response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 
         StringBuilder csvBuilder = new StringBuilder();

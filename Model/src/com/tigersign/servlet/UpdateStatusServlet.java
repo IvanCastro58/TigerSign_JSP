@@ -11,6 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -58,11 +61,15 @@ public class UpdateStatusServlet extends HttpServlet {
                 }
 
                 if (orNumber != null) {
-                    String activity = "Updated status of Service Invoice Number " + orNumber + " to " + newStatus + " (Request: " + requestData + ")";
+                    Map<String, String> details = new HashMap<>();
+                    details.put("Service Invoice", orNumber);
+                    details.put("Status", newStatus);
+                    details.put("Request", requestData);
+
                     if (adminEmail != null) {
-                        AuditLogger.logActivity(adminEmail, activity);
+                        AuditLogger.logActivity(adminEmail, "UPDATE", details);
                     } else if (userEmail != null) {
-                        AuditLoggerSuperAdmin.logActivity(userEmail, activity);
+                        AuditLoggerSuperAdmin.logActivity(userEmail, "UPDATE", details);
                     }
                 }
             } else {
