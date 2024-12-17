@@ -40,10 +40,10 @@ public class PDFGenerator {
         headerTable.setSpacingAfter(10f);
 
         // Load logos directly using the context root
-        //String logoPath1 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/ust.png";
-        //String logoPath2 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/registrar.png";
-        String logoPath1 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/ust.png";
-        String logoPath2 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/registrar.png";
+        String logoPath1 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/ust.png";
+        String logoPath2 = "http://127.0.0.1:7101/TigerSign-ViewController-context-root/resources/images/registrar.png";
+        //String logoPath1 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/ust.png";
+        //String logoPath2 = "https://registrarbeta.ust.edu.ph/tigersign/resources/images/registrar.png";
 
         Image logo1 = Image.getInstance(logoPath1);
         logo1.scaleToFit(60, 60);
@@ -220,9 +220,11 @@ public class PDFGenerator {
         nestedSignatureTable.setHorizontalAlignment(Element.ALIGN_RIGHT); 
 
         // Signature Image (optional)
-        if (details.getSignatureBase64() != null && !details.getSignatureBase64().isEmpty()) {
-            byte[] signatureBytes = Base64.getDecoder().decode(details.getSignatureBase64());
-            Image signatureImage = Image.getInstance(signatureBytes);
+        if (details.getSignaturePath() != null && !details.getSignaturePath().isEmpty()) {
+            String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
+            // String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
+            String signatureUrl = contextRoot + "/" + details.getSignaturePath();
+            Image signatureImage = Image.getInstance(signatureUrl);
             signatureImage.scaleToFit(250, 80); 
             PdfPCell signatureImageCell = new PdfPCell(signatureImage);
             signatureImageCell.setBorder(PdfPCell.NO_BORDER);
@@ -279,11 +281,13 @@ public class PDFGenerator {
         imageTable.setSpacingBefore(10f);
         imageTable.setSpacingAfter(10f);
 
-        if (details.getPhotoBase64() != null && !details.getPhotoBase64().isEmpty()) {
-            byte[] proofBytes = Base64.getDecoder().decode(details.getPhotoBase64());
-            Image proofImage = Image.getInstance(proofBytes);
-            proofImage.scaleToFit(400, 300);
-            PdfPCell proofCell = new PdfPCell(proofImage);
+        if (details.getPhotoPath() != null && !details.getPhotoPath().isEmpty()) {
+            String contextRoot = "http://127.0.0.1:7101/TigerSign-ViewController-context-root";
+            // String contextRoot = "https://registrarbeta.ust.edu.ph/tigersign";
+            String photoUrl = contextRoot + "/" + details.getPhotoPath();
+            Image photoImage = Image.getInstance(photoUrl);
+            photoImage.scaleToFit(400, 300);
+            PdfPCell proofCell = new PdfPCell(photoImage);
             proofCell.setBorder(PdfPCell.NO_BORDER);
             proofCell.setPadding(10);
             proofCell.setHorizontalAlignment(Element.ALIGN_CENTER);
